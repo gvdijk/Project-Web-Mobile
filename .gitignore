@@ -1,3 +1,24 @@
+# Vue related stuff
+.DS_Store
+node_modules
+/dist
+
+# Python related stuff
+__pycache__/
+
+# local env files
+.env.local
+.env.*.local
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
 # Logs
 logs
 *.log
