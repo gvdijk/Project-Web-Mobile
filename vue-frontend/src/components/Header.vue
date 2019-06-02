@@ -1,92 +1,149 @@
 <template>
-  <div class="header">
-    <div class="logodiv">
-      <img src="https://via.placeholder.com/70.png?text=logo" alt="logo">
-    </div>
-    <div class="searchdiv">
-      <img src="https://www.pinclipart.com/picdir/middle/15-157737_lens-clipart-looking-glass-looking-glass-icon-png.png" alt="searchimage" class="searchimage">
-      <input type="search" name="headerSearch" id="headerSearch" class="searchbar" v-model="searchQuery">
-    </div>
-    <div class="buttondiv">
-      <button @click="login">Login</button>
-      <button @click="register">Register</button>
-    </div>
-  </div>
+    <header>
+        <div class="header-content">
+            <div class="logo-wrapper">
+                <img @click="home" src="https://via.placeholder.com/80x40.png?text=Logo%20Naam" alt="logo">
+            </div>
+            <div class="search-wrapper">
+                <i class="fa fa-search"></i>
+                <input type="search" name="headerSearch" id="headerSearch" placeholder="Doorzoek de website">
+            </div>
+            <div class="account-wrapper">
+                <a @click="login">Inloggen</a>
+                <a @click="register">Registreren</a>
+            </div>
+        </div>
+    </header>
 </template>
 
 <script>
 export default {
-  name: 'Header',
-  data() {
-    return {
-      searchQuery: "Search the website",
-    }
-  },
-  methods: {
-    login(){
+    name: 'Header',
+    methods: {
+        login() {
 
+        },
+        register() {
+            this.$router.push({
+                path: '/register'
+            });
+        },
+        home() {
+            this.$router.push({
+                path: '/'
+            });
+        }
     },
-    register(){
-      this.$router.push({path: '/register'});
-    },
-  },
 }
 </script>
 
 <style scoped>
-  .header{
-    background-color: #eeeeee;
-    padding: 20px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-  }
+header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: var(--header-height);
+    width: 100%;
+    background-color: var(--black-soft);
+    box-sizing: border-box;
+    overflow: hidden;
+    z-index: 100;
+}
 
-  .searchbar{
-    padding-left: 10px;
-    height: 40px;
-    width: 500px;
-    border-radius: 3px;
-    border: 0px;
-  }
+.header-content {
+    display: grid;
+    position: relative;
+    height: var(--header-height);
+    width: var(--max-width);
+    max-width: 94%;
+    grid-template-columns: 80px auto 150px;
+    grid-column-gap: 20px;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
 
-  .searchimage{
-    height: 40px;
-    border: 2px;
-    border-radius: 3px;
-  }
+.logo-wrapper {
+    position: relative;
+    height: var(--header-height);
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+}
 
-  .logodiv{
-    width: 250px;
-    margin-right: auto;
-  }
-
-  .searchdiv{
-    display: flex;
-  }
-
-  .buttondiv{
-    width: 250px;
-    margin-left: auto;
-    display: flex;
-    justify-content: space-between;
-    align-content: center;
-  }
-
-  button {
-    width: 100px;
-    height: 40px;
-    font-size: 18px;
-    font-weight: bold;
-    background: #42b983;
-    color: white;
-    border-radius: 3px;
+.logo-wrapper img {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 100%;
+    max-height: 100%;
     cursor: pointer;
-    transition-duration: .5s;
-  }
+}
 
-  button:hover{
-    background: #00d374;
-  }
+.search-wrapper {
+    position: relative;
+    margin: 5px;
+    align-self: center;
+}
+
+.search-wrapper input {
+    position: relative;
+    width: 100%;
+    height: 28px;
+    padding: 4px 8px 4px 28px;
+    box-sizing: border-box;
+    border: 2px solid transparent;
+}
+
+.search-wrapper input:focus {
+    border: 2px solid var(--green);
+}
+
+.search-wrapper i {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    color: var(--gray-darker);
+    z-index: 888;
+    width: 16px;
+    height: 16px;
+    padding: 0 8px;
+    box-sizing: border-box;
+}
+
+.account-wrapper {
+    display: inline-block;
+    align-self: center;
+    white-space: nowrap;
+}
+
+.account-wrapper a {
+    display: inline-block;
+    padding: 5px;
+    font-size: 15px;
+    cursor: pointer;
+    color: var(--white-pure);
+    transition-duration: .1s;
+    /*
+    font-weight: bold;
+    min-width: 60px;
+    background-color: var(--dark-green);
+    border-radius: 3px;
+    */
+}
+
+.account-wrapper a:not(:first-child) {
+    margin-left: 10px;
+}
+
+.account-wrapper a:hover {
+    color: var(--green);
+}
+
+button:hover {
+    background-color: var(--green);
+}
+
 </style>

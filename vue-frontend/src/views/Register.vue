@@ -1,18 +1,18 @@
 <template>
   <div class="register">
-    <h1>Register</h1>
+    <h1>Registreren</h1>
 
     <form action="#" @submit.prevent="register">
-      <label for="username">Username</label>
-      <input type="text" name="username" id="username" v-model="username">
+      <label for="username">Gebruikersnaam</label>
+      <input type="text" name="username" id="username" placeholder="Gebruikersnaam">
 
-      <label for="username">Password</label>
-      <input type="password" name="password" id="password" v-model="password">
+      <label for="username">Wachtwoord</label>
+      <input type="password" name="password" id="password" placeholder="Wachtwoord">
 
-      <label for="username">Confirm password</label>
-      <input type="password" name="confirmpass" id="confirmpass" v-model="confirmPass">
+      <label for="username">Bevestig wachtwoord</label>
+      <input type="password" name="confirmpass" id="confirmpass" placeholder="Bevestig Wachtwoord">
 
-      <button type="submit">Register</button>
+      <button type="submit">Registreren</button>
     </form>
     <transition name="fade">
       <span class="error" v-show="error">{{errorMsg}}</span>
@@ -26,10 +26,7 @@ export default {
   data() {
     return{
       error: false,
-      errorMsg: "",
-      username: "Username",
-      password: "password",
-      confirmPass: "password",
+      errorMsg: ""
     }
   },
   methods: {
@@ -65,16 +62,16 @@ export default {
 </script>
 
 <style scoped>
-.register{
+.register {
   font-weight: bold;
-  color: #5c5c5c;
+  color: var(--gray-darker);
   margin-top: 100px;
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
 }
 
-.error{
+.error {
   color: rgb(197, 64, 64);
 }
 
@@ -86,7 +83,7 @@ export default {
 }
 
 h1 {
-  color: #42b983;
+  color: var(--green);
   text-align: left;
 }
 
@@ -98,13 +95,15 @@ label {
 }
 
 input {
-    color: #5c5c5c;
+    color: var(--gray-darker);
     width: 100%;
     height: 40px;
     font-size: 16px;
+    padding: 4px 8px;
     outline: 0;
     border-radius: 3px;
     border: 1px solid lightgrey;
+    box-sizing: border-box;
 }
 
 button {
@@ -113,14 +112,14 @@ button {
   margin-bottom: 40px;
   padding: 14px 12px;
   font-size: 18px;
-  background: #42b983;
-  color: white;
+  background: var(--dark-green);
+  color: var(--white-pure);
   border-radius: 3px;
   cursor: pointer;
   transition-duration: .5s;
 }
 
-button:hover{
-  background: #00d374;
+button:hover {
+  background: var(--green);
 }
 </style>
