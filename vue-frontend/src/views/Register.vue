@@ -102,8 +102,12 @@ input {
     padding: 4px 8px;
     outline: 0;
     border-radius: 3px;
-    border: 1px solid lightgrey;
+    border: 1px solid var(--gray-bright);
     box-sizing: border-box;
+}
+
+input:focus {
+    border: 1px solid var(--green);
 }
 
 button {

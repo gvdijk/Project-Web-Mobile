@@ -41,7 +41,7 @@ footer {
     display: grid;
     position: relative;
     height: var(--footer-height);
-    width: 400px;
+    width: 500px;
     max-width: 94%;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr;

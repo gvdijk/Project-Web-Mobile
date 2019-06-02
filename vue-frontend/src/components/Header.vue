@@ -93,11 +93,12 @@ header {
     height: 28px;
     padding: 4px 8px 4px 28px;
     box-sizing: border-box;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
+    border-radius: 3px;
 }
 
 .search-wrapper input:focus {
-    border: 2px solid var(--green);
+    border: 1px solid var(--green);
 }
 
 .search-wrapper i {

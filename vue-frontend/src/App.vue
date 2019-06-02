@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <Sidebar></Sidebar>
     <Header></Header>
     <router-view/>
     <Footer></Footer>
@@ -9,12 +10,14 @@
 <script>
 import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
+import Sidebar from './components/Sidebar.vue';
 
 export default {
   name: 'App',
   components: {
     Header,
-    Footer
+    Footer,
+    Sidebar
   }
 }
 </script>
@@ -59,6 +62,8 @@ export default {
     --max-width: 1100px;
     --header-height: 50px;
     --footer-height: 150px;
+    --side-full-width: 200px;
+    --side-retracted-width: 40px;
 }
 
 * {
