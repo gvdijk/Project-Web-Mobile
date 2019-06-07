@@ -4,13 +4,13 @@
 
     <form action="#" @submit.prevent="register">
       <label for="username">Gebruikersnaam</label>
-      <input type="text" name="username" id="username" placeholder="Gebruikersnaam">
+      <input type="text" name="username" id="username" placeholder="Gebruikersnaam" v-model="username"> 
 
       <label for="username">Wachtwoord</label>
-      <input type="password" name="password" id="password" placeholder="Wachtwoord">
+      <input type="password" name="password" id="password" placeholder="Wachtwoord"  v-model="password">
 
       <label for="username">Bevestig wachtwoord</label>
-      <input type="password" name="confirmpass" id="confirmpass" placeholder="Bevestig Wachtwoord">
+      <input type="password" name="confirmpass" id="confirmpass" placeholder="Bevestig Wachtwoord"  v-model="confirmpass">
 
       <button type="submit">Registreren</button>
     </form>
@@ -26,7 +26,10 @@ export default {
   data() {
     return{
       error: false,
-      errorMsg: ""
+      errorMsg: "",
+      username: "",
+      password: "",
+      confirmpass: ""
     }
   },
   methods: {

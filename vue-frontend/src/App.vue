@@ -1,9 +1,11 @@
 <template>
   <div id="app">
-    <Sidebar></Sidebar>
-    <Header></Header>
-    <router-view/>
-    <Footer></Footer>
+      <Sidebar></Sidebar>
+      <Header></Header>
+      <div class="all-content">
+          <router-view />
+      </div>
+      <Footer></Footer>
   </div>
 </template>
 
@@ -13,12 +15,12 @@ import Footer from './components/Footer.vue';
 import Sidebar from './components/Sidebar.vue';
 
 export default {
-  name: 'App',
-  components: {
-    Header,
-    Footer,
-    Sidebar
-  }
+    name: 'App',
+    components: {
+        Header,
+        Footer,
+        Sidebar
+    }
 }
 </script>
 
@@ -74,8 +76,9 @@ export default {
 body {
     position: relative;
     display: block;
-    padding-top: 50px;
-    padding-bottom: 150px;
+    padding-top: var(--header-height);
+    padding-bottom: var(--footer-height);
+    /* padding-left: var(--side-full-width); */
     min-height: 100vh;
     background-color: var(--white-base);
     box-sizing: border-box;
@@ -85,4 +88,13 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding-top: 50px;
 }
+
+.all-content {
+    position: relative;
+    width: var(--max-width);
+    max-width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 </style>
