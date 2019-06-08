@@ -104,7 +104,7 @@ body {
     max-width: 100%;
     left: 50%;
     transform: translateX(-50%);
-    padding: 30px 10px;
+    padding: 30px 20px;
     box-sizing: border-box;
 }
 

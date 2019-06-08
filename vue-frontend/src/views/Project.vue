@@ -44,7 +44,10 @@ export default {
                     id: 1,
                     title: 'Post 1',
                     description: 'Ik wou dit even duidelijk maken',
-                    user: 11,
+                    user: {
+                        id: 12,
+                        name: "Henk de Tank"
+                    },
                     created: 1539550165,
                     edited: 1539550265
                 },
@@ -52,7 +55,10 @@ export default {
                     id: 2,
                     title: 'Post 2',
                     description: '',
-                    user: 12,
+                    user: {
+                        id: 12,
+                        name: "Henk de Tank"
+                    },
                     created: 1549558165,
                     edited: null
                 },
@@ -60,7 +66,10 @@ export default {
                     id: 3,
                     title: 'Post 3',
                     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                    user: 11,
+                    user: {
+                        id: 18,
+                        name: "Kalekarel"
+                    },
                     created: 1449558165,
                     edited: null
                 }
