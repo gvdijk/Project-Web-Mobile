@@ -37,6 +37,7 @@ export default {
     border: 1px solid var(--gray-bright);
     border-radius: 6px;
     margin: 5px 0;
+    box-sizing: border-box;
 }
 
 .project-title {
@@ -91,6 +92,7 @@ export default {
     border-radius: 3px;
     margin: 0 3px;
     cursor: pointer;
+    transition-duration: 0.1s;
 }
 
 .project-button:hover {

@@ -1,11 +1,11 @@
 <template>
-  <div id="app">
-      <Sidebar></Sidebar>
-      <Header></Header>
+  <div id="app" v-bind:class="{'side-active': sidebarExtended}">
+      <Sidebar v-on:set-extended="onExtentionChange" v-bind:extended="sidebarExtended" />
+      <Header />
       <div class="all-content">
           <router-view />
       </div>
-      <Footer></Footer>
+      <Footer />
   </div>
 </template>
 
@@ -23,8 +23,11 @@ export default {
     },
     data() {
         return {
-            
+            sidebarExtended: true
         }
+    },
+    methods: {
+        onExtentionChange(state) { this.sidebarExtended = state; }
     }
 }
 </script>
@@ -70,7 +73,6 @@ export default {
     --header-height: 50px;
     --footer-height: 150px;
     --side-full-width: 200px;
-    --side-retracted-width: 40px;
 }
 
 * {
@@ -83,7 +85,6 @@ body {
     display: block;
     padding-top: var(--header-height);
     padding-bottom: var(--footer-height);
-    padding-left: var(--side-full-width);
     min-height: 100vh;
     background-color: var(--white-base);
     box-sizing: border-box;
@@ -93,13 +94,17 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.side-active {
+    
+}
+
 .all-content {
     position: relative;
     width: var(--max-width);
     max-width: 100%;
-    left: 45%;
+    left: 50%;
     transform: translateX(-50%);
-    padding: 10px;
+    padding: 20px 10px;
     box-sizing: border-box;
 }
 
