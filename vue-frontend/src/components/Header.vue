@@ -2,15 +2,15 @@
     <header>
         <div class="header-content">
             <div class="logo-wrapper">
-                <img @click="home" src="https://via.placeholder.com/80x40.png?text=Logo%20Naam" alt="logo">
+                <router-link to="/"><img src="../assets/Logo_Full_White.svg" alt="logo"></router-link>
             </div>
             <div class="search-wrapper">
                 <i class="fa fa-search"></i>
                 <input type="search" name="headerSearch" id="headerSearch" placeholder="Doorzoek de website">
             </div>
             <div class="account-wrapper">
-                <a @click="login">Inloggen</a>
-                <a @click="register">Registreren</a>
+                <router-link to="#"><a>Inloggen</a></router-link>
+                <router-link to="/register"><a>Registreren</a></router-link>
             </div>
         </div>
     </header>
@@ -22,18 +22,8 @@ export default {
     methods: {
         login() {
 
-        },
-        register() {
-            this.$router.push({
-                path: '/register'
-            });
-        },
-        home() {
-            this.$router.push({
-                path: '/'
-            });
         }
-    },
+    }
 }
 </script>
 
@@ -48,6 +38,8 @@ header {
     box-sizing: border-box;
     overflow: hidden;
     z-index: 100;
+    user-select: none;
+    -moz-user-select: -moz-none;
 }
 
 .header-content {
@@ -56,8 +48,8 @@ header {
     height: var(--header-height);
     width: var(--max-width);
     max-width: 94%;
-    grid-template-columns: 80px auto 150px;
-    grid-column-gap: 20px;
+    grid-template-columns: 160px auto 180px;
+    grid-column-gap: 10px;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
@@ -127,6 +119,7 @@ header {
     cursor: pointer;
     color: var(--white-pure);
     transition-duration: .1s;
+    box-sizing: border-box;
     /*
     font-weight: bold;
     min-width: 60px;

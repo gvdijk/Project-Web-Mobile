@@ -10,7 +10,7 @@
 import ProjectTile from '../components/ProjectTile.vue'
 
 export default {
-    name: 'home',
+    name: 'Home',
     components: {
         ProjectTile
     },

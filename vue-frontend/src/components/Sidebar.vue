@@ -2,26 +2,27 @@
     <aside>
 
         <div class="side-pane">
-            <label class="side-pane-title">Pagina specifiek</label>
+            <label>Pagina specifiek</label>
             
             <div class="side-pane-content">
                 <!-- TODO: fetch content -->
             </div>
         </div>
         <div class="side-pane">
-            <label class="side-pane-title">Mijn Projecten</label>
+            <label>Mijn Projecten</label>
+            <div class="side-pane-content">
+                <!-- TODO: fetch content, hide when logged out -->
+                <router-link to="/Project"><a>Project 1</a></router-link>
+            </div>
+        </div>
+        <div class="side-pane">
+            <label>Recente Projecten</label>
             <div class="side-pane-content">
                 <!-- TODO: fetch content, hide when logged out -->
             </div>
         </div>
         <div class="side-pane">
-            <label class="side-pane-title">Recente Projecten</label>
-            <div class="side-pane-content">
-                <!-- TODO: fetch content, hide when logged out -->
-            </div>
-        </div>
-        <div class="side-pane">
-           <label class="side-pane-title">Explore</label>
+           <label>Explore</label>
             <div class="side-pane-content">
                 
             </div>
@@ -31,7 +32,12 @@
 
 <script>
 export default {
-    name: 'Sidebar'
+    name: 'Sidebar',
+    data() {
+        return {
+
+        }
+    }
 }
 </script>
 
@@ -46,6 +52,8 @@ aside {
     background-color: var(--black-smooth);
     padding: var(--header-height) 0 var(--footer-height) 0;
     box-sizing: border-box;
+    user-select: none;
+    -moz-user-select: -moz-none;
 }
 
 .side-pane {
@@ -55,7 +63,7 @@ aside {
     box-sizing: border-box;
 }
 
-.side-pane-title {
+label {
     display: block;
     color: var(--white-soft);
     font-size: 12pt;
@@ -65,7 +73,7 @@ aside {
     cursor: pointer;
 }
 
-.side-pane-title:hover {
+label:hover {
     color: var(--green);
 }
 

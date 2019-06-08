@@ -35,6 +35,8 @@ footer {
     box-sizing: border-box;
     overflow: hidden;
     z-index: 100;
+    user-select: none;
+    -moz-user-select: -moz-none;
 }
 
 .footer-content {
@@ -63,5 +65,9 @@ footer {
     margin: 4px 2px;
     text-decoration: none;
     cursor: pointer;
+}
+
+.footer-column a:hover {
+    /* color: var(--green); */
 }
 </style>

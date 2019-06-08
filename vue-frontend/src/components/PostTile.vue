@@ -1,37 +1,34 @@
 <template>
-    <div class="project-tile">
-        <span class="project-title">{{ project.title }}</span>
-        <span class="project-subtitle">{{ project.users }} deelnemers | Gemaakt op {{ project.created }}</span>
-        <span class="project-content" v-bind:class="{'project-content-extended': extended}">{{ project.description }}</span>
-        <div class="project-actions"> 
+    <div class="post-tile">
+        <span class="post-title">{{ post.title }}</span>
+        <span class="post-subtitle"> Geplaatst op {{ post.created }} <span v-if="post.edited"> | Laatst bewerkt op {{ post.edited }}</span></span>
+        <span class="post-content" v-bind:class="{'post-content-extended': extended}">{{ post.description }}</span>
+        <div class="post-actions"> 
             <div @click="viewLess" v-if="extended" class="description-extender">Lees minder...</div>
             <div @click="viewMore" v-else class="description-extender">Lees meer...</div>
-            <div class="project-button">Bekijken</div>
-            <div v-if="project.access" class="project-button">Deelnemen</div>
-            <div v-else class="project-button">Aanvragen</div>
+            <div class="post-button">Bekijken</div>
         </div>
     </div>
 </template>
 
 <script>
 export default {
-    name: 'ProjectTile',
+    name: 'PostTile',
     data() {
         return {
             extended: false
         }
     },
-    // TODO: See if extentiosion is necessary
     methods: {
         viewLess() { this.extended = false; },
         viewMore() { this.extended = true; }
     },
-    props: ['project']
+    props: ['post']
 }
 </script>
 
 <style scoped>
-.project-tile {
+.post-tile {
     width: 100%;
     padding: 8px 4px 4px 12px;
     border: 1px solid var(--gray-bright);
@@ -39,20 +36,20 @@ export default {
     margin: 5px 0;
 }
 
-.project-title {
+.post-title {
     display: block;
     font-size: 16pt;
     color: var(--black-smooth);
 }
 
-.project-subtitle {
+.post-subtitle {
     display: block;
     font-size: 9pt;
     color: var(--black-smooth);
     font-style: italic;
 }
 
-.project-content {
+.post-content {
     display: block;
     font-size: 11pt;
     color: var(--black-smooth);
@@ -61,7 +58,7 @@ export default {
     margin: 3px 0;
 }
 
-.project-content-extended {
+.post-content-extended {
     height: auto;
 }
 
@@ -73,15 +70,13 @@ export default {
     padding: 3px 1px 1px
 }
 
-.project-actions {
+.post-actions {
     display: block;
     height: 22px;
     box-shadow: 0 -5px 12px -6px #eee;
-    user-select: none;
-    -moz-user-select: -moz-none;
 }
 
-.project-button {
+.post-button {
     float: right;
     padding: 2px 9px 4px;
     background-color: var(--dark-green);
@@ -93,7 +88,7 @@ export default {
     cursor: pointer;
 }
 
-.project-button:hover {
+.post-button:hover {
     background-color: var(--green);
 }
 </style>

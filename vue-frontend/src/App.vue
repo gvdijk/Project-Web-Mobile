@@ -20,6 +20,11 @@ export default {
         Header,
         Footer,
         Sidebar
+    },
+    data() {
+        return {
+            
+        }
     }
 }
 </script>
@@ -78,7 +83,7 @@ body {
     display: block;
     padding-top: var(--header-height);
     padding-bottom: var(--footer-height);
-    /* padding-left: var(--side-full-width); */
+    padding-left: var(--side-full-width);
     min-height: 100vh;
     background-color: var(--white-base);
     box-sizing: border-box;
@@ -86,15 +91,16 @@ body {
 
 #app {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    padding-top: 50px;
 }
 
 .all-content {
     position: relative;
     width: var(--max-width);
     max-width: 100%;
-    left: 50%;
+    left: 45%;
     transform: translateX(-50%);
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 </style>
