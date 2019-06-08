@@ -95,7 +95,7 @@ body {
 }
 
 .side-active {
-    
+
 }
 
 .all-content {
@@ -104,7 +104,7 @@ body {
     max-width: 100%;
     left: 50%;
     transform: translateX(-50%);
-    padding: 20px 10px;
+    padding: 30px 10px;
     box-sizing: border-box;
 }
 

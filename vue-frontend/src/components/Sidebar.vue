@@ -95,8 +95,6 @@ aside {
     background-color: var(--black-smooth);
     padding: var(--header-height) 0 var(--footer-height) 0;
     box-sizing: border-box;
-    user-select: none;
-    -moz-user-select: -moz-none;
     white-space: nowrap;
     transition-duration: 0.2s;
     z-index: 50;
@@ -149,6 +147,8 @@ aside {
     cursor: pointer;
     transition-duration: 0.1s;
     height: 32px;
+    user-select: none;
+    -moz-user-select: -moz-none;
 }
 
 .side-pane label:hover {
@@ -166,6 +166,8 @@ aside {
     background-color: var(--gray-darker);
     border-bottom-right-radius: 4px;
     transition-duration: 0.2s;
+    user-select: none;
+    -moz-user-select: -moz-none;
 }
 
 .side-extender div {

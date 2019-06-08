@@ -34,6 +34,7 @@ export default {
     border: 1px solid var(--gray-bright);
     border-radius: 6px;
     margin: 5px 0;
+    box-sizing: border-box;
 }
 
 .post-title {
@@ -67,7 +68,10 @@ export default {
     font-size: 9pt;
     cursor: pointer;
     display: inline-block;
-    padding: 3px 1px 1px
+    padding: 3px 1px 1px;
+    box-sizing: border-box;
+    user-select: none;
+    -moz-user-select: -moz-none;
 }
 
 .post-actions {
@@ -86,6 +90,8 @@ export default {
     border-radius: 3px;
     margin: 0 3px;
     cursor: pointer;
+    user-select: none;
+    -moz-user-select: -moz-none;
 }
 
 .post-button:hover {
