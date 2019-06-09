@@ -1,8 +1,8 @@
 <template>
     <div class="project-tile">
         <span class="project-title">{{ project.title }}</span>
-        <span class="project-subtitle">{{ project.users }} deelnemers | Gemaakt op {{ project.created }}</span>
-        <span class="project-content" v-bind:class="{'project-content-extended': extended}">{{ project.description }}</span>
+        <span class="project-subtitle">{{ usersPlaceholder }} deelnemers | Gemaakt op {{ createdPlaceholder }}</span>
+        <span class="project-content" v-bind:class="{'project-content-extended': extended}">{{ project.body }}</span>
         <div class="project-actions"> 
             <div @click="viewLess" v-if="extended" class="description-extender">Lees minder...</div>
             <div @click="viewMore" v-else class="description-extender">Lees meer...</div>
@@ -18,7 +18,9 @@ export default {
     name: 'ProjectTile',
     data() {
         return {
-            extended: false
+            extended: false,
+            usersPlaceholder: 'x',
+            createdPlaceholder: 'dd/mm/yyyy',
         }
     },
     // TODO: See if extentiosion is necessary

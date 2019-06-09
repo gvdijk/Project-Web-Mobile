@@ -30,7 +30,7 @@ button{
 }
 
 .border-button{
-    
+
 }
 
 .selector-button{

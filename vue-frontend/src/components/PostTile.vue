@@ -17,8 +17,8 @@ export default {
     data() {
         return {
             extended: false,
-            createdPlaceholder: '08/06/2019',
-            editedPlaceholder: '10/06/2019'
+            createdPlaceholder: 'dd/mm/yyyy',
+            editedPlaceholder: 'dd/mm/yyyy',
         }
     },
     methods: {
