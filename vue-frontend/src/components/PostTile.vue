@@ -1,12 +1,12 @@
 <template>
     <div class="post-tile">
         <span class="post-title">{{ post.title }}</span>
-        <span class="post-subtitle"> Geplaatst op {{ createdPlaceholder }} <span v-if="true"> | Laatst bewerkt op {{ editedPlaceholder }}</span></span>
+        <span class="post-subtitle"> {{usernamePlaceholder}} | Geplaatst op {{ createdPlaceholder }} <span v-if="true"> | Laatst bewerkt op {{ editedPlaceholder }}</span></span>
         <span class="post-content" v-bind:class="{'post-content-extended': extended}">{{ post.body }}</span>
         <div class="post-actions"> 
             <div @click="viewLess" v-if="extended" class="description-extender">Lees minder...</div>
             <div @click="viewMore" v-else class="description-extender">Lees meer...</div>
-            <div class="post-button">Bekijken</div>
+            <router-link class="post-button" to="/Post">Bekijken</router-link>
         </div>
     </div>
 </template>
@@ -19,6 +19,7 @@ export default {
             extended: false,
             createdPlaceholder: 'dd/mm/yyyy',
             editedPlaceholder: 'dd/mm/yyyy',
+            usernamePlaceholder: 'username',
         }
     },
     methods: {
@@ -37,6 +38,7 @@ export default {
     border-radius: 6px;
     margin: 5px 0;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 .post-title {
@@ -83,6 +85,7 @@ export default {
 }
 
 .post-button {
+    text-decoration: none;
     float: right;
     padding: 2px 9px 4px;
     background-color: var(--dark-green);

@@ -6,7 +6,7 @@
         <div class="project-actions"> 
             <div @click="viewLess" v-if="extended" class="description-extender">Lees minder...</div>
             <div @click="viewMore" v-else class="description-extender">Lees meer...</div>
-            <div class="project-button">Bekijken</div>
+            <router-link class="project-button" to="/project"><a>Bekijken</a></router-link>
             <div v-if="project.access" class="project-button">Deelnemen</div>
             <div v-else class="project-button">Aanvragen</div>
         </div>
@@ -94,6 +94,7 @@ export default {
     border-radius: 3px;
     margin: 0 3px;
     cursor: pointer;
+    text-decoration: none;
     transition-duration: 0.1s;
 }
 

@@ -1,0 +1,15 @@
+<template>
+    <div class="usersettings">
+        
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'UserSettings'
+}
+</script>
+
+<style scoped>
+
+</style>
