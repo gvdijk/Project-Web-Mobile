@@ -21,10 +21,13 @@
 
 <script>
 import PostTile from '../components/PostTile.vue'
+import PageSelector from '../components/PageSelector.vue'
+
 export default {
     name: 'Project',
     components: {
-        PostTile
+        PostTile,
+        PageSelector,
     },
     data() {
         return {
@@ -39,7 +42,7 @@ export default {
                 access: true,
                 created: 1539550165
             },
-            posts: [
+            placeholderPosts: [
                 {
                     id: 1,
                     title: 'Post 1',
@@ -64,11 +67,26 @@ export default {
                     created: 1449558165,
                     edited: null
                 }
-            ]
+            ],
+            posts: [],
         }
     },
     methods: {
-        
+        fetchPosts(){
+        this.$store.dispatch('getPosts')
+        .then( response => {
+            this.posts = response;
+        })
+        .catch( error => {
+            console.log(error);
+        })
+        }
+    },
+    computed: {
+
+    },
+    created(){
+        this.fetchPosts();
     }
 }
 </script>
