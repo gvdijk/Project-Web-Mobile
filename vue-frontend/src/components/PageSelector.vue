@@ -95,6 +95,12 @@ button{
     border-style: solid;
     border-color: var(--gray-bright);
     cursor: pointer;
+    transition-duration: 0.3s;
+}
+
+button:hover{
+    color: var(--white-base);
+    background-color: var(--green);
 }
 
 .inactive{
