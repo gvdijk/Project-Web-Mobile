@@ -91,6 +91,7 @@ body {
     min-height: 100vh;
     background-color: var(--white-base);
     box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 #app {
