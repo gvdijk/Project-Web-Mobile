@@ -23,7 +23,7 @@ export default {
     },
     data() {
         return {
-            sidebarExtended: true
+            sidebarExtended: false
         }
     },
     methods: {
@@ -95,7 +95,7 @@ body {
 }
 
 .side-active {
-
+    /* FIXME: This should not be empty */
 }
 
 .all-content {

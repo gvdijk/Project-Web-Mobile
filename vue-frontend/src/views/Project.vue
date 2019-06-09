@@ -14,9 +14,9 @@
             <div class="project-stats">Er zijn {{project.posts}} berichten geplaatst door {{project.users}} gebruikers sinds {{project.created}}</div>
         </div>
         <div class="posts-view">
-            <PostTile v-for="post in posts" :key="post.id" v-bind:post="post" />
+            <PostTile v-for="post in paginatedPosts" :key="post.id" v-bind:post="post" />
         </div>
-        <PageSelector/>
+        <PageSelector v-bind:visiblePages="3" v-bind:totalEntries="posts.length" v-bind:entriesPerPage="5" v-on:pageChanged="pageChanged"/>
     </div>
 </template>
 
@@ -44,7 +44,8 @@ export default {
                 created: 1539550165
             },
             posts: [],
-            perPage: 5,
+            startIndex: 0,
+            endIndex: 0
         }
     },
     methods: {
@@ -56,18 +57,19 @@ export default {
             .catch( error => {
                 console.log(error);
             })
+        },
+        pageChanged(startIndex, endIndex){
+            this.startIndex = startIndex;
+            this.endIndex = endIndex;
         }
     },
     computed: {
-        numberOfPages(){
-
-        },
         paginatedPosts(){
-
+            return this.posts.slice(this.startIndex, this.endIndex);
         }
     },
     created(){
-        // this.fetchPosts();
+        this.fetchPosts();
     }
 }
 </script>
