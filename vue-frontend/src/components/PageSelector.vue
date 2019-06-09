@@ -108,6 +108,11 @@ button:hover{
     color: var(--gray-dark);
 }
 
+.inactive:hover{
+    background-color: var(--white-base);
+    color: var(--gray-dark);
+}
+
 .active{
     color: var(--white-base);
     background-color: var(--green);
