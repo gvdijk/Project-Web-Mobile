@@ -28,6 +28,9 @@ export default {
     },
     methods: {
         onExtentionChange(state) { this.sidebarExtended = state; }
+    },
+    mounted() {
+        setTimeout(() => this.sidebarExtended = false, 1000);
     }
 }
 </script>
@@ -71,7 +74,7 @@ export default {
 
     --max-width: 1100px;
     --header-height: 50px;
-    --footer-height: 150px;
+    --footer-height: 180px;
     --side-full-width: 200px;
 }
 

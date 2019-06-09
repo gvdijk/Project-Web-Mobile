@@ -4,6 +4,11 @@
             <div class="logo-wrapper">
                 <router-link to="/"><img src="../assets/Logo_Full_White.svg" alt="logo"></router-link>
             </div>
+            <div class="hamburger" v-bind:class="{'active-burger':menuCollapse}" @click="toggleMenu">
+                <div class="top"></div>
+                <div class="mid"></div>
+                <div class="bot"></div>
+            </div>
             <div class="search-wrapper">
                 <i class="fa fa-search"></i>
                 <input type="search" name="headerSearch" id="headerSearch" placeholder="Doorzoek de website">
@@ -20,8 +25,12 @@
 export default {
     name: 'Header',
     methods: {
-        login() {
-
+        login() { },
+        toggleMenu() { this.menuCollapse = !this.menuCollapse; }
+    },
+    data() {
+        return {
+            menuCollapse: true
         }
     }
 }
@@ -55,8 +64,13 @@ header {
     transform: translateX(-50%);
 }
 
+.hamburger {
+    display: none;
+}
+
 .logo-wrapper {
     position: relative;
+    display: inline-block;
     height: var(--header-height);
     width: 100%;
     padding: 5px;
@@ -68,7 +82,7 @@ header {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    max-width: 100%;
+    max-width: 160px;
     max-height: 100%;
     cursor: pointer;
 }
@@ -120,12 +134,6 @@ header {
     color: var(--white-pure);
     transition-duration: .1s;
     box-sizing: border-box;
-    /*
-    font-weight: bold;
-    min-width: 60px;
-    background-color: var(--dark-green);
-    border-radius: 3px;
-    */
 }
 
 .account-wrapper a:not(:first-child) {
@@ -138,6 +146,56 @@ header {
 
 button:hover {
     background-color: var(--green);
+}
+
+
+@media screen and (max-width: 800px)  {
+    .search-wrapper {}
+
+    .header-content {
+        display: block;
+        height: var(--header-height);
+        width: var(--max-width);
+        max-width: 94%;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        align-content: center;
+    }
+
+    .hamburger {
+        display: block;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 0;
+        cursor: pointer;
+    }
+
+    .hamburger div {
+        width: 25px;
+        height: 3px;
+        background-color: var(--white-soft);
+        margin: 6px 0;
+        opacity: 100;
+        transition-duration: 0.2s;
+    }
+
+    .active-burger div {
+        margin: -3px 0;
+    }
+
+    .active-burger .top {
+        transform: rotate(-45deg);
+    }
+
+    .active-burger .mid {
+        opacity: 0;
+    }
+
+    .active-burger .bot {
+        transform: rotate(45deg);
+    }
 }
 
 </style>

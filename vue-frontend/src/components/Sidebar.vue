@@ -9,29 +9,35 @@
             </div>
         </div>
         <div class="side-pane">
-            <label @click="toggleInfoVisibility">Pagina specifiek</label>
+            <div class="side-pane-title" @click="toggleInfoVisibility">
+                Pagina specifiek
+                <div class="side-pane-arrow" v-bind:class="{'arrow-up': !extendedInfo, 'arrow-down': extendedInfo}"></div>
+            </div>
             <div class="side-pane-content" v-if="extendedInfo">
                 <!-- TODO: make content aware -->
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
             </div>
         </div>
         <div class="side-pane" v-if="authenticated">
-            <label @click="toggleMyProjectsVisibility">Mijn Projecten</label>
+            <div class="side-pane-title" @click="toggleMyProjectsVisibility">
+                Mijn Projecten
+                <div class="side-pane-arrow" v-bind:class="{'arrow-up': !extendedProjects, 'arrow-down': extendedProjects}"></div>
+            </div>
             <div class="side-pane-content" v-if="extendedProjects">
                 <router-link :key="project.id" v-for="project in myProjects" to="/Project"><a>{{project.title}}</a></router-link>
             </div>
         </div>
         <div class="side-pane" v-if="authenticated">
-            <label @click="toggleRecentProjectsVisibility">Recente Projecten</label>
+            <div class="side-pane-title" @click="toggleRecentProjectsVisibility">
+                Recente Projecten
+                <div class="side-pane-arrow" v-bind:class="{'arrow-up': !extendedRecent, 'arrow-down': extendedRecent}"></div>
+            </div>
             <div class="side-pane-content" v-if="extendedRecent">
                 <router-link :key="project.id" v-for="project in recentProjects" to="/Project"><a>{{project.title}}</a></router-link>
             </div>
         </div>
         <div class="side-pane">
-           <label>Explore</label>
-            <div class="side-pane-content">
-                
-            </div>
+            <router-link class="side-pane-title" to="/Explore"><a>Explore</a></router-link>
         </div>
     </aside>
 </template>
@@ -42,7 +48,7 @@ export default {
     data() {
         return {
             authenticated: true,
-            extendedInfo: true,
+            extendedInfo: false,
             extendedProjects: true,
             extendedRecent: true,
             myProjects: [
@@ -137,9 +143,9 @@ aside {
     display: none;
 }
 
-.side-pane label {
+.side-pane-title {
     display: block;
-    color: var(--white-soft);
+    color: var(--green);
     font-size: 12pt;
     font-weight: 500;
     padding: 5px;
@@ -149,10 +155,32 @@ aside {
     height: 32px;
     user-select: none;
     -moz-user-select: -moz-none;
+    text-decoration: none;
 }
 
-.side-pane label:hover {
+.side-pane-title:hover {
     color: var(--green);
+}
+
+.side-pane-arrow {
+    position: absolute;
+    top: 17px;
+    right: 12px;
+    width: 5px;
+    height: 5px;
+    border: solid var(--white-soft);
+    border-width: 0 3px 3px 0;
+    display: block;
+    float: right;
+    transition-duration: 0.2s;
+}
+
+.arrow-up {
+    transform: rotate(45deg);
+}
+
+.arrow-down {
+    transform: rotate(225deg);
 }
 
 .side-extender {
