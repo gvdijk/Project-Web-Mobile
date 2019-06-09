@@ -24,7 +24,7 @@
                 <div class="side-pane-arrow" v-bind:class="{'arrow-up': !extendedProjects, 'arrow-down': extendedProjects}"></div>
             </div>
             <div class="side-pane-content" v-if="extendedProjects">
-                <router-link :key="project.id" v-for="project in myProjects" to="/Project"><a>{{project.title}}</a></router-link>
+                <router-link :key="project.id" v-for="project in myProjects" to="/project"><a>{{project.title}}</a></router-link>
             </div>
         </div>
         <div class="side-pane" v-if="authenticated">
@@ -33,11 +33,11 @@
                 <div class="side-pane-arrow" v-bind:class="{'arrow-up': !extendedRecent, 'arrow-down': extendedRecent}"></div>
             </div>
             <div class="side-pane-content" v-if="extendedRecent">
-                <router-link :key="project.id" v-for="project in recentProjects" to="/Project"><a>{{project.title}}</a></router-link>
+                <router-link :key="project.id" v-for="project in recentProjects" to="/project"><a>{{project.title}}</a></router-link>
             </div>
         </div>
         <div class="side-pane">
-            <router-link class="side-pane-title" to="/Explore"><a>Explore</a></router-link>
+            <router-link class="side-pane-title" to="/explore"><a>Explore</a></router-link>
         </div>
     </aside>
 </template>
@@ -104,6 +104,7 @@ aside {
     white-space: nowrap;
     transition-duration: 0.2s;
     z-index: 50;
+    border-right: 1px solid var(--gray-bright);
 }
 
 .hide-aside  {
