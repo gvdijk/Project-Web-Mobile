@@ -42,7 +42,7 @@ header {
     top: 0;
     left: 0;
     height: var(--header-height);
-    width: 100%;
+    width: 100vw;
     background-color: var(--black-soft);
     box-sizing: border-box;
     overflow: hidden;

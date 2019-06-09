@@ -30,7 +30,7 @@ footer {
     bottom: 0;
     left: 0;
     height: var(--footer-height);
-    width: 100%;
+    width: 100vw;
     overflow: hidden;
     z-index: 100;
     user-select: none;
