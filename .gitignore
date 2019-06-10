@@ -5,6 +5,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Python related stuff
+__pycache__/
+
 # Runtime data
 pids
 *.pid
