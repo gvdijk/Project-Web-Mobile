@@ -1,0 +1,167 @@
+info:
+  title: Project managing API   
+path:
+ /user:
+  post:
+   tags:
+    - Users
+   summary: create new user
+   processId: user.create
+   parameters:
+    - name: userName
+      schema:
+       type: string
+       charLimit: 45
+    - name: userPass
+      schema:
+       type: string
+       charLimit: 256
+   responses:
+    '200':
+     description: user has been added to the db
+ /user/{userID}:
+  get:
+   tags:
+    - Users
+   summary: returns 1 user with userID
+   processId: user.get_by_id
+   parameters:
+    - name: Id
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: returns user found under id
+     content:
+      schema:
+       type: array
+       $ref: '#/components/schemas/user'
+    '404':
+     description: no user found under id
+ /user/{userID}/project:
+  get:
+   tags:
+    - Projects
+   summary: return all projects of user
+   processId: user.get_projects_by_id
+   parameters:
+    - name: Id
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: returns all projects found under id
+     content:
+      schema:
+       type: array
+       $ref: '#/components/schemas/project'
+    '404':
+     description: no user found under id
+    '405':
+     description: no projects found under id
+ /user/{userID}/post:
+  get:
+   tags:
+    - Posts
+   summary: Return all posts for a user
+   processId: user.get_posts_by_id
+   parameters:
+    - name: Id
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: returns all posts found under id
+     content:
+      schema:
+       type: array
+       $ref: '#/components/schemas/post'
+    '404':
+     description: no user found under id
+    '405':
+     description: no posts found under id
+ /user/{userID}/comment:
+  get:
+   tags:
+    - Comments
+   summary: return all comments for a user
+   processId: user.get_comments_by_id
+   parameters:
+    - name: Id
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: returns all comments found under id
+     content:
+      schema:
+       type: array
+       $ref: '#/components/schemas/comment'
+    '404':
+     description: no user found under id
+    '405':
+     description: no comments found under id
+ /user:
+  get:
+   tags:
+    - Users
+   summary: return all users containing <userName>
+   processId: user.get_by_name
+   parameters:
+    - name: userName
+      schema:
+       type: string
+       charLimit: 45
+   responses:
+    '200':
+     description: returns all users containing userName
+     content:
+      schema:
+       type: array
+       $ref: '#/components/schemas/user'
+    '404':
+     description: no users found under userName
+ /user/{userID}:
+  put:
+   tags:
+    - Users
+   summary: update details for user found under id
+   processId: user.put_by_id
+   parameters:
+    - name: Id
+      schema:
+       type: integer
+       minimum: 0
+    - name: userName
+      schema:
+       type: string
+       charLimit: 45
+    - name: userPass
+      schema:
+       type: string
+       charLimit: 256
+    responses:
+     '200':
+      description: user has been updated
+     '404':
+      description: user has not been found and has been added to the db
+ /user/{userID):
+  delete:
+   tags:
+    - Users
+   summary: Delete user under id from db
+   processId: user.delete_by_id
+   parameters:
+    - name: Id
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: user has been deleted form the db
+    '404':
+     description: no user found under id

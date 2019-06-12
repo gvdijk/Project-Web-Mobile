@@ -1,0 +1,19 @@
+components:
+ schemas:
+  project:
+   properties:
+    projectId:
+     type: integer
+     minimum: 0
+    projectName:
+     type: string
+     charLimit: 45
+    projectDescription:
+     type: string
+     charLimit: 500
+    projectVisibility:
+     type: enum
+    projectCreated
+     type: date-time
+    projectOwner:
+     type: integer

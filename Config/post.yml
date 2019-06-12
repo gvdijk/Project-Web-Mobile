@@ -1,0 +1,25 @@
+components:
+ schemas:
+  post:
+   properties:
+    postID:
+     type: integer
+     minimum: 0
+    postTitle:
+     type: string
+     charLimit: 45
+    postContent:
+     type: string
+     charLimit: 2000
+    postCreated:
+     type: date-time
+    postEdited:
+     type: date-time
+    postState:
+     type: enum
+    postUser:
+     type: integer
+     minimum: 0
+    postProject:
+     type: integer
+     minimum: 0

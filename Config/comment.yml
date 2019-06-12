@@ -1,0 +1,22 @@
+components:
+ schemas:
+  comment:
+   properties:
+    commentID:
+     type: integer
+     minimum: 0
+    commentContent:
+     type: string
+     charLimit: 2000
+    commentCreated:
+     type: date-time
+    commentEdited:
+     type: date-time
+    commentState:
+     type: enum
+    commentUser:
+     type: integer
+     minimum: 0
+    commentPost:
+     type: integer
+     minimum: 0

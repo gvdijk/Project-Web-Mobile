@@ -1,0 +1,17 @@
+components:
+ schemas:
+  user:
+   properties:
+    userID:
+     type: integer
+     minimum: 0
+    userName:
+     type: string
+     charLimit: 45
+    userPass:
+     type: string
+     charLimit: 256
+    userPicture:
+     type: file
+    userCreated:
+     type: date-time
