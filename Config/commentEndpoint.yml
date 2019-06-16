@@ -1,0 +1,64 @@
+path:
+ /comment:
+  post:
+   tags:
+    - comment
+   summary: create a new comment on a post
+   operationId: comment.create
+   parameters:
+    - name: commentPost
+      schema:
+       type: integer
+       minimum: 0
+    - name: commentUser
+      schema:
+       type: integer
+       minimum: 0
+    - name: commentContent
+      schema:
+       type: string
+       charLimit: 2000
+    - name: commentCreated
+      schema:
+       type: date-time
+    - name: commentState
+      schema:
+       type: string
+       enum: "OPEN", "RESTRICTED", "PRIVATE"
+   responses:
+    '404':
+     description: no post found under id
+ /comment/{commentID}:
+  put:
+   tags:
+    - comment
+   summary: update comment under id
+   operationId: comment.put_by_id
+   parameters:
+    - name: commentContent
+      schema:
+       type: string
+       charLimit: 2000
+    - name: commentEdited
+      schema:
+       type: date-time
+    - name: commentState
+      schema:
+       type: string
+       enum: "OPEN", "RESTRICTED", "PRIVATE"
+   responses:
+    '404':
+     description: no comment found under id
+ /comment/{commentID}:
+  delete:
+   tags:
+    - comment
+   summary: delete comment under id
+   parameters:
+    - name: commentID
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '404':
+     description: no comment found under id

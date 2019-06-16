@@ -1,6 +1,13 @@
 components:
  schemas:
   comment:
+   type: object
+   required:
+    - commentID
+    - commentContent
+    - commentState
+    - commentUser
+    - commentPost
    properties:
     commentID:
      type: integer
@@ -13,7 +20,8 @@ components:
     commentEdited:
      type: date-time
     commentState:
-     type: enum
+     type: string
+     enum: "OPEN", "RESTRICTED", "PRIVATE"
     commentUser:
      type: integer
      minimum: 0

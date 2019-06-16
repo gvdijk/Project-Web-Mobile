@@ -1,6 +1,14 @@
 components:
  schemas:
   post:
+   type: object
+   required:
+    - postID
+    - postTitle
+    - postContent
+    - postState
+    - postUser
+    - postProject
    properties:
     postID:
      type: integer
@@ -16,7 +24,8 @@ components:
     postEdited:
      type: date-time
     postState:
-     type: enum
+     type: string
+     enum: "OPEN", "RESTRICTED", "PRIVATE"
     postUser:
      type: integer
      minimum: 0

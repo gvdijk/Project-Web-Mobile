@@ -1,6 +1,10 @@
 components:
  schemas:
   user:
+   type: object
+   required:
+    - userID
+    - userName
    properties:
     userID:
      type: integer
@@ -9,7 +13,7 @@ components:
      type: string
      charLimit: 45
     userPass:
-     type: string
+     type: password
      charLimit: 256
     userPicture:
      type: file

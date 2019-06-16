@@ -1,8 +1,14 @@
 components:
  schemas:
   project:
+   type: object
+   required:
+    - projectID
+    - projectName
+    - projectOwner
+    - projectVisibility
    properties:
-    projectId:
+    projectID:
      type: integer
      minimum: 0
     projectName:
@@ -12,7 +18,8 @@ components:
      type: string
      charLimit: 500
     projectVisibility:
-     type: enum
+     type: string
+     enum: "OPEN", "RESTRICTED", "PRIVATE"
     projectCreated
      type: date-time
     projectOwner:

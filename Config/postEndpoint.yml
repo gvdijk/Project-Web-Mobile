@@ -1,0 +1,106 @@
+path:
+ /post:
+  post:
+   tags:
+    - post
+   summary: create a post on a project
+   operationId: post.create
+   parameters:
+    - name: postProject
+      schema:
+       type: integer
+       minimum: 0
+    - name: postUser
+      schema:
+       type: integer
+       minimum: 0
+    - name: postTitle
+      schema:
+       type: string
+       charLimit: 45
+    - name: postContent
+      schema:
+       type: string
+       charLimit: 2000
+    - name: postCreated
+      schema:
+       type: date-time
+    - name: postState
+      schema:
+       type: string
+       enum: "OPEN", "RESTRICTED", "PRIVATE"
+ /post/{postID}:
+  get:
+   tags:
+    - post
+   summary: return post under id
+   operationId: post.get_by_id
+   parameters:
+    - name: postID
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: return post found under id
+     schema:
+      type: array
+      $ref: 'post.yml'
+    '404':
+     description: no post found under id
+ /post/{postID}/comments:
+  get:
+   tags:
+    - post
+   summary: return all comments on post under id
+   operationId: project.get_comments_by_id
+   parameters:
+    - name: postID
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: return all comments found under postID
+     schema:
+      type: array
+      $ref: 'comments'
+ /post/{postID}:
+  put:
+   tags:
+    - post
+   summary: update post under id
+   operationId: post.put_by_id
+   parameters:
+    - name: postTitle
+      schema:
+       type: string
+       charLimit: 45
+    - name: postContent
+      schema:
+       type: string
+       charLimit: 2000
+    - name: postEdited
+      schema:
+       type: date-time
+    - name: postState
+      schema:
+       type: string
+       enum: "OPEN", "RESTRICTED", "PRIVATE"
+   responses:
+    '404':
+     description: no post found under id
+ /post/{postID}:
+  delete:
+   tags:
+    - post
+   summary: delete post under id
+   operationId: post.delete_by_id
+   parameters:
+    - name: postID
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '404':
+     description: no post found under id
