@@ -6,7 +6,7 @@ paths:
  /user:
   post:
    tags:
-    - Users
+    - user
    summary: create new user
    operationId: user.create
    parameters:
@@ -23,7 +23,7 @@ paths:
      description: user has been added to the db
   get:
    tags:
-    - Users
+    - user
    summary: return all users containing userNamePart
    operationId: user.get_by_name
    parameters:
@@ -35,16 +35,17 @@ paths:
     '200':
      description: returns all users containing userNamePart
      content:
-      schema:
-       type: array
+      application/json:
+       schema:
+        type: array
         items:
-         $ref: '#/components/schemas/user'
+          $ref: '#/components/schemas/user'
     '404':
      description: no users found containing userNamePart
  /user/{userID}:
   get:
    tags:
-    - Users
+    - user
    summary: returns 1 user with userID
    operationId: user.get_by_id
    parameters:
@@ -57,15 +58,16 @@ paths:
     '200':
      description: returns user found under id
      content:
-      schema:
-       type: array
-       items:
-        $ref: '#/components/schemas/user'
+      application/json:
+       schema:
+        type: array
+        items:
+         $ref: '#/components/schemas/user'
     '404':
      description: no user found under id
   put:
    tags:
-    - Users
+    - user
    summary: update details for user found under id
    operationId: user.put_by_id
    parameters:
@@ -89,7 +91,7 @@ paths:
      description: no user found under id
   delete:
    tags:
-    - Users
+    - user
    summary: flag user under id as deleted
    operationId: user.delete_by_id
    parameters:
@@ -102,16 +104,16 @@ paths:
     '200':
      description: user has been flagged as deleted in the db
      content:
-      schema:
-       name: userID
-       type: integer
-       minimum: 0
+      application/json:
+       schema: #userID
+        type: integer
+        minimum: 0
     '404':
      description: no user found under id
  /user/{userID}/project:
   get:
    tags:
-    - Projects
+    - user
    summary: return all projects of user
    operationId: user.get_projects_by_id
    parameters:
@@ -124,10 +126,11 @@ paths:
     '200':
      description: returns all projects found under user
      content:
-      schema:
-       type: array
-       items:
-        $ref: '#/components/schemas/project'
+      application/json:
+       schema:
+        type: array
+        items:
+         $ref: '#/components/schemas/project'
     '204':
      description: no projects found under user
     '404':
@@ -135,7 +138,7 @@ paths:
  /user/{userID}/post:
   get:
    tags:
-    - Posts
+    - user
    summary: Return all posts for a user
    operationId: user.get_posts_by_id
    parameters:
@@ -148,10 +151,11 @@ paths:
     '200':
      description: returns all posts found under user
      content:
-      schema:
-       type: array
-       items:
-        $ref: '#/components/schemas/post'
+      application/json:
+       schema:
+        type: array
+        items:
+         $ref: '#/components/schemas/post'
     '404':
      description: no user found under id
     '204':
@@ -159,7 +163,7 @@ paths:
  /user/{userID}/comment:
   get:
    tags:
-    - Comments
+    - user
    summary: return all comments for a user
    operationId: user.get_comments_by_id
    parameters:
@@ -172,10 +176,11 @@ paths:
     '200':
      description: returns all comments found under user
      content:
-      schema:
-       type: array
-       items:
-        $ref: '#/components/schemas/comment'
+      application/json:
+       schema:
+        type: array
+        items:
+         $ref: '#/components/schemas/comment'
     '404':
      description: no user found under id
     '204':
@@ -209,10 +214,10 @@ paths:
     '201':
      description: project created
      content:
-      schema:
-       name: projectID
-       type: integer
-       minimum: 0
+      application/json:
+       schema: #projectID
+        type: integer
+        minimum: 0
   get:
    tags:
     - project
@@ -222,10 +227,11 @@ paths:
     '200':
      description: returns all projects found with visibility OPEN or RESTRICTED
      content:
-      schema:
-       type: array
-       items:
-        $ref: '#/components/schemas/project'
+      application/json:
+       schema:
+        type: array
+        items:
+         $ref: '#/components/schemas/project'
     '404':
      description: no projects found
  /project/{projectID}/post:
@@ -260,10 +266,10 @@ paths:
        type: string
        enum: ["OPEN", "RESTRICTED", "PRIVATE"]
    responses:
-   '201':
-    description: post created on project
-   '404':
-    description: no project found under projectID
+    '201':
+     description: post created on project
+    '404':
+     description: no project found under projectID
   get:
    tags:
     - project
@@ -279,10 +285,11 @@ paths:
     '200':
      description: retun all posts found under project
      content:
-      schema:
-       type: array
-       items:
-        $ref: '#/components/schemas/post'
+      application/json:
+       schema:
+        type: array
+        items:
+         $ref: '#/components/schemas/post'
     '404':
      description: no project found under id
     '204':
@@ -314,10 +321,10 @@ paths:
     '201':
      description: user added to the project
      content:
-      schema:
-       name: userID
-       type: integer
-       minimum: 0
+      application/json:
+       schema: #userID
+        type: integer
+        minimum: 0
   put:
    tags:
     - project
@@ -345,7 +352,7 @@ paths:
   delete:
    tags:
     - project
-   summary: delete user under userid in project under projectid
+   summary: delete user under userid from project under projectid
    operationId: project.delete_user_by_id
    parameters:
     - name: projectID
@@ -360,7 +367,12 @@ paths:
        minimum: 0
    responses:
     '200':
-     description: user under id deleted
+     description: user under id deleted form the project
+     content:
+      aplication\json:
+       schema: #userID
+        type: integer
+        minimum: 0
     '404':
      description: no user found under id
  /project/{projectID}:
@@ -379,10 +391,11 @@ paths:
     '200':
      description: return project found under id
      content:
-      schema:
-       type: array
-       items:
-        $ref: '#/components/schemas/project'
+      application/json:
+       schema:
+        type: array
+        items:
+         $ref: '#/components/schemas/project'
     '404':
      description: no project found under id
   put:
@@ -442,10 +455,11 @@ paths:
     '200':
      description: retun all users found under project
      content:
-      schema:
-       type: array
-       items:
-        $ref: '#/components/schemas/user'
+      application/json:
+       schema:
+        type: array
+        items:
+         $ref: '#/components/schemas/user'
     '404':
      description: no project found under id
     '204':
@@ -474,7 +488,7 @@ paths:
     - name: commentCreated
       in: query
       schema:
-       type: date-time
+       type: string
     - name: commentState
       in: query
       schema:
@@ -484,10 +498,10 @@ paths:
     '201':
      description: comment created under post under postID
      content:
-      schema:
-       name: commentID
-       type: integer
-       minimum: 0
+      application/json:
+       schema: #commentID
+        type: integer
+        minimum: 0
     '404':
      description: no post found under id
  /post/{postID}:
@@ -505,10 +519,12 @@ paths:
    responses:
     '200':
      description: return post found under id
-     schema:
-      type: array
-      items:
-       $ref: '#/components/schemas/post'
+     content:
+      aplication\json:
+       schema:
+        type: array
+        items:
+         $ref: '#/components/schemas/post'
     '404':
      description: no post found under id
   put:
@@ -528,7 +544,7 @@ paths:
     - name: postEdited
       in: query
       schema:
-       type: date-time
+       type: string
     - name: postState
       in: query
       schema:
@@ -554,10 +570,10 @@ paths:
     '200':
      description: post flagged as deleted in database
      content:
-      schema:
-       name: postID
-       type: integer
-       minimum: 0
+      application/json:
+       schema: #postID
+        type: integer
+        minimum: 0
     '404':
      description: no post found under id
  /post/{postID}/comments:
@@ -593,7 +609,7 @@ paths:
     - name: commentEdited
       in: query
       schema:
-       type: date-time
+       type: string
     - name: commentState
       in: query
       schema:
@@ -608,6 +624,7 @@ paths:
    tags:
     - comment
    summary: flag comment under id as deleted
+   operationId: comment.delete_by_id
    parameters:
     - name: commentID
       in: query
@@ -618,10 +635,11 @@ paths:
     '200':
      description: comment under id flagged as deleted
      content:
-      schema:
-       name: commentID
-       type: integer
-       minimum: 0
+      application/json:
+       schema:
+        name: commentID
+        type: integer
+        minimum: 0
     '404':
      description: no comment found under id
  /login:
@@ -643,9 +661,9 @@ paths:
     '200':
      description: succesfull login
      content:
-      schema:
-       name: JWT
-       type: string
+      application/json:
+       schema: #JWT
+        type: string
     '403':
      description: unable to login because of invalid input
  /authorization:
@@ -675,8 +693,12 @@ components:
      type: string
     userPicture:
      type: string
+     format: binary
     userCreated:
      type: string
+    userDeleted:
+     type: boolean
+     default: false
   project:
    type: object
    required:
@@ -696,10 +718,13 @@ components:
      type: string
      enum: ["OPEN", "RESTRICTED", "PRIVATE"]
     projectCreated:
-     type: date-time
+     type: string
     projectOwner:
      type: integer
      minimum: 0
+    projectDeleted:
+     type: boolean
+     default: false
   post:
    type: object
    required:
@@ -718,9 +743,9 @@ components:
     postContent:
      type: string
     postCreated:
-     type: date-time
+     type: string
     postEdited:
-     type: date-time
+     type: string
     postState:
      type: string
      enum: ["OPEN", "RESTRICTED", "PRIVATE"]
@@ -730,6 +755,9 @@ components:
     postProject:
      type: integer
      minimum: 0
+    postDeleted:
+     type: boolean
+     default: false
   comment:
    type: object
    required:
@@ -745,9 +773,9 @@ components:
     commentContent:
      type: string
     commentCreated:
-     type: date-time
+     type: string
     commentEdited:
-     type: date-time
+     type: string
     commentState:
      type: string
      enum: ["OPEN", "RESTRICTED", "PRIVATE"]
@@ -757,3 +785,6 @@ components:
     commentPost:
      type: integer
      minimum: 0
+    commentDeleted:
+     type: boolean
+     default: false
