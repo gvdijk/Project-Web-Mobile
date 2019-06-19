@@ -1,0 +1,759 @@
+openapi: 3.0.2
+info:
+ title: Project managing API
+ version: '0.1'
+paths:
+ /user:
+  post:
+   tags:
+    - Users
+   summary: create new user
+   operationId: user.create
+   parameters:
+    - name: userName
+      in: query
+      schema:
+       type: string
+    - name: userPass
+      in: query
+      schema:
+       type: string
+   responses:
+    '201':
+     description: user has been added to the db
+  get:
+   tags:
+    - Users
+   summary: return all users containing userNamePart
+   operationId: user.get_by_name
+   parameters:
+    - name: userNamePart
+      in: query
+      schema:
+       type: string
+   responses:
+    '200':
+     description: returns all users containing userNamePart
+     content:
+      schema:
+       type: array
+        items:
+         $ref: '#/components/schemas/user'
+    '404':
+     description: no users found containing userNamePart
+ /user/{userID}:
+  get:
+   tags:
+    - Users
+   summary: returns 1 user with userID
+   operationId: user.get_by_id
+   parameters:
+    - name: userID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: returns user found under id
+     content:
+      schema:
+       type: array
+       items:
+        $ref: '#/components/schemas/user'
+    '404':
+     description: no user found under id
+  put:
+   tags:
+    - Users
+   summary: update details for user found under id
+   operationId: user.put_by_id
+   parameters:
+    - name: userID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+    - name: userName
+      in: query
+      schema:
+       type: string
+    - name: userPass
+      in: query
+      schema:
+       type: string
+   responses:
+    '200':
+     description: user information under id succesfully updated
+    '404':
+     description: no user found under id
+  delete:
+   tags:
+    - Users
+   summary: flag user under id as deleted
+   operationId: user.delete_by_id
+   parameters:
+    - name: userID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: user has been flagged as deleted in the db
+     content:
+      schema:
+       name: userID
+       type: integer
+       minimum: 0
+    '404':
+     description: no user found under id
+ /user/{userID}/project:
+  get:
+   tags:
+    - Projects
+   summary: return all projects of user
+   operationId: user.get_projects_by_id
+   parameters:
+    - name: userID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: returns all projects found under user
+     content:
+      schema:
+       type: array
+       items:
+        $ref: '#/components/schemas/project'
+    '204':
+     description: no projects found under user
+    '404':
+     description: no user found under id
+ /user/{userID}/post:
+  get:
+   tags:
+    - Posts
+   summary: Return all posts for a user
+   operationId: user.get_posts_by_id
+   parameters:
+    - name: userID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: returns all posts found under user
+     content:
+      schema:
+       type: array
+       items:
+        $ref: '#/components/schemas/post'
+    '404':
+     description: no user found under id
+    '204':
+     description: no posts found under user
+ /user/{userID}/comment:
+  get:
+   tags:
+    - Comments
+   summary: return all comments for a user
+   operationId: user.get_comments_by_id
+   parameters:
+    - name: userID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: returns all comments found under user
+     content:
+      schema:
+       type: array
+       items:
+        $ref: '#/components/schemas/comment'
+    '404':
+     description: no user found under id
+    '204':
+     description: no comments found under user
+ /project:
+  post:
+   tags:
+    - project
+   summary: create a new project
+   operationId: project.create
+   parameters:
+    - name: projectName
+      in: query
+      schema:
+       type: string
+    - name: projectDescription
+      in: query
+      schema:
+       type: string
+    - name: projectVisibility
+      in: query
+      schema:
+       type: string
+       enum: ["OPEN", "RESTRICTED", "PRIVATE"]
+    - name: projectOwner
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '201':
+     description: project created
+     content:
+      schema:
+       name: projectID
+       type: integer
+       minimum: 0
+  get:
+   tags:
+    - project
+   summary: returns all projects with visibility OPEN or RESTRICTED
+   operationId: project.get_projects
+   responses:
+    '200':
+     description: returns all projects found with visibility OPEN or RESTRICTED
+     content:
+      schema:
+       type: array
+       items:
+        $ref: '#/components/schemas/project'
+    '404':
+     description: no projects found
+ /project/{projectID}/post:
+  post:
+   tags:
+    - project
+    - post
+   summary: create a post on a project
+   operationId: project.create_post
+   parameters:
+    - name: postProject
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+    - name: postUser
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+    - name: postTitle
+      in: query
+      schema:
+       type: string
+    - name: postContent
+      in: query
+      schema:
+       type: string
+    - name: postState
+      in: query
+      schema:
+       type: string
+       enum: ["OPEN", "RESTRICTED", "PRIVATE"]
+   responses:
+   '201':
+    description: post created on project
+   '404':
+    description: no project found under projectID
+  get:
+   tags:
+    - project
+   summary: return all posts of project
+   operationId: project.get_posts_by_id
+   parameters:
+    - name: projectID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: retun all posts found under project
+     content:
+      schema:
+       type: array
+       items:
+        $ref: '#/components/schemas/post'
+    '404':
+     description: no project found under id
+    '204':
+     description: no posts found under project
+ /project/{projectID}/{userID}:
+  post:
+   tags:
+    - project
+    - user
+   summary: create a project user relationship
+   operationId: project.add_user_by_id
+   parameters:
+    - name: projectID
+      in: query
+      schema: 
+       type: integer
+       minimum: 0
+    - name: userID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+    - name: role
+      in: query
+      schema:
+       type: string
+       enum: ["OWNER", "USER"]
+   responses:
+    '201':
+     description: user added to the project
+     content:
+      schema:
+       name: userID
+       type: integer
+       minimum: 0
+  put:
+   tags:
+    - project
+   summary: add user to project
+   operationId: project.update_user_by_id
+   parameters:
+    - name: projectID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+    - name: userID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+    - name: role
+      in: query
+      schema:
+       type: string
+       enum: ["OWNER", "USER"]
+   responses:
+    '404':
+     description: no user found under id
+  delete:
+   tags:
+    - project
+   summary: delete user under userid in project under projectid
+   operationId: project.delete_user_by_id
+   parameters:
+    - name: projectID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+    - name: userID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: user under id deleted
+    '404':
+     description: no user found under id
+ /project/{projectID}:
+  get:
+   tags:
+    - project
+   summary: return a project under ID
+   operationId: project.get_by_id
+   parameters:
+    - name: projectID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: return project found under id
+     content:
+      schema:
+       type: array
+       items:
+        $ref: '#/components/schemas/project'
+    '404':
+     description: no project found under id
+  put:
+   tags:
+    - project
+   summary: update project settings of project found under id
+   operationId: project.put_by_id
+   parameters:
+    - name: projectID
+      in: query
+      schema: 
+       type: integer
+       minimum: 0
+    - name: projectName
+      in: query
+      schema:
+       type: string
+    - name: description
+      in: query
+      schema:
+       type: string
+    - name: visibility
+      in: query
+      schema:
+       type: string
+       enum: ["OPEN", "RESTRICTED", "PRIVATE"]
+   responses:
+    '404': 
+     description: no project found under id
+  delete:
+   tags:
+    - project
+   summary: flag project under id as deleted
+   operationId: project.delete_by_id
+   parameters:
+    - name: projectID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '404':
+     description: no project found under id
+ /project/{projectID}/users:
+  get:
+   tags:
+    - project
+   summary: return all users of project
+   operationId: project.get_users_by_id
+   parameters:
+    - name: projectID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: retun all users found under project
+     content:
+      schema:
+       type: array
+       items:
+        $ref: '#/components/schemas/user'
+    '404':
+     description: no project found under id
+    '204':
+     description: no users found under project
+ /post/{postID}/comment:
+  post:
+   tags:
+    - comment
+   summary: create a new comment on a post
+   operationId: comment.create
+   parameters:
+    - name: commentPost
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+    - name: commentUser
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+    - name: commentContent
+      in: query
+      schema:
+       type: string
+    - name: commentCreated
+      in: query
+      schema:
+       type: date-time
+    - name: commentState
+      in: query
+      schema:
+       type: string
+       enum: ["OPEN", "RESTRICTED", "PRIVATE"]
+   responses:
+    '201':
+     description: comment created under post under postID
+     content:
+      schema:
+       name: commentID
+       type: integer
+       minimum: 0
+    '404':
+     description: no post found under id
+ /post/{postID}:
+  get:
+   tags:
+    - post
+   summary: return post under id
+   operationId: post.get_by_id
+   parameters:
+    - name: postID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: return post found under id
+     schema:
+      type: array
+      items:
+       $ref: '#/components/schemas/post'
+    '404':
+     description: no post found under id
+  put:
+   tags:
+    - post
+   summary: update post under id
+   operationId: post.put_by_id
+   parameters:
+    - name: postTitle
+      in: query
+      schema:
+       type: string
+    - name: postContent
+      in: query
+      schema:
+       type: string
+    - name: postEdited
+      in: query
+      schema:
+       type: date-time
+    - name: postState
+      in: query
+      schema:
+       type: string
+       enum: ["OPEN", "RESTRICTED", "PRIVATE"]
+   responses:
+    '200':
+     description: post updated
+    '404':
+     description: no post found under id
+  delete:
+   tags:
+    - post
+   summary: flag post under id as deleted
+   operationId: post.delete_by_id
+   parameters:
+    - name: postID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: post flagged as deleted in database
+     content:
+      schema:
+       name: postID
+       type: integer
+       minimum: 0
+    '404':
+     description: no post found under id
+ /post/{postID}/comments:
+  get:
+   tags:
+    - post
+   summary: return all comments on post under id
+   operationId: project.get_comments_by_id
+   parameters:
+    - name: postID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: return all comments found under postID
+     schema:
+      type: array
+      items:
+       $ref: '#/components/schemas/comment'
+ /comment/{commentID}:
+  put:
+   tags:
+    - comment
+   summary: update comment under id
+   operationId: comment.put_by_id
+   parameters:
+    - name: commentContent
+      in: query
+      schema:
+       type: string
+    - name: commentEdited
+      in: query
+      schema:
+       type: date-time
+    - name: commentState
+      in: query
+      schema:
+       type: string
+       enum: ["OPEN", "RESTRICTED", "PRIVATE"]
+   responses:
+    '200':
+     description: comment under id updated
+    '404':
+     description: no comment found under id
+  delete:
+   tags:
+    - comment
+   summary: flag comment under id as deleted
+   parameters:
+    - name: commentID
+      in: query
+      schema:
+       type: integer
+       minimum: 0
+   responses:
+    '200':
+     description: comment under id flagged as deleted
+     content:
+      schema:
+       name: commentID
+       type: integer
+       minimum: 0
+    '404':
+     description: no comment found under id
+ /login:
+  post:
+   tags:
+    - login
+   summary: login attempt
+   operationId: login.user
+   parameters:
+    - name: userName
+      in: query
+      schema:
+       type: string
+    - name: userPass
+      in: query
+      schema:
+       type: string
+   responses:
+    '200':
+     description: succesfull login
+     content:
+      schema:
+       name: JWT
+       type: string
+    '403':
+     description: unable to login because of invalid input
+ /authorization:
+  post:
+   tags:
+     - authorization
+   summary: authority check
+   responses:
+    '200': 
+     description: authorized
+    '403':
+     description: not authorized
+components:
+ schemas:
+  user:
+   type: object
+   required:
+    - userID
+    - userName
+   properties:
+    userID:
+     type: integer
+     minimum: 0
+    userName:
+     type: string
+    userPass:
+     type: string
+    userPicture:
+     type: string
+    userCreated:
+     type: string
+  project:
+   type: object
+   required:
+    - projectID
+    - projectName
+    - projectOwner
+    - projectVisibility
+   properties:
+    projectID:
+     type: integer
+     minimum: 0
+    projectName:
+     type: string
+    projectDescription:
+     type: string
+    projectVisibility:
+     type: string
+     enum: ["OPEN", "RESTRICTED", "PRIVATE"]
+    projectCreated:
+     type: date-time
+    projectOwner:
+     type: integer
+     minimum: 0
+  post:
+   type: object
+   required:
+    - postID
+    - postTitle
+    - postContent
+    - postState
+    - postUser
+    - postProject
+   properties:
+    postID:
+     type: integer
+     minimum: 0
+    postTitle:
+     type: string
+    postContent:
+     type: string
+    postCreated:
+     type: date-time
+    postEdited:
+     type: date-time
+    postState:
+     type: string
+     enum: ["OPEN", "RESTRICTED", "PRIVATE"]
+    postUser:
+     type: integer
+     minimum: 0
+    postProject:
+     type: integer
+     minimum: 0
+  comment:
+   type: object
+   required:
+    - commentID
+    - commentContent
+    - commentState
+    - commentUser
+    - commentPost
+   properties:
+    commentID:
+     type: integer
+     minimum: 0
+    commentContent:
+     type: string
+    commentCreated:
+     type: date-time
+    commentEdited:
+     type: date-time
+    commentState:
+     type: string
+     enum: ["OPEN", "RESTRICTED", "PRIVATE"]
+    commentUser:
+     type: integer
+     minimum: 0
+    commentPost:
+     type: integer
+     minimum: 0
