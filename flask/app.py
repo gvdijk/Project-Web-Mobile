@@ -101,11 +101,11 @@ def del_user(id):
 @app.route('/project', methods=['POST'])
 def add_project():
     # Fetch form data
-    userDetails = request.form
-    name = userDetails['name']
-    description = userDetails['description']
-    visibility = userDetails['visibility']
-    owner = userDetails['userID']
+    projectDetails = request.form
+    name = projectDetails['name']
+    description = projectDetails['description']
+    visibility = projectDetails['visibility']
+    owner = projectDetails['userID']
 
     cur = mysql.connection.cursor()
     cur.execute("INSERT INTO project(projectName, projectDescription, projectVisibility, projectOwner) VALUES(%s, %s, %s, %s)", (name, description, visibility, owner))
@@ -114,6 +114,188 @@ def add_project():
     # TODO return statement, picture
     return 200
 
+@app.route('/project/<string:id>/post', methods=['POST'])
+def add_post(id):
+    # Fetch form data
+    projectDetails = request.form
+    title = projectDetails['title']
+    content = projectDetails['content']
+    owner = projectDetails['userID']
+
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO project(postTitle, postContent, postOwner) VALUES(%s, %s, %s)", (title, content, owner))
+    mysql.connection.commit()
+    cur.close()
+    # TODO return statement, picture
+    return 200
+
+@app.route('/project/<string:id>/user', methods=['POST'])
+def add_project_user(id):
+    # Fetch form data
+    projectDetails = request.form
+    user = projectDetails['user']
+    role = projectDetails['role']
+
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO projectuser(User_userID, Project_projectID, projectuserRole) VALUES(%s, %s, %s)", (user, id, role))
+    mysql.connection.commit()
+    cur.close()
+    # TODO return statement, picture
+    return 200
+
+@app.route('/project', methods=['GET'])
+def get_project():
+    cur = mysql.connection.cursor()
+    resultValue = cur.execute("SELECT * FROM project WHERE projectVisibility = 'PUBLIC'")
+    if resultValue > 0:
+        projectDetails = cur.fetchall()
+        return projectDetails, 200
+
+@app.route('/project/<string:id>', methods=['GET'])
+def get_project_id(id):
+    cur = mysql.connection.cursor()
+    resultValue = cur.execute("SELECT * FROM project WHERE projectID = " + id)
+    if resultValue > 0:
+        projectDetails = cur.fetchall()
+        return projectDetails, 200
+
+@app.route('/project/<string:id>/user', methods=['GET'])
+def get_project_users(id):
+    cur = mysql.connection.cursor()
+    resultValue = cur.execute("SELECT User_userID FROM projectuser WHERE Project_projectID = " + id)
+    if resultValue > 0:
+        projectDetails = cur.fetchall()
+        return projectDetails, 200
+
+@app.route('/project/<string:id>/post', methods=['GET'])
+def get_project_post(id):
+    cur = mysql.connection.cursor()
+    resultValue = cur.execute("SELECT * FROM post WHERE postProject = " + id)
+    if resultValue > 0:
+        projectDetails = cur.fetchall()
+        return projectDetails, 200
+
+@app.route('/project/<string:id>', methods=['PUT'])
+def put_project(id):
+    # Fetch form data
+    projectDetails = request.form
+    title = projectDetails['title']
+    content = projectDetails['content']
+    visibility = projectDetails['visibility']
+
+    cur = mysql.connection.cursor()
+    cur.execute("UPDATE project SET postTitle = %s, postContent = %s, postVisibility WHERE postID = " + id), (title, content, visibility)
+    mysql.connection.commit()
+    cur.close()
+    # TODO return statement
+    return 200
+
+@app.route('/project/<string:id>/user', methods=['PUT'])
+def put_project(id):
+    # Fetch form data
+    projectDetails = request.form
+    user = projectDetails['user']
+    role = projectDetails['role']
+
+    cur = mysql.connection.cursor()
+    cur.execute("UPDATE projectuser SET projectuserRole = %s WHERE User_userID = "+ user +" AND Project_projectID = "+ id), (role)
+    mysql.connection.commit()
+    cur.close()
+    # TODO return statement
+    return 200
+
+@app.route('/project/<string:id>', methods=['DELETE'])
+def del_project(id):
+    cur = mysql.connection.cursor()
+    cur.execute("UPDATE project SET projectDeleted = true WHERE projectID = " + id)
+    mysql.connection.commit()
+    cur.close()
+    # TODO return statement
+    return 200
+
+@app.route('/user/<string:id>/user', methods=['DELETE'])
+def del_user(id):
+    projectDetails = request.form
+    user = projectDetails['user']
+    
+    cur = mysql.connection.cursor()
+    cur.execute("UPDATE project SET projectDeleted = true WHERE projectID = " + id)
+    mysql.connection.commit()
+    cur.close()
+    # TODO return statement
+    return 200
+
+
+
+# POSTS
+@app.route('/post/<string:id>/comment', methods=['POST'])
+def add_comment():
+    # Fetch form data
+    postDetails = request.form
+    content = postDetails['content']
+    parent = postDetails['parent']
+
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO comment(commentContent, projectDescription, projectVisibility, projectOwner) VALUES(%s, %s, %s, %s)", (name, description, visibility, owner))
+    mysql.connection.commit()
+    cur.close()
+    # TODO INSERT logic 
+    return 200
+
+@app.route('/post/<string:id>', methods=['GET'])
+def get_post(id):
+    cur = mysql.connection.cursor()
+    resultValue = cur.execute("SELECT * FROM post WHERE postID = " + id)
+    if resultValue > 0:
+        postDetails = cur.fetchall()
+        return postDetails, 200
+
+@app.route('/post/<string:id>/comments', methods=['GET'])
+def get_post_comments(id):
+    cur = mysql.connection.cursor()
+    resultValue = cur.execute("SELECT * FROM comment WHERE commentPost = " + id)
+    if resultValue > 0:
+        postDetails = cur.fetchall()
+        return postDetails, 200
+
+@app.route('/post/<string:id>', methods=['PUT'])
+def put_post(id):
+    # Fetch form data
+    postDetails = request.form
+    title = postDetails['title']
+    content = postDetails['content']
+
+    cur = mysql.connection.cursor()
+    cur.execute("UPDATE post SET postTitle = %s, postContent = %s WHERE postID = "+ id), (title, content)
+    mysql.connection.commit()
+    cur.close()
+    # TODO return statement
+    return 200
+
+@app.route('/post/<string:id>', methods=['DELETE'])
+def del_post(id): 
+    cur = mysql.connection.cursor()
+    cur.execute("UPDATE post SET postDeleted = true WHERE postID = " + id)
+    mysql.connection.commit()
+    cur.close()
+    # TODO return statement
+    return 200
+
+
+
+# COMMENTS
+@app.route('/comment/<string:id>', methods=['PUT'])
+def put_comment(id):
+    # Fetch form data
+    commentDetails = request.form
+    content = commentDetails['content']
+
+    cur = mysql.connection.cursor()
+    cur.execute("UPDATE comment SET commentContent = %s WHERE commentID = "+ id), (content)
+    mysql.connection.commit()
+    cur.close()
+    # TODO return statement
+    return 200
 
 
 
