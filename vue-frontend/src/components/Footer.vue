@@ -72,6 +72,7 @@ footer {
     margin: 4px 2px;
     text-decoration: none;
     cursor: pointer;
+    transition-duration: 0.1s;
 }
 
 .footer-column a:hover {

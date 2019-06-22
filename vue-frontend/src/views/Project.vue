@@ -6,8 +6,8 @@
                 <div class="project-actions">
                     <div class="project-button" v-if="!userIsJoined && !project.access">Aanvragen</div>
                     <div class="project-button" v-if="!userIsJoined && project.access">Deelnemen</div>
-                    <div class="project-button" v-if="userIsJoined">Nieuw bericht</div>
-                    <div class="project-button" v-if="userIsJoined && userIsAdmin">Instellingen</div>
+                    <div class="project-button" v-if="userIsJoined" @click="$emit('requestModal', 'create', {'type': 'post', 'id': project.id})">Nieuw bericht</div>
+                    <div class="project-button settings-button" v-if="userIsJoined && userIsAdmin">Instellingen</div>
                 </div>
             </div>
             <div class="project-description">{{project.description}}</div>
@@ -108,6 +108,14 @@ export default {
 
 .project-button:hover {
     background-color: var(--green);
+}
+
+.settings-button {
+    background-color: var(--dark-blue);
+}
+
+.settings-button:hover {
+    background-color: var(--blue);
 }
 
 .project-description {

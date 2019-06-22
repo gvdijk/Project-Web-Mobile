@@ -1,18 +1,25 @@
 <template>
-    <div class="project">
+    <div class="post">
         <div class="post-details">
             <div class="post-header">
                 <div class="post-title">{{post.title}}</div>
                 <div class="post-actions">
-                    <div class="post-button delete-button" v-if="isAdmin || isOwner">Verwijderen</div>
-                    <div class="post-button" v-if="isAdmin || isOwner">Bewerken</div>
+                    <div class="post-button"
+                        @click="$emit('requestModal', 'create', {'type': 'comment', 'id': post.id})">
+                        Reageer
+                    </div>
+                    <div class="post-button edit-button" v-if="isAdmin || isOwner" 
+                        @click="$emit('requestModal', 'edit', {'type': 'post', 'id': post.id, 'text': post.description})">
+                        Bewerken
+                    </div>
+                    <div class="post-button delete-button" v-if="isAdmin || isOwner" @click="$emit('requestModal', 'delete', {'type': 'post', 'id': post.id})">Verwijderen</div>
                 </div>
             </div>
             <div class="post-description">{{post.description}}</div>
             <div class="post-stats">Geplaatst op {{post.created}} | {{comments.length}} reacties <span v-if="post.edited"> | Laatst bewerkt op {{post.edited}}</span></div>
         </div>
         <div class="posts-view">
-            <CommentTile v-for="comment in comments" :key="comment.id" v-bind:comment="comment" />
+            <CommentTile v-for="comment in comments" :key="comment.id" v-bind:comment="comment" v-on:requestModal="commentModalRequest" />
         </div>
     </div>
 </template>
@@ -24,8 +31,12 @@ export default {
     components: {
         CommentTile
     },
+    methods: {
+        commentModalRequest(type, body) { this.$emit('requestModal', type, body); }
+    },
     data() {
         return {
+            //TODO: Read owner/admin status
             isOwner: true,
             isAdmin: false,
             post: {
@@ -111,9 +122,6 @@ export default {
                 }
             ]
         }
-    },
-    methods: {
-        
     }
 }
 </script>
@@ -148,6 +156,7 @@ export default {
     cursor: pointer;
     user-select: none;
     -moz-user-select: -moz-none;
+    transition-duration: 0.1s;
 }
 
 .post-button:hover {
@@ -167,6 +176,14 @@ export default {
     font-size: 11pt;
     margin-bottom: 10px;
     font-style: italic;
+}
+
+.edit-button {
+    background-color: var(--dark-blue);
+}
+
+.edit-button:hover {
+    background-color: var(--blue);
 }
 
 .delete-button {

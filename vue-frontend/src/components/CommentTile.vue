@@ -1,12 +1,27 @@
 <template>
     <div class="comment-tile">
         <div class="comment-details">
-            <span class="comment-subtitle">{{ comment.user.name }} | Geplaatst op {{ comment.created }}<span v-if="comment.edited"> | Laatst bewerkt op {{ comment.edited }}</span></span>
-            <div v-if="isAdmin || isOwner" class="comment-button">Bewerken</div>
-            <div v-if="isAdmin || isOwner" class="comment-button delete-button">Verwijderen</div>
+            <span class="comment-subtitle">
+                {{ comment.user.name }} | Geplaatst op {{ comment.created }}
+                <span v-if="comment.edited"> | Laatst bewerkt op {{ comment.edited }}</span>
+            </span>
+            <div class="comment-button delete-button"
+                v-if="isAdmin || isOwner" 
+                 @click="$emit('requestModal', 'delete', {'type': 'comment', 'id': comment.id})">
+                Verwijderen
+            </div>
+            <div class="comment-button edit-button"
+                v-if="isAdmin || isOwner"
+                @click="$emit('requestModal', 'edit', {'type': 'comment', 'id': comment.id, 'text': comment.description})">
+                Bewerken
+            </div>
+            <div class="comment-button"
+                 @click="$emit('requestModal', 'create', {'type': 'child', 'id': comment.id})">
+                Reageer
+            </div>
         </div>
         <span class="comment-content">{{ comment.description }}</span>
-        <CommentTile :key="child.id" v-for="child in children" v-bind:comment="child" />
+        <CommentTile :key="child.id" v-for="child in children" v-bind:comment="child" v-on:requestModal="childCommentModalRequest" />
     </div>
 </template>
 
@@ -15,12 +30,13 @@ export default {
     name: 'CommentTile',
     data() {
         return {
-            isOwner: false,
+            //TODO: Read owner/admin status
+            isOwner: true,
             isAdmin: false
         }
     },
-    components: {
-        
+    methods: {
+        childCommentModalRequest(type, body) { this.$emit('requestModal', type, body); }
     },
     props: ['comment'],
     computed: {
@@ -64,27 +80,34 @@ export default {
 
 .comment-button {
     float: right;
-    padding: 1px 6px 3px;
-    background-color: var(--dark-green);
-    color: var(--white-soft);
-    font-size: 10pt;
-    border: 1px solid var(--gray-brighter);
-    border-radius: 3px;
+    padding: 1px 3px 3px;
+    color: var(--dark-green);
+    font-size: 9pt;
+    font-weight: 600;
     margin: 0 3px;
     cursor: pointer;
     user-select: none;
     -moz-user-select: -moz-none;
+    transition-duration: 0.1s;
 }
 
 .comment-button:hover {
-    background-color: var(--green);
+    color: var(--green);
+}
+
+.edit-button {
+    color: var(--dark-blue);
+}
+
+.edit-button:hover {
+    color: var(--blue);
 }
 
 .delete-button {
-    background-color: var(--dark-red);
+    color: var(--dark-red);
 }
 
 .delete-button:hover {
-    background-color: var(--red);
+    color: var(--red);
 }
 </style>

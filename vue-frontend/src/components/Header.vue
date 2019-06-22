@@ -14,8 +14,8 @@
                 <input type="search" name="headerSearch" id="headerSearch" placeholder="Doorzoek de website">
             </div>
             <div class="account-wrapper">
-                <router-link to="#"><a>Inloggen</a></router-link>
-                <router-link to="/register"><a>Registreren</a></router-link>
+                <span class=account-label @click="$emit('requestModal', 'login', {})">Inloggen</span>
+                <router-link class=account-label to="/register"><a>Registreren</a></router-link>
             </div>
         </div>
     </header>
@@ -126,7 +126,7 @@ header {
     white-space: nowrap;
 }
 
-.account-wrapper a {
+.account-label {
     display: inline-block;
     padding: 5px;
     font-size: 15px;
@@ -134,13 +134,14 @@ header {
     color: var(--white-pure);
     transition-duration: .1s;
     box-sizing: border-box;
+    text-decoration: none;
 }
 
-.account-wrapper a:not(:first-child) {
+.account-label:not(:first-child) {
     margin-left: 10px;
 }
 
-.account-wrapper a:hover {
+.account-label:hover {
     color: var(--green);
 }
 

@@ -1,33 +1,50 @@
 <template>
-  <div id="app" v-bind:class="{'side-active': sidebarExtended}">
-      <Sidebar v-on:set-extended="onExtentionChange" v-bind:extended="sidebarExtended" />
-      <Header />
-      <div class="all-content">
-          <router-view />
-      </div>
-      <Footer />
-  </div>
+    <div id="app">
+        <Modal
+            v-if="modalActive"
+            v-bind:modaltype="modalType"
+            v-bind:modaldata="modalData"
+            v-on:closeModal="onModalClose" 
+        />
+        <Sidebar v-on:set-extended="onExtentionChange" v-bind:extended="sidebarExtended" />
+        <Header v-on:requestModal="openModal" />
+        <div class="all-content">
+            <router-view v-on:requestModal="openModal" />
+        </div>
+        <Footer />
+    </div>
 </template>
 
 <script>
 import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
 import Sidebar from './components/Sidebar.vue';
+import Modal from './components/modal/Modal.vue';
 
 export default {
     name: 'App',
     components: {
         Header,
         Footer,
-        Sidebar
+        Sidebar,
+        Modal
     },
     data() {
         return {
-            sidebarExtended: false
+            sidebarExtended: false,
+            modalType: null,
+            modalData: {},
+            modalActive: false
         }
     },
     methods: {
-        onExtentionChange(state) { this.sidebarExtended = state; }
+        onExtentionChange(state) { this.sidebarExtended = state; },
+        onModalClose() { this.modalActive = false; },
+        openModal(type, data) {
+            this.modalType = type;
+            this.modalData = data;
+            this.modalActive = true;
+        }
     },
     mounted() {
         setTimeout(() => this.sidebarExtended = false, 1000);
@@ -76,6 +93,8 @@ export default {
     --header-height: 50px;
     --footer-height: 180px;
     --side-full-width: 200px;
+
+    --font-fam: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 * {
@@ -95,11 +114,7 @@ body {
 }
 
 #app {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.side-active {
-    /* FIXME: This should not be empty */
+    font-family: var(--font-fam);
 }
 
 .all-content {
@@ -111,5 +126,7 @@ body {
     padding: 30px 20px;
     box-sizing: border-box;
 }
+
+
 
 </style>
