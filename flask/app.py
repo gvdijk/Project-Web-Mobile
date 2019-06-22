@@ -27,14 +27,17 @@ def add_user():
     cur = mysql.connection.cursor()
     cur.execute("INSERT INTO user(userName, userPass, userPicture) VALUES(%s, %s, %s)", (name, password, picture))
     mysql.connection.commit()
+
+    cur.execute("SELECT userID FROM user WHERE MAX(userID)")
+    newUser = cur.fetchall()
     cur.close()
-    # TODO return statement, picture
-    return 200
+    # TODO picture
+    return newUser, 200
 
 @app.route('/user/<string:id>', methods=['GET'])
 def get_user(id):
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT * FROM user WHERE userID = " + id)
+    resultValue = cur.execute("SELECT * FROM user WHERE userDeleted = 0 AND userID = " + id)
     if resultValue > 0:
         userDetails = cur.fetchall()
         return userDetails, 200
@@ -42,7 +45,7 @@ def get_user(id):
 @app.route('/user/<string:id>/projects', methods=['GET'])
 def get_user_projects(id):
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT Project_projectID FROM projectuser WHERE User_userID = " + id)
+    resultValue = cur.execute("SELECT Project_projectID FROM projectuser WHERE projectuserDeleted = 0 AND User_userID = " + id)
     if resultValue > 0:
         userDetails = cur.fetchall()
         return userDetails, 200
@@ -50,7 +53,7 @@ def get_user_projects(id):
 @app.route('/user/<string:id>/posts', methods=['GET'])
 def get_user_posts(id):
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT * FROM post WHERE postUser = " + id)
+    resultValue = cur.execute("SELECT * FROM post WHERE postDeleted = 0 AND postUser = " + id)
     if resultValue > 0:
         userDetails = cur.fetchall()
         return userDetails, 200
@@ -58,15 +61,28 @@ def get_user_posts(id):
 @app.route('/user/<string:id>/comments', methods=['GET'])
 def get_user_comments(id):
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT * FROM comments WHERE commentUser = " + id)
+    resultValue = cur.execute("SELECT * FROM comment WHERE commentDeleted = 0 AND commentUser = " + id)
     if resultValue > 0:
         userDetails = cur.fetchall()
         return userDetails, 200
 
-@app.route('/user/<string:name>', methods=['GET'])
+@app.route('/user', methods=['GET'])
 def get_user_name(name):
+    name = request.args.get('name')
+    limit = request.args.get('limit')
+    offset = request.args.get('offset')
+
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT userName FROM user WHERE userName LIKE %"+ name +"%")
+
+    if name == None:
+        resultValue = cur.execute("SELECT userID, userName FROM user WHERE userDeleted = 0 ORDER BY userName LIMIT " + limit + " OFFSET " + offset)
+
+    elif limit != None & offset != None:
+        resultValue = cur.execute("SELECT userID, userName FROM user WHERE userDeleted = 0 AND userName LIKE %"+ name +"% ORDER BY userName LIMIT " + limit + " OFFSET " + offset)
+
+    else:
+        resultValue = cur.execute("SELECT userID, userName FROM user WHERE userDeleted = 0  AND userName LIKE %"+ name +"% ORDER BY userName")
+
     if resultValue > 0:
         userDetails = cur.fetchall()
         return userDetails, 200
@@ -82,8 +98,7 @@ def put_user(id):
     cur.execute("UPDATE user SET userName = %s, userPass = %s WHERE userID = " + id), (name, password)
     mysql.connection.commit()
     cur.close()
-    # TODO return statement
-    return 200
+    return userDetails, 200
     
 @app.route('/user/<string:id>', methods=['DELETE'])
 def del_user(id):
@@ -91,8 +106,7 @@ def del_user(id):
     cur.execute("UPDATE user SET userDeleted = true WHERE userID = " + id)
     mysql.connection.commit()
     cur.close()
-    # TODO return statement
-    return 200
+    return id, 200
 
 
 
@@ -110,9 +124,12 @@ def add_project():
     cur = mysql.connection.cursor()
     cur.execute("INSERT INTO project(projectName, projectDescription, projectVisibility, projectOwner) VALUES(%s, %s, %s, %s)", (name, description, visibility, owner))
     mysql.connection.commit()
+
+    cur.execute("SELECT projectID FROM project WHERE MAX(projectID)")
+    newProject = cur.fetchall()
+
     cur.close()
-    # TODO return statement, picture
-    return 200
+    return newProject, 200
 
 @app.route('/project/<string:id>/post', methods=['POST'])
 def add_post(id):
@@ -123,11 +140,14 @@ def add_post(id):
     owner = projectDetails['userID']
 
     cur = mysql.connection.cursor()
-    cur.execute("INSERT INTO project(postTitle, postContent, postOwner) VALUES(%s, %s, %s)", (title, content, owner))
+    cur.execute("INSERT INTO post(postTitle, postContent, postUser, postProject) VALUES(%s, %s, %s, %s)", (title, content, owner, id))
     mysql.connection.commit()
+
+    resultValue = cur.execute("SELECT postID FROM post WHERE MAX(postID)")
+    newPost = cur.fetchall()
+
     cur.close()
-    # TODO return statement, picture
-    return 200
+    return newPost, 200
 
 @app.route('/project/<string:id>/user', methods=['POST'])
 def add_project_user(id):
@@ -145,16 +165,30 @@ def add_project_user(id):
 
 @app.route('/project', methods=['GET'])
 def get_project():
+    name = request.args.get('name')
+    limit = request.args.get('limit')
+    offset = request.args.get('offset')
+
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT * FROM project WHERE projectVisibility = 'PUBLIC'")
+
+    if name == None:
+        resultValue = cur.execute("SELECT projectID, projectName FROM project WHERE projectDeleted = 0 ORDER BY projectName LIMIT " + limit + " OFFSET " + offset)
+
+    elif limit != None & offset != None:
+        resultValue = cur.execute("SELECT projectID, projectName FROM project WHERE projectDeleted = 0 AND projectName LIKE %"+ name +"% ORDER BY projectName LIMIT " + limit + " OFFSET " + offset)
+
+    else:
+        resultValue = cur.execute("SELECT projectID, projectName FROM project WHERE projectDeleted = 0  AND projectName LIKE %"+ name +"% ORDER BY projectName")
+
     if resultValue > 0:
         projectDetails = cur.fetchall()
+        # TODO json
         return projectDetails, 200
 
 @app.route('/project/<string:id>', methods=['GET'])
 def get_project_id(id):
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT * FROM project WHERE projectID = " + id)
+    resultValue = cur.execute("SELECT * FROM project WHERE projectDeleted = 0 AND projectID = " + id)
     if resultValue > 0:
         projectDetails = cur.fetchall()
         return projectDetails, 200
@@ -162,15 +196,24 @@ def get_project_id(id):
 @app.route('/project/<string:id>/user', methods=['GET'])
 def get_project_users(id):
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT User_userID FROM projectuser WHERE Project_projectID = " + id)
+    resultValue = cur.execute("SELECT User_userID FROM projectuser WHERE projectuserDeleted = 0 AND Project_projectID = " + id)
     if resultValue > 0:
         projectDetails = cur.fetchall()
         return projectDetails, 200
 
 @app.route('/project/<string:id>/post', methods=['GET'])
 def get_project_post(id):
+    limit = request.args.get('limit')
+    offset = request.args.get('offset')
+
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT * FROM post WHERE postProject = " + id)
+
+    if limit != None & offset != None:
+        resultValue = cur.execute("SELECT * FROM post WHERE postDeleted = 0 AND postProject = " + id + " ORDER BY postCreated LIMIT " + limit + " OFFSET " + offset)
+
+    else:
+        resultValue = cur.execute("SELECT * FROM post WHERE postDeleted = 0 AND postProject = " + id)
+
     if resultValue > 0:
         projectDetails = cur.fetchall()
         return projectDetails, 200
@@ -191,7 +234,7 @@ def put_project(id):
     return 200
 
 @app.route('/project/<string:id>/user', methods=['PUT'])
-def put_project(id):
+def put_project_user(id):
     # Fetch form data
     projectDetails = request.form
     user = projectDetails['user']
@@ -213,8 +256,8 @@ def del_project(id):
     # TODO return statement
     return 200
 
-@app.route('/user/<string:id>/user', methods=['DELETE'])
-def del_user(id):
+@app.route('/project/<string:id>/user', methods=['DELETE'])
+def del_project_user(id):
     projectDetails = request.form
     user = projectDetails['user']
     
@@ -236,26 +279,31 @@ def add_comment():
     parent = postDetails['parent']
 
     cur = mysql.connection.cursor()
-    cur.execute("INSERT INTO comment(commentContent, projectDescription, projectVisibility, projectOwner) VALUES(%s, %s, %s, %s)", (name, description, visibility, owner))
+    cur.execute("INSERT INTO comment(commentContent, commentPost) VALUES(%s, %s)", (content, parent))
     mysql.connection.commit()
+
+    cur.execute("SELECT commentID FROM comment WHERE MAX(commentID)")
+    newComment = cur.fetchall()
+
     cur.close()
-    # TODO INSERT logic 
-    return 200
+    return newComment, 200
 
 @app.route('/post/<string:id>', methods=['GET'])
 def get_post(id):
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT * FROM post WHERE postID = " + id)
+    resultValue = cur.execute("SELECT * FROM post WHERE postDeleted = 0 AND postID = " + id)
     if resultValue > 0:
         postDetails = cur.fetchall()
+        # TODO Nested json
         return postDetails, 200
 
 @app.route('/post/<string:id>/comments', methods=['GET'])
 def get_post_comments(id):
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT * FROM comment WHERE commentPost = " + id)
+    resultValue = cur.execute("SELECT * FROM comment WHERE commentDeleted = 0 AND commentPost = " + id)
     if resultValue > 0:
         postDetails = cur.fetchall()
+        # TODO nested json
         return postDetails, 200
 
 @app.route('/post/<string:id>', methods=['PUT'])
@@ -269,7 +317,6 @@ def put_post(id):
     cur.execute("UPDATE post SET postTitle = %s, postContent = %s WHERE postID = "+ id), (title, content)
     mysql.connection.commit()
     cur.close()
-    # TODO return statement
     return 200
 
 @app.route('/post/<string:id>', methods=['DELETE'])
@@ -278,8 +325,7 @@ def del_post(id):
     cur.execute("UPDATE post SET postDeleted = true WHERE postID = " + id)
     mysql.connection.commit()
     cur.close()
-    # TODO return statement
-    return 200
+    return id, 200
 
 
 
@@ -294,7 +340,6 @@ def put_comment(id):
     cur.execute("UPDATE comment SET commentContent = %s WHERE commentID = "+ id), (content)
     mysql.connection.commit()
     cur.close()
-    # TODO return statement
     return 200
 
 
