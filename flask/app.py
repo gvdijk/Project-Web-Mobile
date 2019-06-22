@@ -143,7 +143,7 @@ def add_post(id):
     cur.execute("INSERT INTO post(postTitle, postContent, postUser, postProject) VALUES(%s, %s, %s, %s)", (title, content, owner, id))
     mysql.connection.commit()
 
-    resultValue = cur.execute("SELECT postID FROM post WHERE MAX(postID)")
+    cur.execute("SELECT postID FROM post WHERE MAX(postID)")
     newPost = cur.fetchall()
 
     cur.close()
@@ -262,7 +262,7 @@ def del_project_user(id):
     user = projectDetails['user']
     
     cur = mysql.connection.cursor()
-    cur.execute("UPDATE project SET projectDeleted = true WHERE projectID = " + id)
+    cur.execute("UPDATE projectuser SET projectuserDeleted = true WHERE Project_projectID = " + id + " AND User_userID = " + user)
     mysql.connection.commit()
     cur.close()
     # TODO return statement
