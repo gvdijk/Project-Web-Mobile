@@ -43,9 +43,9 @@ def isInt(var):
 @app.route('/user', methods=['POST'])
 def add_user():
     # Fetch form data
-    userDetails = request.form
-    name = userDetails.get('name')
-    password = userDetails.get('password')
+    userDetails = request.get_json()
+    name = userDetails['name']
+    password = userDetails['password']
 
     # Check if all data is supplied
     if name is None:
@@ -145,9 +145,9 @@ def put_user(id):
     if not isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
     # Fetch form data
-    userDetails = request.form
-    name = userDetails.get('name')
-    password = userDetails.get('password')
+    userDetails = request.get_json()
+    name = userDetails['name']
+    password = userDetails['password']
 
     # Check if all data is supplied
     if name is None:
@@ -192,11 +192,11 @@ def del_user(id):
 @app.route('/project', methods=['POST'])
 def add_project():
     # Fetch form data
-    projectDetails = request.form
-    name = projectDetails.get('name')
-    description = projectDetails.get('description')
-    visibility = projectDetails.get('visibility')
-    owner = projectDetails.get('ownerID')
+    projectDetails = request.get_json()
+    name = projectDetails['name']
+    description = projectDetails['description']
+    visibility = projectDetails['visibility']
+    owner = projectDetails['ownerID']
 
     # Check if all data is supplied correctly
     if name is None:
@@ -223,10 +223,10 @@ def add_post(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Fetch form data
-    projectDetails = request.form
-    title = projectDetails.get('title')
-    content = projectDetails.get('content')
-    owner = projectDetails.get('userID')
+    projectDetails = request.get_json()
+    title = projectDetails['title']
+    content = projectDetails['content']
+    owner = projectDetails['userID']
 
     # Check if all data is supplied
     if title is None:
@@ -250,9 +250,9 @@ def add_post(id):
 @app.route('/project/<string:id>/users', methods=['POST'])
 def add_project_user(id):
     # Fetch form data
-    projectDetails = request.form
-    user = projectDetails.get('user')
-    role = projectDetails.get('role')
+    projectDetails = request.get_json()
+    user = projectDetails['user']
+    role = projectDetails['role']
 
     # Check if all data is supplied
     if user is None:
@@ -339,10 +339,10 @@ def put_project(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Fetch form data
-    projectDetails = request.form
-    title = projectDetails.get('title')
-    content = projectDetails.get('content')
-    visibility = projectDetails.get('visibility')
+    projectDetails = request.get_json()
+    title = projectDetails['title']
+    content = projectDetails['content']
+    visibility = projectDetails['visibility']
 
     # Check if all data is supplied
     if title is None:
@@ -365,16 +365,16 @@ def put_project(id):
     else:
         return jsonify({"error": "No results found"}), 404
 
-@app.route('/project/<string:id>/user', methods=['PUT'])
+@app.route('/project/<string:id>/users', methods=['PUT'])
 def put_project_user(id):
     # Check if specified ID is an integer
     if not isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Fetch form data
-    projectDetails = request.form
-    user = projectDetails.get('user')
-    role = projectDetails.get('role')
+    projectDetails = request.get_json()
+    user = projectDetails['user']
+    role = projectDetails['role']
 
     # Check if all data is supplied
     if user is None:
@@ -412,15 +412,15 @@ def del_project(id):
     else:
         return jsonify({"erorr": "Something went wrong deleting the project"}), 500
 
-@app.route('/project/<string:id>/user', methods=['DELETE'])
+@app.route('/project/<string:id>/users', methods=['DELETE'])
 def del_project_user(id):
     # Check if specified ID is an integer
     if not isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Fetch form data
-    projectDetails = request.form
-    user = projectDetails.get('user')
+    projectDetails = request.get_json()
+    user = projectDetails['user']
 
     if user is None:
         return jsonify({"error": "Projectuser id not specified"}), 400
@@ -439,17 +439,17 @@ def del_project_user(id):
 
 
 # POSTS
-@app.route('/post/<string:id>/comment', methods=['POST'])
+@app.route('/post/<string:id>/comments', methods=['POST'])
 def add_comment(id):
     # Check if specified ID is an integer
     if not isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Fetch form data
-    postDetails = request.form
-    content = postDetails.get('content')
-    parent = postDetails.get('parent')
-    userID = postDetails.get('userID')
+    postDetails = request.get_json()
+    content = postDetails['content']
+    parent = postDetails['parent']
+    userID = postDetails['userID']
 
     if content is None:
         return jsonify({"error": "Comment content not specified"}), 400
@@ -494,9 +494,9 @@ def put_post(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Fetch form data
-    postDetails = request.form
-    title = postDetails.get('title')
-    content = postDetails.get('content')
+    postDetails = request.get_json()
+    title = postDetails['title']
+    content = postDetails['content']
 
     if content is None:
         return jsonify({"error": "Post content not specified"}), 400
@@ -538,8 +538,8 @@ def put_comment(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Fetch form data
-    commentDetails = request.form
-    content = commentDetails.get('content')
+    commentDetails = request.get_json()
+    content = commentDetails['content']
 
     if content is None:
         return jsonify({"error": "Comment content not specified"}), 400
