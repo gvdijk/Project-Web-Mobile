@@ -60,7 +60,7 @@ def login():
     # Check the hashed password against the one provided
     if function.verify_hashed_password(user['userPass'], password):
         jwt_token = create_access_token(identity=user['userID'])
-        return jsonify({"jwt_token": jwt_token}), 200
+        return jsonify({"id": user['userID'], "jwt_token": jwt_token}), 200
     else:
         return jsonify({"error": "Incorrect password"}), 401
 
@@ -68,7 +68,6 @@ def login():
 
 # USERS
 @app.route('/user', methods=['POST'])
-@jwt_required
 def add_user():
     # Fetch form data
     userDetails = request.get_json()
@@ -80,6 +79,9 @@ def add_user():
         return jsonify({"error": "Username not specified"}), 400
     if password is None:
         return jsonify({"error": "Password not specified"}), 400
+
+    # Strip leading and trailing spaces
+    name = name.strip()
     
     # Check is username and password comply to the requirements
     username_message = function.check_username(name)

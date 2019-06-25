@@ -29,7 +29,7 @@ def check_username(name):
     # Check if name is at least 3 characters long
     if len(name) < 3:
         return "Name must be at least 3 characters long"
-    # Check if name is no more than 20 characters long
+    # Check if name is no more than 45 characters long
     elif len(name) > 20:
         return "Name must be no more than 20 characters long"
     # Check if name only contains letters, numbers underscores or dashes
