@@ -18,7 +18,7 @@ def close_connection():
 
 # -----------------------------------------Login Related Functions--------------------------------------- #
 def getUserByName(name):
-    sql = "SELECT userName, userPass FROM user WHERE userDeleted = 0 AND userName = %s"
+    sql = "SELECT * FROM user WHERE userDeleted = 0 AND userName = %s"
     data = (name,)
     cur.execute(sql, data)
     results = cur.fetchone()
