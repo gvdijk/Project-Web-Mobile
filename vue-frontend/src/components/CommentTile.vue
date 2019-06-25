@@ -2,25 +2,25 @@
     <div class="comment-tile">
         <div class="comment-details">
             <span class="comment-subtitle">
-                {{ comment.user.name }} | Geplaatst op {{ comment.created }}
-                <span v-if="comment.edited"> | Laatst bewerkt op {{ comment.edited }}</span>
+                {{ comment.commentUser }} | Geplaatst op {{ comment.commentCreated }}
+                <span v-if="comment.commentEdited"> | Laatst bewerkt op {{ comment.commentEdited }}</span>
             </span>
             <div class="comment-button delete-button"
                 v-if="isAdmin || isOwner" 
-                 @click="$emit('requestModal', 'delete', {'type': 'comment', 'id': comment.id})">
+                 @click="$emit('requestModal', 'delete', {'type': 'comment', 'id': comment.commentID})">
                 Verwijderen
             </div>
             <div class="comment-button edit-button"
                 v-if="isAdmin || isOwner"
-                @click="$emit('requestModal', 'edit', {'type': 'comment', 'id': comment.id, 'text': comment.description})">
+                @click="$emit('requestModal', 'edit', {'type': 'comment', 'id': comment.commentID, 'text': comment.commentContent})">
                 Bewerken
             </div>
             <div class="comment-button"
-                 @click="$emit('requestModal', 'create', {'type': 'child', 'id': comment.id})">
+                 @click="$emit('requestModal', 'create', {'type': 'child', 'id': comment.commentID})">
                 Reageer
             </div>
         </div>
-        <span class="comment-content">{{ comment.description }}</span>
+        <span class="comment-content">{{ comment.commentContent }}</span>
         <CommentTile :key="child.id" v-for="child in children" v-bind:comment="child" v-on:requestModal="childCommentModalRequest" />
     </div>
 </template>

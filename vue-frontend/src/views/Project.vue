@@ -2,7 +2,7 @@
     <div class="project">
         <div class="project-details">
             <div class="project-header">
-                <div class="project-title">{{project.title}}</div>
+                <div class="project-title">{{project.projectName}}</div>
                 <div class="project-actions">
                     <div class="project-button" v-if="!userIsJoined && !project.access">Aanvragen</div>
                     <div class="project-button" v-if="!userIsJoined && project.access">Deelnemen</div>
@@ -10,11 +10,11 @@
                     <div class="project-button settings-button" v-if="userIsJoined && userIsAdmin">Instellingen</div>
                 </div>
             </div>
-            <div class="project-description">{{project.description}}</div>
-            <div class="project-stats">Er zijn {{project.posts}} berichten geplaatst door {{project.users}} gebruikers sinds {{project.created}}</div>
+            <div class="project-description">{{project.projectDescription}}</div>
+            <div class="project-stats">Er zijn {{posts.length}} berichten geplaatst door {{project.users}} gebruikers sinds {{project.projectCreated}}</div>
         </div>
         <div class="posts-view">
-            <PostTile v-for="post in paginatedPosts" :key="post.id" v-bind:post="post" />
+            <PostTile v-for="post in posts" :key="post.postID" v-bind:post="post" />
         </div>
         <PageSelector v-bind:visiblePages="3" v-bind:totalEntries="posts.length" v-bind:entriesPerPage="5" v-on:pageChanged="pageChanged"/>
     </div>
@@ -34,29 +34,22 @@ export default {
         return {
             userIsJoined: true,
             userIsAdmin: true,
-            project: {
-                id: 1,
-                title: 'Invisiline',
-                    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                users: 34,
-                posts: 325,
-                access: true,
-                created: 1539550165
-            },
+            project: {},
             posts: [],
             startIndex: 0,
             endIndex: 0
         }
     },
     methods: {
+        fetchProject(){
+            this.$store.dispatch('getProjectByID', this.$route.params.id)
+            .then( response => this.project = response)
+            .catch( error => console.log(error))
+        },
         fetchPosts(){
-            this.$store.dispatch('getPosts')
-            .then( response => {
-                this.posts = response;
-            })
-            .catch( error => {
-                console.log(error);
-            })
+            this.$store.dispatch('getProjectPosts', this.$route.params.id)
+            .then( response => this.posts = response)
+            .catch( error => console.log(error))
         },
         pageChanged(startIndex, endIndex){
             this.startIndex = startIndex;
@@ -69,6 +62,8 @@ export default {
         }
     },
     created(){
+        console.log(this.$route.params.id);
+        this.fetchProject();
         this.fetchPosts();
     }
 }

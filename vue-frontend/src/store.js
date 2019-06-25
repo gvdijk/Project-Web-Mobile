@@ -15,30 +15,40 @@ export default new Vuex.Store({
 
     },
     actions: {
-        getPosts(context, projectID){
-            // JSON placeholder until our own API is implemented
-            return new Promise((resolve, reject) => {
-                Axios.get('https://jsonplaceholder.typicode.com/posts')
-                .then( response => {
-                    resolve(response.data);
-                })
-                .catch ( error => {
-                    reject(error);
-                })
-            })
+        getProjects(context){
+            return new Promise((resolve, reject) => 
+                Axios.get(`http://127.0.0.1:5000/project`)
+                .then(response => resolve(response.data))
+                .catch(error => reject(error))
+            )
         },
-        getProjects(){
-            // JSON placeholder until our own API is implemented
-            // Since JSON placeholder doesn't have projects, projects are simply posts as well for the time being
-            return new Promise((resolve, reject) => {
-                Axios.get('https://jsonplaceholder.typicode.com/posts')
-                .then( response => {
-                    resolve(response.data);
-                })
-                .catch ( error => {
-                    reject(error);
-                })
-            })
-        }
+        getProjectByID(context, projectID){
+            return new Promise((resolve, reject) => 
+                Axios.get(`http://127.0.0.1:5000/project/${projectID}`)
+                .then(response => resolve(response.data))
+                .catch(error => reject(error))
+            )
+        },
+        getProjectPosts(context, projectID){
+            return new Promise((resolve, reject) => 
+                Axios.get(`http://127.0.0.1:5000/project/${projectID}/posts`)
+                .then(response => resolve(response.data))
+                .catch(error => reject(error))
+            )
+        },
+        getPostByID(context, postID){
+            return new Promise((resolve, reject) => 
+                Axios.get(`http://127.0.0.1:5000/post/${postID}`)
+                .then(response => resolve(response.data))
+                .catch(error => reject(error))
+            )
+        },
+        getPostComments(context, postID){
+            return new Promise((resolve, reject) => 
+                Axios.get(`http://127.0.0.1:5000/post/${postID}/comments`)
+                .then(response => resolve(response.data))
+                .catch(error => reject(error))
+            )
+        },
     }
 })

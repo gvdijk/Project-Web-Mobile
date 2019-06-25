@@ -1,12 +1,12 @@
 <template>
     <div class="project-tile">
-        <span class="project-title">{{ project.title }}</span>
-        <span class="project-subtitle">{{ usersPlaceholder }} deelnemers | Gemaakt op {{ createdPlaceholder }}</span>
-        <span class="project-content" v-bind:class="{'project-content-extended': extended}">{{ project.body }}</span>
+        <span class="project-title">{{ project.projectName }}</span>
+        <span class="project-subtitle">{{ usersPlaceholder }} deelnemers | Gemaakt op {{ project.projectCreated }}</span>
+        <span class="project-content" v-bind:class="{'project-content-extended': extended}">{{ project.projectDescription }}</span>
         <div class="project-actions"> 
             <div @click="viewLess" v-if="extended" class="description-extender">Lees minder...</div>
             <div @click="viewMore" v-else class="description-extender">Lees meer...</div>
-            <router-link class="project-button" to="/project"><a>Bekijken</a></router-link>
+            <router-link class="project-button" :to="{ path:`/project/${this.project.projectID}`}"><a>Bekijken</a></router-link>
             <div v-if="project.access" class="project-button">Deelnemen</div>
             <div v-else class="project-button">Aanvragen</div>
         </div>
@@ -28,7 +28,10 @@ export default {
         viewLess() { this.extended = false; },
         viewMore() { this.extended = true; }
     },
-    props: ['project']
+    props: ['project'],
+    created() {
+        console.log(this.project)
+    }
 }
 </script>
 

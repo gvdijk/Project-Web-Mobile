@@ -1,12 +1,12 @@
 <template>
     <div class="post-tile">
-        <span class="post-title">{{ post.title }}</span>
-        <span class="post-subtitle"> {{usernamePlaceholder}} | Geplaatst op {{ createdPlaceholder }} <span v-if="true"> | Laatst bewerkt op {{ editedPlaceholder }}</span></span>
-        <span class="post-content" v-bind:class="{'post-content-extended': extended}">{{ post.body }}</span>
+        <span class="post-title">{{ post.postTitle }}</span>
+        <span class="post-subtitle"> {{post.postUser}} | Geplaatst op {{ post.postCreated }} <span v-if="post.postEdited"> | Laatst bewerkt op {{ editedPlaceholder }}</span></span>
+        <span class="post-content" v-bind:class="{'post-content-extended': extended}">{{ post.postContent }}</span>
         <div class="post-actions"> 
             <div @click="viewLess" v-if="extended" class="description-extender">Lees minder...</div>
             <div @click="viewMore" v-else class="description-extender">Lees meer...</div>
-            <router-link class="post-button" to="/Post">Bekijken</router-link>
+            <router-link class="post-button" :to="{ path:`/project/${this.post.postProject}/post/${this.post.postID}`}">Bekijken</router-link>
         </div>
     </div>
 </template>
@@ -26,7 +26,10 @@ export default {
         viewLess() { this.extended = false; },
         viewMore() { this.extended = true; }
     },
-    props: ['post']
+    props: ['post'],
+    created() {
+        console.log(this.post);
+    }
 }
 </script>
 

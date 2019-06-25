@@ -1,9 +1,9 @@
 <template>
     <div class="home">
         <div class="projects-view">
-            <ProjectTile v-for="project in paginatedProjects" :key="project.id" v-bind:project="project" />
+            <ProjectTile v-for="project in projects" :key="project.id" v-bind:project="project" />
         </div>
-    <PageSelector v-bind:visiblePages="3" v-bind:totalEntries="projects.length" v-bind:entriesPerPage="5" v-on:pageChanged="pageChanged"/>
+        <PageSelector v-bind:visiblePages="3" v-bind:totalEntries="projects.length" v-bind:entriesPerPage="5" v-on:pageChanged="pageChanged"/>
     </div>
 </template>
 
@@ -25,14 +25,10 @@ export default {
         }
     },
     methods: {
-        fetchPosts(){
+        fetchProjects(){
             this.$store.dispatch('getProjects')
-            .then( response => {
-                this.projects = response;
-            })
-            .catch( error => {
-                console.log(error);
-            })
+            .then( response => this.projects = response)
+            .catch( error => console.log(error))
         },
         pageChanged(startIndex, endIndex){
             this.startIndex = startIndex;
@@ -45,7 +41,7 @@ export default {
         },
     },
     created(){
-        this.fetchPosts();
+        this.fetchProjects();
     }
 }
 </script>
