@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, jsonify
-from flask_mysqldb import MySQL
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
@@ -19,7 +18,7 @@ database_name = 'mydb'
 database.connect(user, password, host, database_name)
 
 # Configure CORS parameters
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:8080"}})
 
 # Configure JWT parameters
 app.config['JWT_SECRET_KEY'] = 'super-secret-JWT-key'
@@ -39,13 +38,38 @@ def isInt(var):
     except ValueError as e:
         return False
 
+# Authentication
+@app.route('/login', methods=['POST'])
+def login():
+    # Get user details from request body
+    userDetails = request.get_json()
+    name = userDetails.get('name')
+    password = userDetails.get('password')
+
+    # Check if the user details are set
+    if name is None:
+        return jsonify({"error": "Username not specified"}), 400
+    if password is None:
+        return jsonify({"error": "Password not specified"}), 400
+
+    # Check if the user exists
+    user = database.getUserByName(name)
+    if user is None:
+        return jsonify({"error": "User with username " + name + " does not exist"}), 400
+
+    # TODO: check hashed password
+
+    # Temporary debugging return statement
+    return jsonify({"info": "Ok"}), 200
+
+
 # USERS
 @app.route('/user', methods=['POST'])
 def add_user():
     # Fetch form data
     userDetails = request.get_json()
-    name = userDetails['name']
-    password = userDetails['password']
+    name = userDetails.get('name')
+    password = userDetails.get('password')
 
     # Check if all data is supplied
     if name is None:
@@ -146,8 +170,8 @@ def put_user(id):
         return jsonify({"error": "id is not an integer"}), 400
     # Fetch form data
     userDetails = request.get_json()
-    name = userDetails['name']
-    password = userDetails['password']
+    name = userDetails.get('name')
+    password = userDetails.get('password')
 
     # Check if all data is supplied
     if name is None:
@@ -193,10 +217,10 @@ def del_user(id):
 def add_project():
     # Fetch form data
     projectDetails = request.get_json()
-    name = projectDetails['name']
-    description = projectDetails['description']
-    visibility = projectDetails['visibility']
-    owner = projectDetails['ownerID']
+    name = projectDetails.get('name')
+    description = projectDetails.get('description')
+    visibility = projectDetails.get('visibility')
+    owner = projectDetails.get('ownerID')
 
     # Check if all data is supplied correctly
     if name is None:
@@ -224,9 +248,9 @@ def add_post(id):
 
     # Fetch form data
     projectDetails = request.get_json()
-    title = projectDetails['title']
-    content = projectDetails['content']
-    owner = projectDetails['userID']
+    title = projectDetails.get('title')
+    content = projectDetails.get('content')
+    owner = projectDetails.get('userID')
 
     # Check if all data is supplied
     if title is None:
@@ -251,8 +275,8 @@ def add_post(id):
 def add_project_user(id):
     # Fetch form data
     projectDetails = request.get_json()
-    user = projectDetails['user']
-    role = projectDetails['role']
+    user = projectDetails.get('user')
+    role = projectDetails.get('role')
 
     # Check if all data is supplied
     if user is None:
@@ -340,9 +364,9 @@ def put_project(id):
 
     # Fetch form data
     projectDetails = request.get_json()
-    title = projectDetails['title']
-    content = projectDetails['content']
-    visibility = projectDetails['visibility']
+    title = projectDetails.get('title')
+    content = projectDetails.get('content')
+    visibility = projectDetails.get('visibility')
 
     # Check if all data is supplied
     if title is None:
@@ -373,8 +397,8 @@ def put_project_user(id):
 
     # Fetch form data
     projectDetails = request.get_json()
-    user = projectDetails['user']
-    role = projectDetails['role']
+    user = projectDetails.get('user')
+    role = projectDetails.get('role')
 
     # Check if all data is supplied
     if user is None:
@@ -420,7 +444,7 @@ def del_project_user(id):
 
     # Fetch form data
     projectDetails = request.get_json()
-    user = projectDetails['user']
+    user = projectDetails.get('user')
 
     if user is None:
         return jsonify({"error": "Projectuser id not specified"}), 400
@@ -447,9 +471,9 @@ def add_comment(id):
 
     # Fetch form data
     postDetails = request.get_json()
-    content = postDetails['content']
-    parent = postDetails['parent']
-    userID = postDetails['userID']
+    content = postDetails.get('content')
+    parent = postDetails.get('parent')
+    userID = postDetails.get('userID')
 
     if content is None:
         return jsonify({"error": "Comment content not specified"}), 400
@@ -495,8 +519,8 @@ def put_post(id):
 
     # Fetch form data
     postDetails = request.get_json()
-    title = postDetails['title']
-    content = postDetails['content']
+    title = postDetails.get('title')
+    content = postDetails.get('content')
 
     if content is None:
         return jsonify({"error": "Post content not specified"}), 400
@@ -539,7 +563,7 @@ def put_comment(id):
 
     # Fetch form data
     commentDetails = request.get_json()
-    content = commentDetails['content']
+    content = commentDetails.get('content')
 
     if content is None:
         return jsonify({"error": "Comment content not specified"}), 400
