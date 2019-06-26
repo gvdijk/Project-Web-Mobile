@@ -14,7 +14,7 @@ app = Flask(__name__)
 host = 'localhost'
 user = 'webapp'
 password = 'admin' # Super encripted and safe password usage
-database_name = 'mydb'
+database_name = 'newdb'
 database.connect(user, password, host, database_name)
 
 # Configure CORS parameters
@@ -527,13 +527,22 @@ def add_comment(id):
 
     if content is None:
         return jsonify({"error": "Comment content not specified"}), 400
-    if parent is None:
-        return jsonify({"error": "Comment parent id not specified"}), 400
     if userID is None:
         return jsonify({"error": "Comment user id not specified"}), 400
 
+    # Check if post actually exists
+    post = database.getPostByID(id)
+    if post is None:
+        return jsonify({"error": "Specified post does not exist"}), 400
+
+    # Check if parent actually exists
+    if parent is not None:
+        comment = database.getCommentByID(str(parent))
+        if comment is None:
+            return jsonify({"error": "Parent comment does not exist"}), 400
+
     # Add comment
-    commentID = database.addPostComment(content, parent, userID)
+    commentID = database.addPostComment(content, parent, userID, id)
     return jsonify({"id": commentID}), 201
 
 @app.route('/post/<string:id>', methods=['GET'])
@@ -572,16 +581,13 @@ def put_post(id):
 
     # Fetch form data
     postDetails = request.get_json()
-    title = postDetails.get('title')
     content = postDetails.get('content')
 
     if content is None:
         return jsonify({"error": "Post content not specified"}), 400
-    if title is None:
-        return jsonify({"error": "Post title not specified"}), 400
     
     # Update post
-    data = database.updatePost(id, title, content)
+    data = database.updatePost(id, content)
     if data is not None:
         return jsonify(data), 200
     else:
