@@ -27,9 +27,23 @@ export default {
     name: 'Edit',
     methods: {
         updateAction() {
-            //TODO: Axios put action
-             console.log(`Updated ${this.body.type} with id ${this.body.id} to \r\n ${this.body.text}`);
-             this.$emit('closeModal');
+            if (this.body.type == 'post') {
+                this.$store.dispatch('updatePost', {
+                    id: this.body.id,
+                    text: this.body.text
+                })
+                .then(this.$emit('closeModal'))
+                .catch( error => console.log(error));
+            } else {
+                this.$store.dispatch('updateComment', {
+                    id: this.body.id,
+                    text: this.body.text
+                })
+                .then(this.$emit('closeModal'))
+                .catch( error => console.log(error));
+            }
+            
+            this.$emit('closeModal');
         }
     },
     props: ['body']

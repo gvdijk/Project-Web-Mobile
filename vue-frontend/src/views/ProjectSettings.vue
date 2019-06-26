@@ -68,13 +68,13 @@ export default {
     methods: {
         fetchProject(){
             this.$store.dispatch('getProjectByID', this.$route.params.id)
-            .then( response => this.project = response)
-            .catch( error => console.log(error))
+            .then(response => this.project = response)
+            .catch(error => console.log(error))
         },
         fetchProjectUsers(){
             this.$store.dispatch('getProjectUsers', this.$route.params.id)
-            .then( response => this.users = response)
-            .catch( error => console.log(error))
+            .then(response => this.users = response)
+            .catch(error => console.log(error))
         },
         updateDetails(){
             this.$store.dispatch('updateProject', {
@@ -83,8 +83,8 @@ export default {
                 description: this.project.projectDescription,
                 visibility: this.project.projectVisibility
             })
-            .then( response => this.project = response)
-            .catch( error => console.log(error))
+            .then(response => this.project = response)
+            .catch(error => console.log(error))
         }
     },
     created() {
