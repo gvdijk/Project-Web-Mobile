@@ -47,7 +47,7 @@ def addUser(name, password):
     return cur.lastrowid
 
 def getUserProjects(id):
-    sql = "SELECT Project_projectID FROM projectuser WHERE projectuserDeleted = 0 AND User_userID = " + id
+    sql = "SELECT * FROM projectuser WHERE projectuserDeleted = 0 AND User_userID = " + id
     cur.execute(sql)
     results = cur.fetchall()
 
