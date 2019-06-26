@@ -104,11 +104,24 @@ export default new Vuex.Store({
             )
         },
 
+        updateProject(context, project) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
+            return new Promise((resolve, reject) => 
+                axios.put(`/project/${project.projectID}`, {
+                    title: project.name,
+                    content: project.description,
+                    visibility: project.visibility
+                })
+                .then(response => resolve(response.data))
+                .catch(error => reject(error))
+            )
+        },
+
 
         registerUser(context, payload){
             return new Promise((resolve, reject) => {
                 console.log(payload.user + "    " + payload.pass)
-                Axios.post('http://localhost:5000/user', {
+                axios.post('http://localhost:5000/user', {
                     name: payload.user,
                     password: payload.pass
                 })
@@ -118,7 +131,7 @@ export default new Vuex.Store({
         },
         loginUser(context, payload){
             return new Promise((resolve, reject) => {
-              Axios.post('http://localhost:5000/login', {
+              axios.post('http://localhost:5000/login', {
                 name: payload.user,
                 password: payload.pass,
               })

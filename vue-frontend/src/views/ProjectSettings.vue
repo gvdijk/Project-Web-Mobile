@@ -3,25 +3,54 @@
         <h1>Project Instellingen</h1>
         <section>
             <label>Naam</label>
-            <input type="text" :value="project.projectName">
+            <input type="text" v-model="project.projectName">
             <label>Omschrijving</label>
-            <textarea :value="project.projectDescription"></textarea>
-            <button type="submit">Aanpassen</button>
+            <textarea v-model="project.projectDescription"></textarea>
+            <label>Zichtbaarheid</label>
+            <select v-model="project.projectVisibility">
+                <option value="PUBLIC">Openbaar</option>
+                <option value="RESTRICTED">Beschermd</option>
+                <option value="PRIVATE">Verborgen</option>
+            </select>
+            <div class="button" @click="updateDetails">Aanpassen</div>
+        </section>
+            <h2>Gebruikers</h2>
+        <section>
+            <label>Gebruiker uitnodigen</label>
+            <input type="text" v-model="inviteUserName" placeholder="Gebruikersnaam">
+            <div class="button">Uitnodigen</div>
         </section>
         <section>
-            <label>Gebruikers</label>
+            <label>Gebruikers overzicht</label>
             <table>
+                <tr>
+                    <th>Naam</th>
+                    <th>Type</th>
+                    <th>Lid sinds</th>
+                    <th>Acties</th>
+                </tr>
                 <tr :key="user.User_userID" v-for="user in users">
                     <td>{{user.User_userID}}</td>
                     <td>
-                        
+                        Gebruiker
                     </td>
                     <td>
-                        <div class="user-button"></div>
+                        16 Augustus 2018
+                    </td>
+                    <td>
+                        <div class="user-button" title="Accepteren"><i class="fa fa-check"></i></div>
+                        <div class="user-button" title="Weigeren"><i class="fa fa-times"></i></div>
+                        <div class="user-button" title="Annuleren"><i class="fa fa-minus"></i></div>
+                        <div class="user-button" title="Promoveer naar administrator"><i class="fa fa-star"></i></div>
+                        <div class="user-button" title="Degradeer naar gebruiker"><i class="fa fa-star is-admin"></i></div>
+                        <div class="user-button" title="Verwijder gebruiker van project"><i class="fa fa-minus"></i></div>
+                        <div class="user-button" title="Ban gebruiker van project"><i class="fa fa-ban"></i></div>
                     </td>
                 </tr>
             </table>
-            <button type="submit">Aanpassen</button>
+        </section>
+        <section>
+            <div class="delete-button">Project Verwijderen</div>
         </section>
     </div>
 </template>
@@ -32,7 +61,8 @@ export default {
     data() {
         return {
             project: {},
-            users: []
+            users: [],
+            inviteUserName: ""
         }
     },
     methods: {
@@ -44,6 +74,16 @@ export default {
         fetchProjectUsers(){
             this.$store.dispatch('getProjectUsers', this.$route.params.id)
             .then( response => this.users = response)
+            .catch( error => console.log(error))
+        },
+        updateDetails(){
+            this.$store.dispatch('updateProject', {
+                projectID: this.project.projectID,
+                name: this.project.projectName,
+                description: this.project.projectDescription,
+                visibility: this.project.projectVisibility
+            })
+            .then( response => this.project = response)
             .catch( error => console.log(error))
         }
     },
@@ -63,12 +103,17 @@ h1 {
     font-weight: 500;
 }
 
-section {
-    border-bottom: 1px solid var(--gray-base);
-    padding-bottom: 64px;
+h2 {
+    font-size: 16pt;
+    color: var(--green);
+    font-weight: 400;
 }
 
-button {
+section {
+    padding-bottom: 36px;
+}
+
+.button {
     display: block;
     float: right;
     padding: 4px 9px 6px;
@@ -85,8 +130,28 @@ button {
     transition-duration: 0.2s;
 }
 
-button:hover {
+.button:hover {
     background-color: var(--green);
+}
+
+.delete-button {
+    display: block;
+    float: right;
+    padding: 5px 12px 7px;
+    background-color: var(--dark-red);
+    color: var(--white-soft);
+    font-size: 12pt;
+    border: 2px solid var(--gray-brighter);
+    border-radius: 3px;
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+    -moz-user-select: -moz-none;
+    transition-duration: 0.2s;
+}
+
+.delete-button:hover {
+    background-color: var(--red);
 }
 
 label {
@@ -94,7 +159,7 @@ label {
     font-weight: 300;
     color: var(--gray-dark);
     font-size: 13pt;
-    margin: 6px 0 3px;
+    margin: 10px 0 3px;
 }
 
 input {
@@ -107,6 +172,12 @@ input {
     border: 1px solid var(--gray-bright);
     color: var(--black-deep);
     box-sizing: border-box;
+}
+
+select {
+    font-size: 14px;
+    padding: 4px 8px;
+    outline: 0;
 }
 
 textarea {
@@ -142,25 +213,47 @@ tr {
     border-bottom: 1px solid var(--gray-bright);
 }
 
+th {
+    text-align: left;
+}
+
+td:last-child {
+    width: 80px;
+}
+
 .user-button {
-    width: 28px;
-    height: 28px;
-}
-
-.old-box {
-    display: none;
-}
-
-.new-box {
     display: inline-block;
-    width: 16px;
-    height: 16px;
-    background-color: var(--gray-base);
+    width: 24px;
+    height: 24px;
     cursor: pointer;
 }
 
-.new-box:hover {
-    background-color: var(--gray-bright);
+
+i {
+    color: var(--gray-dark);
+    transition-duration: 0.1s;
+}
+
+.is-admin {
+    color: var(--yellow);
+}
+
+.fa-check:hover {
+    color: var(--green);
+}
+
+.fa-star:hover {
+    color: var(--yellow);
+}
+
+.fa-times:hover,
+.is-admin:hover,
+.fa-ban:hover {
+    color: var(--red);
+}
+
+.fa-minus:hover {
+    color: var(--orange);
 }
 
 </style>

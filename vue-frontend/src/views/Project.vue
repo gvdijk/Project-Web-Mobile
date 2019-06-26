@@ -7,7 +7,12 @@
                     <div class="project-button" v-if="!userIsJoined && !project.access">Aanvragen</div>
                     <div class="project-button" v-if="!userIsJoined && project.access">Deelnemen</div>
                     <div class="project-button" v-if="userIsJoined" @click="$emit('requestModal', 'create', {'type': 'post', 'id': project.projectID})">Nieuw bericht</div>
-                    <div class="project-button settings-button" v-if="userIsJoined && userIsAdmin">Instellingen</div>
+                    <router-link 
+                        class="project-button settings-button" 
+                        v-if="userIsJoined && userIsAdmin"
+                        :to="{ path:`/project/${this.project.projectID}/settings`}">
+                        Instellingen
+                    </router-link>
                 </div>
             </div>
             <div class="project-description">{{project.projectDescription}}</div>
@@ -98,6 +103,7 @@ export default {
     cursor: pointer;
     user-select: none;
     -moz-user-select: -moz-none;
+    text-decoration: none;
 }
 
 .project-button:hover {
