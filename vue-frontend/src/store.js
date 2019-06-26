@@ -82,6 +82,7 @@ export default new Vuex.Store({
 
 
         createPost(context, post) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
             return new Promise((resolve, reject) => 
                 axios.post(`/project/${post.projectID}/posts`, {
                     userID: context.state.userID,
@@ -93,12 +94,18 @@ export default new Vuex.Store({
             )
         },
         createComment(context, comment) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
+
+            let requestBody = {
+                content: comment.content,
+                parent: comment.parent,
+                userID: context.state.userID
+            };
+            let url = `/post/${comment.postID}/comments`;
+            console.log(requestBody);
+            console.log(url);
             return new Promise((resolve, reject) => 
-                axios.post(`/post/${comment.postID}/comments`, {
-                    content: comment.content,
-                    parent: comment.postID,
-                    userID: context.state.userID
-                })
+                axios.post(url, requestBody)
                 .then(response => resolve(response))
                 .catch(error => reject(error))
             )
@@ -116,6 +123,26 @@ export default new Vuex.Store({
                 .catch(error => reject(error))
             )
         },
+        updatePost(context, post) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
+            return new Promise((resolve, reject) => 
+                axios.put(`/post/${post.id}`, {
+                    content: post.text
+                })
+                .then(response => resolve(response.data))
+                .catch(error => reject(error))
+            )
+        },
+        updateComment(context, comment) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
+            return new Promise((resolve, reject) => 
+                axios.put(`/comment/${comment.id}`, {
+                    content: comment.text
+                })
+                .then(response => resolve(response.data))
+                .catch(error => reject(error))
+            )
+        },
 
 
         registerUser(context, payload){
@@ -125,8 +152,8 @@ export default new Vuex.Store({
                     name: payload.user,
                     password: payload.pass
                 })
-                .then( response => { resolve(response.data) })
-                .catch ( error => { reject(error.response.data.error) })
+                .then(response => { resolve(response.data) })
+                .catch (error => { reject(error.response.data.error) })
             })
         },
         loginUser(context, payload){

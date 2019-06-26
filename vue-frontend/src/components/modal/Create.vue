@@ -19,7 +19,8 @@
 /*
  *  body should be of format { 
  *      type: [post || comment || child], 
- *      id: [projectID || postID || commentID] 
+ *      id: [projectID || postID || commentID],
+ *      parent: [commentID]
  *  }
  */
 export default {
@@ -32,32 +33,22 @@ export default {
     },
     methods: {
         createAction() {
-            console.log(`Created ${this.body.type} on id ${this.body.id} \r\n\ Title: ${this.title} \r\n Description: ${this.description}`);
             if (this.body.type == 'post') {
                 this.$store.dispatch('createPost', {
                    projectID: this.body.id,
                    title: this.title,
                    content: this.description  
                 })
-                .then( response => console.log(response))
-                .catch( error => console.log(error))
-            }
-            // else if (this.body.type == 'comment') {
-            //     this.$store.dispatch('createComment', {
-            //        postID: this.body.id,
-            //        content: this.description  
-            //     })
-            //     .then( response => this.post = response)
-            //     .catch( error => console.log(error))
-            // }
-            else {
+                .then(response => console.log(response))
+                .catch(error => console.log(error))
+            } else {
                 this.$store.dispatch('createComment', {
-                   postID: this.body.postID,
-                   parent: this.body.commentID,
+                   postID: this.body.id,
+                   parent: this.body.parent || null,
                    content: this.description
                 })
-                .then( response => this.post = response)
-                .catch( error => console.log(error))
+                .then(response => this.post = response)
+                .catch(error => console.log(error))
             }
             this.$emit('closeModal');
             //TODO: If type=post, go to page on succesful creation?

@@ -28,10 +28,7 @@ export default {
         viewLess() { this.extended = false; },
         viewMore() { this.extended = true; }
     },
-    props: ['project'],
-    created() {
-        console.log(this.project)
-    }
+    props: ['project']
 }
 </script>
 
