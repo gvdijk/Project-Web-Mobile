@@ -26,10 +26,7 @@ export default {
         viewLess() { this.extended = false; },
         viewMore() { this.extended = true; }
     },
-    props: ['post'],
-    created() {
-        console.log(this.post);
-    }
+    props: ['post']
 }
 </script>
 

@@ -30,7 +30,7 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/Project.vue')
     },
     {
-      path: '/project/:id/post/:id',
+      path: '/project/:projectid/post/:id',
       name: 'post',
       component: () => import(/* webpackChunkName: "about" */ './views/Post.vue')
     },
@@ -40,12 +40,12 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/Explore.vue')
     },
     {
-      path: '/projectsettings',
+      path: '/project/:id/settings',
       name: 'projectsettings',
       component: () => import(/* webpackChunkName: "about" */ './views/ProjectSettings.vue')
     },
     {
-      path: '/usersettings',
+      path: '/user/:id/usersettings',
       name: 'usersettings',
       component: () => import(/* webpackChunkName: "about" */ './views/UserSettings.vue')
     }

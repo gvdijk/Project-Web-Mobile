@@ -56,7 +56,6 @@ export default {
     created() {
         this.fetchPost();
         this.fetchComments();
-        console.log(this.post);
     }
 }
 </script>

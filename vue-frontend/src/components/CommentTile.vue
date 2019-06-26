@@ -16,7 +16,7 @@
                 Bewerken
             </div>
             <div class="comment-button"
-                 @click="$emit('requestModal', 'create', {'type': 'child', 'id': comment.commentID})">
+                 @click="$emit('requestModal', 'create', {'type': 'child', 'postID': comment.commentPost, 'commentID': comment.commentID})">
                 Reageer
             </div>
         </div>

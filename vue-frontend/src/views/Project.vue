@@ -6,7 +6,7 @@
                 <div class="project-actions">
                     <div class="project-button" v-if="!userIsJoined && !project.access">Aanvragen</div>
                     <div class="project-button" v-if="!userIsJoined && project.access">Deelnemen</div>
-                    <div class="project-button" v-if="userIsJoined" @click="$emit('requestModal', 'create', {'type': 'post', 'id': project.id})">Nieuw bericht</div>
+                    <div class="project-button" v-if="userIsJoined" @click="$emit('requestModal', 'create', {'type': 'post', 'id': project.projectID})">Nieuw bericht</div>
                     <div class="project-button settings-button" v-if="userIsJoined && userIsAdmin">Instellingen</div>
                 </div>
             </div>
@@ -62,7 +62,6 @@ export default {
         }
     },
     created(){
-        console.log(this.$route.params.id);
         this.fetchProject();
         this.fetchPosts();
     }

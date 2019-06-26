@@ -32,8 +32,33 @@ export default {
     },
     methods: {
         createAction() {
-            //TODO: Axios create action
             console.log(`Created ${this.body.type} on id ${this.body.id} \r\n\ Title: ${this.title} \r\n Description: ${this.description}`);
+            if (this.body.type == 'post') {
+                this.$store.dispatch('createPost', {
+                   projectID: this.body.id,
+                   title: this.title,
+                   content: this.description  
+                })
+                .then( response => console.log(response))
+                .catch( error => console.log(error))
+            }
+            // else if (this.body.type == 'comment') {
+            //     this.$store.dispatch('createComment', {
+            //        postID: this.body.id,
+            //        content: this.description  
+            //     })
+            //     .then( response => this.post = response)
+            //     .catch( error => console.log(error))
+            // }
+            else {
+                this.$store.dispatch('createComment', {
+                   postID: this.body.postID,
+                   parent: this.body.commentID,
+                   content: this.description
+                })
+                .then( response => this.post = response)
+                .catch( error => console.log(error))
+            }
             this.$emit('closeModal');
             //TODO: If type=post, go to page on succesful creation?
         }
