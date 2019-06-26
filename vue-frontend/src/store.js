@@ -79,8 +79,54 @@ export default new Vuex.Store({
                 .catch(error => reject(error))
             )
         },
+        getUserByID(context, userID){
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
+            console.log(userID);
+            return new Promise((resolve, reject) => 
+                axios.get(`/user/${userID}`)
+                .then(response => resolve(response.data))
+                .catch(error => reject(error))
+            )
+        },
+        getUserProjects(context){
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
+            return new Promise((resolve, reject) => 
+                axios.get(`/user/${context.state.userID}/projects`)
+                .then(response => resolve(response.data))
+                .catch(error => reject(error))
+            )
+        },
+        getUserPosts(context){
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
+            return new Promise((resolve, reject) => 
+                axios.get(`/user/${context.state.userID}/posts`)
+                .then(response => resolve(response.data))
+                .catch(error => reject(error))
+            )
+        },
+        getUserComments(context){
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
+            return new Promise((resolve, reject) => 
+                axios.get(`/user/${context.state.userID}/comments`)
+                .then(response => resolve(response.data))
+                .catch(error => reject(error))
+            )
+        },
 
 
+        createProject(context, project) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
+            return new Promise((resolve, reject) => 
+                axios.post(`/project`, {
+                    name: project.name,
+                    description: project.description,
+                    visibility: project.visibility,
+                    ownerID: context.state.userID
+                })
+                .then(response => resolve(response))
+                .catch(error => reject(error))
+            )
+        },
         createPost(context, post) {
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
             return new Promise((resolve, reject) => 
@@ -95,21 +141,18 @@ export default new Vuex.Store({
         },
         createComment(context, comment) {
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
-
-            let requestBody = {
-                content: comment.content,
-                parent: comment.parent,
-                userID: context.state.userID
-            };
-            let url = `/post/${comment.postID}/comments`;
-            console.log(requestBody);
-            console.log(url);
             return new Promise((resolve, reject) => 
-                axios.post(url, requestBody)
+                axios.post(`/post/${comment.postID}/comments`, {
+                    content: comment.content,
+                    parent: comment.parent,
+                    userID: context.state.userID
+                })
                 .then(response => resolve(response))
                 .catch(error => reject(error))
             )
         },
+
+
 
         updateProject(context, project) {
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
@@ -143,6 +186,33 @@ export default new Vuex.Store({
                 .catch(error => reject(error))
             )
         },
+
+        
+        deleteProject(context, projectID) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
+            return new Promise((resolve, reject) => 
+                axios.delete(`/project/${projectID}`)
+                .then(response => resolve(response.data))
+                .catch(error => reject(error))
+            )
+        },
+        deletePost(context, postID) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
+            return new Promise((resolve, reject) => 
+                axios.delete(`/post/${postID}`)
+                .then(response => resolve(response.data))
+                .catch(error => reject(error))
+            )
+        },
+        deleteComment(context, commentID) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
+            return new Promise((resolve, reject) => 
+                axios.delete(`/comment/${commentID}`)
+                .then(response => resolve(response.data))
+                .catch(error => reject(error))
+            )
+        },
+
 
 
         registerUser(context, payload){

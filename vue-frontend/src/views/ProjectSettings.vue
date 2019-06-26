@@ -3,9 +3,9 @@
         <h1>Project Instellingen</h1>
         <section>
             <label>Naam</label>
-            <input type="text" v-model="project.projectName">
+            <input type="text" v-model="project.projectName" placeholder="Naam">
             <label>Omschrijving</label>
-            <textarea v-model="project.projectDescription"></textarea>
+            <textarea v-model="project.projectDescription" placeholder="Omschrijving"></textarea>
             <label>Zichtbaarheid</label>
             <select v-model="project.projectVisibility">
                 <option value="PUBLIC">Openbaar</option>
@@ -50,7 +50,7 @@
             </table>
         </section>
         <section>
-            <div class="delete-button">Project Verwijderen</div>
+            <div class="delete-button" @click="$emit('requestModal', 'delete', {'type': 'project', 'id': project.projectID})">Project Verwijderen</div>
         </section>
     </div>
 </template>
@@ -85,7 +85,8 @@ export default {
             })
             .then(response => this.project = response)
             .catch(error => console.log(error))
-        }
+        },
+
     },
     created() {
         this.fetchProject();

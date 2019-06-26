@@ -26,9 +26,20 @@ export default {
     name: 'Delete',
     methods: {
         deleteAction() {
-            //TODO: Axios delete action
              console.log(`Deleted ${this.body.type} with id ${this.body.id}`);
-             this.$emit('closeModal');
+            if (this.body.type == 'project') {
+                this.$store.dispatch('deleteProject', this.body.id)
+                .then(this.$emit('closeModal'))
+                .catch(error => console.log(error));
+            } else if (this.body.type == 'post') {
+                this.$store.dispatch('deletePost', this.body.id)
+                .then(this.$emit('closeModal'))
+                .catch(error => console.log(error));
+            } else {
+                this.$store.dispatch('deleteComment', this.body.id)
+                .then(this.$emit('closeModal'))
+                .catch(error => console.log(error));
+            }
         }
     },
     props: ['body']

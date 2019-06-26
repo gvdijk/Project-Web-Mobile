@@ -33,17 +33,15 @@ export default {
                     text: this.body.text
                 })
                 .then(this.$emit('closeModal'))
-                .catch( error => console.log(error));
+                .catch(error => console.log(error));
             } else {
                 this.$store.dispatch('updateComment', {
                     id: this.body.id,
                     text: this.body.text
                 })
                 .then(this.$emit('closeModal'))
-                .catch( error => console.log(error));
+                .catch(error => console.log(error));
             }
-            
-            this.$emit('closeModal');
         }
     },
     props: ['body']

@@ -39,6 +39,9 @@
         <div class="side-pane">
             <router-link class="side-pane-title" to="/explore"><a>Explore</a></router-link>
         </div>
+        <div class="side-pane">
+            <router-link class="side-pane-title" to="/new"><a>Nieuw Project</a></router-link>
+        </div>
     </aside>
 </template>
 

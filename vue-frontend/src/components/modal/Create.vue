@@ -39,7 +39,7 @@ export default {
                    title: this.title,
                    content: this.description  
                 })
-                .then(response => console.log(response))
+                .then(response => this.$router.push(`/project/${this.body.id}/post/${response.data.id}`))
                 .catch(error => console.log(error))
             } else {
                 this.$store.dispatch('createComment', {
@@ -50,7 +50,6 @@ export default {
                 .then(response => this.post = response)
                 .catch(error => console.log(error))
             }
-            this.$emit('closeModal');
             //TODO: If type=post, go to page on succesful creation?
         }
     },

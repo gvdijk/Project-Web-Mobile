@@ -45,7 +45,12 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/ProjectSettings.vue')
     },
     {
-      path: '/user/:id/usersettings',
+      path: '/new',
+      name: 'newproject',
+      component: () => import(/* webpackChunkName: "about" */ './views/NewProject.vue')
+    },
+    {
+      path: '/profile',
       name: 'usersettings',
       component: () => import(/* webpackChunkName: "about" */ './views/UserSettings.vue')
     }

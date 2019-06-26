@@ -15,6 +15,7 @@
             </div>
             <div class="account-wrapper">
                 <span v-if="!authenticated" class=account-label @click="$emit('requestModal', 'login', {})">Inloggen</span>
+                <router-link v-if="authenticated" class=account-label to="/profile"><a>Profiel</a></router-link>
                 <span v-if="authenticated" class=account-label @click="logout">Uitloggen</span>
                 <router-link v-if="!authenticated" class=account-label to="/register"><a>Registreren</a></router-link>
             </div>
