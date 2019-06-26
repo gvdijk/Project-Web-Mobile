@@ -24,10 +24,10 @@
                 <div class="side-pane-arrow" v-bind:class="{'arrow-up': !extendedProjects, 'arrow-down': extendedProjects}"></div>
             </div>
             <div class="side-pane-content" v-if="extendedProjects">
-                <router-link :key="project.id" v-for="project in myProjects" to="/project"><a>{{project.title}}</a></router-link>
+                <router-link :key="project.id" v-for="project in userProjects" to="/project/${project.projectID}"><a>{{project.projectName}}</a></router-link>
             </div>
         </div>
-        <div class="side-pane" v-if="authenticated">
+        <!-- <div class="side-pane" v-if="authenticated">
             <div class="side-pane-title" @click="toggleRecentProjectsVisibility">
                 Recente Projecten
                 <div class="side-pane-arrow" v-bind:class="{'arrow-up': !extendedRecent, 'arrow-down': extendedRecent}"></div>
@@ -35,7 +35,7 @@
             <div class="side-pane-content" v-if="extendedRecent">
                 <router-link :key="project.id" v-for="project in recentProjects" to="/project"><a>{{project.title}}</a></router-link>
             </div>
-        </div>
+        </div> -->
         <div class="side-pane">
             <router-link class="side-pane-title" to="/explore"><a>Explore</a></router-link>
         </div>
@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
     name: 'Sidebar',
     data() {
@@ -54,20 +55,7 @@ export default {
             extendedInfo: false,
             extendedProjects: true,
             extendedRecent: true,
-            myProjects: [
-                {
-                    id: 1,
-                    title: 'Invisiline'
-                },
-                {
-                    id: 2,
-                    title: 'Barbarapapa'
-                },
-                {
-                    id: 3,
-                    title: 'De beste titel voor een lange beschrijving'
-                }
-            ],
+            myProjects: [],
             recentProjects: [
                 {
                     id: 1,
@@ -87,7 +75,11 @@ export default {
     methods: {
         toggleInfoVisibility() { this.extendedInfo = !this.extendedInfo; },
         toggleMyProjectsVisibility() { this.extendedProjects = !this.extendedProjects; },
-        toggleRecentProjectsVisibility() { this.extendedRecent = !this.extendedRecent; }
+        toggleRecentProjectsVisibility() { this.extendedRecent = !this.extendedRecent; },
+
+    },
+    computed: {
+        ...mapGetters(["userProjects"])
     },
     props: ['extended']
 }

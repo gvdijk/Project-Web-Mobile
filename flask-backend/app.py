@@ -12,8 +12,8 @@ app = Flask(__name__)
 
 # Connect to the MySQL database
 host = 'localhost'
-user = 'webapp'
-password = 'admin' # Super encripted and safe password usage
+user = 'root'
+password = 'MySQL55BoeM!' # Super encripted and safe password usage
 database_name = 'newdb'
 database.init(user, password, host, database_name)
 
@@ -150,13 +150,10 @@ def get_user_posts(id):
         return jsonify({"error": "Specified user does not exist"})
 
     data = database.getUserPosts(id)
-    if data is None:
-        return jsonify({"error": "No results found"}), 404
-    else:
-        for post in data:
-            project = database.getProjectByID(str(post['postProject']))
-            post['project'] = project
+    if data is not None:
         return jsonify(data), 200
+    else:
+        return jsonify({"error": "No results found"}), 404
 
 @app.route('/user/<string:id>/comments', methods=['GET'])
 @jwt_required
@@ -171,13 +168,10 @@ def get_user_comments(id):
         return jsonify({"error": "Specified user does not exist"})
 
     data = database.getUserComments(id)
-    if data is None:
-        return jsonify({"error": "No results found"}), 404
-    else:
-        for comment in data:
-            post = database.getPostByID(str(comment['commentPost']))
-            comment['post'] = post
+    if data is not None:
         return jsonify(data), 200
+    else:
+        return jsonify({"error": "No results found"}), 404
 
 @app.route('/user', methods=['GET'])
 @jwt_required
@@ -358,7 +352,7 @@ def get_project():
     else:
         for project in data:
             user = database.getUserInfo(str(project['projectOwner']))
-            project['user'] = user
+            project['owner'] = user
         return jsonify(data), 200
 
 @app.route('/project/<string:id>', methods=['GET'])
@@ -372,7 +366,7 @@ def get_project_id(id):
         return jsonify({"error": "No results found"}), 404
     else:
         user = database.getUserInfo(str(data['projectOwner']))
-        data['user'] = user
+        data['owner'] = user
         return jsonify(data), 200
 
 @app.route('/project/<string:id>/users', methods=['GET'])

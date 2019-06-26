@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div class="post-description">{{post.postContent}}</div>
-            <div class="post-stats">{{post.postUser}} | Geplaatst op {{post.postCreated}} | {{comments.length}} reacties <span v-if="post.postEdited"> | Laatst bewerkt op {{post.edited}}</span></div>
+            <div class="post-stats">{{post.user.userName}} | {{comments.length}} reacties | Geplaatst op {{post.postCreated}} <span v-if="post.postEdited"> | Laatst bewerkt op {{post.postEdited}}</span></div>
         </div>
         <div class="posts-view">
             <CommentTile v-for="comment in comments" :key="comment.id" v-bind:comment="comment" v-on:requestModal="commentModalRequest" />
@@ -25,7 +25,9 @@
 </template>
 
 <script>
-import CommentTile from '../components/CommentTile.vue'
+import CommentTile from '../components/CommentTile.vue';
+import { mapGetters } from 'vuex';
+
 export default {
     name: 'Post',
     components: {
@@ -33,10 +35,11 @@ export default {
     },
     data() {
         return {
-            //TODO: Read owner/admin status
-            isOwner: true,
+            //TODO: Read admin status
             isAdmin: false,
-            post: {},
+            post: {
+                user: {}
+            },
             comments: []
         }
     },
@@ -56,6 +59,12 @@ export default {
     created() {
         this.fetchPost();
         this.fetchComments();
+    },
+    computed: {
+        ...mapGetters(["userID"]),
+        isOwner() { return this.userID == this.post.user.userID || null }
+    },
+    watch: {
     }
 }
 </script>

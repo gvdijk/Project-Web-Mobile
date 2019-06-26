@@ -10,6 +10,7 @@ export default new Vuex.Store({
     state: {
         JWT_Token: localStorage.getItem("JWT_Token") || null,
         userID: localStorage.getItem("userID") || null,
+        userProjects: {}
     },
     getters: {
         token(state){
@@ -21,6 +22,9 @@ export default new Vuex.Store({
         authenticated(state){
             return state.JWT_Token !== null;
         },
+        userProjects(state){
+            return state.userProjects;
+        }
     },
     mutations: {
         setToken(state, token){
@@ -35,6 +39,9 @@ export default new Vuex.Store({
         unsetUserID(state){
             state.userID = null;
         },
+        setUserProjects(state, projects){
+            state.userProjects = projects;
+        }
     },
     actions: {
         getProjects(context){
@@ -92,7 +99,10 @@ export default new Vuex.Store({
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
             return new Promise((resolve, reject) => 
                 axios.get(`/user/${context.state.userID}/projects`)
-                .then(response => resolve(response.data))
+                .then(response => {
+                    resolve(response.data);
+                    context.commit('setUserProjects', response.data);
+                })
                 .catch(error => reject(error))
             )
         },

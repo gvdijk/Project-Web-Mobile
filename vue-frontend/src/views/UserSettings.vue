@@ -3,6 +3,7 @@
         <h1>Gebruikers Instellingen</h1>
         <section>
             <label>Naam</label>
+            <span>{{user.userName}}</span>
             <label>Afbeelding</label>
             <div class="button" @click="updateDetails">Aanpassen</div>
         </section>
@@ -27,11 +28,59 @@
                     <td>
                         <div class="user-button" title="Accepteren"><i class="fa fa-check"></i></div>
                         <div class="user-button" title="Weigeren"><i class="fa fa-times"></i></div>
-                        <div class="user-button" title="Annuleren"><i class="fa fa-minus"></i></div>
-                        <div class="user-button" title="Promoveer naar administrator"><i class="fa fa-star"></i></div>
-                        <div class="user-button" title="Degradeer naar gebruiker"><i class="fa fa-star is-admin"></i></div>
-                        <div class="user-button" title="Verwijder gebruiker van project"><i class="fa fa-minus"></i></div>
-                        <div class="user-button" title="Ban gebruiker van project"><i class="fa fa-ban"></i></div>
+                        <div class="user-button" title="Leave"><i class="fa fa-minus"></i></div>
+                    </td>
+                </tr>
+            </table>
+        </section>
+        <h2>Berichten</h2>
+        <section>
+            <label>Berichten overzicht</label>
+            <table>
+                <tr>
+                    <th>Bericht</th>
+                    <th>Project</th>
+                    <th>Geplaatst</th>
+                    <th>Acties</th>
+                </tr>
+                <tr :key="post.postID" v-for="post in posts">
+                    <td>{{post.postTitle}}</td>
+                    <td>
+                        <!-- {{post.project.projectName}} -->
+                    </td>
+                    <td>
+                        16 Augustus 2018
+                    </td>
+                    <td>
+                        <div class="user-button" title="Accepteren"><i class="fa fa-check"></i></div>
+                        <div class="user-button" title="Weigeren"><i class="fa fa-times"></i></div>
+                        <div class="user-button" title="Leave"><i class="fa fa-minus"></i></div>
+                    </td>
+                </tr>
+            </table>
+        </section>
+        <h2>Reacties</h2>
+        <section>
+            <label>Reacties overzicht</label>
+            <table>
+                <tr>
+                    <th>Reacties</th>
+                    <th>Project</th>
+                    <th>Geplaatst</th>
+                    <th>Acties</th>
+                </tr>
+                <tr :key="comment.commentID" v-for="comment in comments">
+                    <td>{{comment.commentContent}}</td>
+                    <td>
+                        <!-- {{comment.post.postTitle}} -->
+                    </td>
+                    <td>
+                        16 Augustus 2018
+                    </td>
+                    <td>
+                        <div class="user-button" title="Leave"><i class="fa fa-reply"></i></div>
+                        <div class="user-button" title="Accepteren"><i class="fa fa-edit"></i></div>
+                        <div class="user-button" title="Weigeren"><i class="fa fa-times"></i></div>
                     </td>
                 </tr>
             </table>
@@ -43,14 +92,14 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex';
 export default {
     name: 'UserSettings',
     data() {
         return {
             user: {},
             projects: [],
-            post: [],
+            posts: [],
             comments: []
         }
     },
@@ -70,7 +119,7 @@ export default {
         },
         fetchUserPosts(){
             this.$store.dispatch('getUserPosts', this.userID)
-            .then(response => this.post = response)
+            .then(response => this.posts = response)
             .catch(error => console.log(error))
         },
         fetchUserComments(){
@@ -92,8 +141,15 @@ export default {
     },
     created() {
         this.fetchUser();
-        // this.fetchUserProjects();
-
+        this.fetchUserProjects();
+        this.fetchUserPosts();
+        this.fetchUserComments();
+    },
+    computed: {
+        // commentPost(comment) {
+        //     console.log(comment);
+        //     return comment.post.postTitle || null;
+        // }
     }
 }
 </script>
@@ -235,14 +291,20 @@ td:last-child {
 i {
     color: var(--gray-dark);
     transition-duration: 0.1s;
+    padding: 2px;
 }
 
 .is-admin {
     color: var(--yellow);
 }
 
-.fa-check:hover {
+.fa-check:hover,
+.fa-reply:hover {
     color: var(--green);
+}
+
+.fa-edit:hover {
+    color: var(--blue);
 }
 
 .fa-star:hover {

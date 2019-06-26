@@ -1,7 +1,7 @@
 <template>
     <div class="post-tile">
         <span class="post-title">{{ post.postTitle }}</span>
-        <span class="post-subtitle"> {{post.postUser}} | Geplaatst op {{ post.postCreated }} <span v-if="post.postEdited"> | Laatst bewerkt op {{ editedPlaceholder }}</span></span>
+        <span class="post-subtitle"> {{post.user.userName}} | Geplaatst op {{ post.postCreated }} <span v-if="post.postEdited"> | Laatst bewerkt op {{ editedPlaceholder }}</span></span>
         <span class="post-content" v-bind:class="{'post-content-extended': extended}">{{ post.postContent }}</span>
         <div class="post-actions"> 
             <div @click="viewLess" v-if="extended" class="description-extender">Lees minder...</div>
@@ -16,10 +16,7 @@ export default {
     name: 'PostTile',
     data() {
         return {
-            extended: false,
-            createdPlaceholder: 'dd/mm/yyyy',
-            editedPlaceholder: 'dd/mm/yyyy',
-            usernamePlaceholder: 'username',
+            extended: false
         }
     },
     methods: {

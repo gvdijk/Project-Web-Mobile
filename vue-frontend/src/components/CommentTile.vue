@@ -2,22 +2,22 @@
     <div class="comment-tile">
         <div class="comment-details">
             <span class="comment-subtitle">
-                {{ comment.commentUser }} | Geplaatst op {{ comment.commentCreated }}
+                {{ comment.user.userName }} | Geplaatst op {{ comment.commentCreated }}
                 <span v-if="comment.commentEdited"> | Laatst bewerkt op {{ comment.commentEdited }}</span>
             </span>
             <div class="comment-button delete-button"
                 v-if="isAdmin || isOwner" 
                  @click="$emit('requestModal', 'delete', {'type': 'comment', 'id': comment.commentID})">
-                Verwijderen
+                <i class="fa fa-trash"></i>
             </div>
             <div class="comment-button edit-button"
                 v-if="isAdmin || isOwner"
                 @click="$emit('requestModal', 'edit', {'type': 'comment', 'id': comment.commentID, 'text': comment.commentContent})">
-                Bewerken
+                <i class="fa fa-edit"></i>
             </div>
             <div class="comment-button"
                  @click="$emit('requestModal', 'create', {'type': 'child', 'id': comment.commentPost, 'parent': comment.commentID})">
-                Reageer
+                <i class="fa fa-reply"></i>
             </div>
         </div>
         <span class="comment-content">{{ comment.commentContent }}</span>
@@ -26,12 +26,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
     name: 'CommentTile',
     data() {
         return {
-            //TODO: Read owner/admin status
-            isOwner: true,
+            //TODO: Read admin status
             isAdmin: false
         }
     },
@@ -42,7 +42,9 @@ export default {
     computed: {
         children: function () { 
             return this.comment.children 
-        }
+        },
+        ...mapGetters(["userID"]),
+        isOwner() { return this.userID == this.comment.user.userID || null }
     }
 }
 </script>
@@ -82,9 +84,9 @@ export default {
     float: right;
     padding: 1px 3px 3px;
     color: var(--dark-green);
-    font-size: 9pt;
+    font-size: 11pt;
     font-weight: 600;
-    margin: 0 3px;
+    margin: 0 1px;
     cursor: pointer;
     user-select: none;
     -moz-user-select: -moz-none;
@@ -110,4 +112,29 @@ export default {
 .delete-button:hover {
     color: var(--red);
 }
+
+
+
+i {
+    color: var(--gray-dark);
+    transition-duration: 0.1s;
+    padding: 2px;
+}
+
+.fa-reply:hover {
+    color: var(--green);
+}
+
+.fa-edit:hover {
+    color: var(--blue);
+}
+
+.fa-trash:hover {
+    color: var(--red);
+}
+
+.fa-minus:hover {
+    color: var(--orange);
+}
+
 </style>
