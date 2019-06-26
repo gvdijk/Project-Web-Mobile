@@ -39,6 +39,16 @@ def getUserByID(id):
     else:
         return results
 
+def getUserInfo(id):
+    sql = "SELECT userCreated, userID, userName, userPicture FROM user WHERE userDeleted = 0 AND userID = " + id
+    cur.execute(sql)
+    results = cur.fetchone()
+
+    if (results is not None and len(results) == 0):
+        return None
+    else:
+        return results
+
 def addUser(name, password):
     sql = "INSERT INTO user(userName, userPass) VALUES(%s, %s)"
     data = (name, password)
@@ -169,7 +179,7 @@ def getProjectByID(id):
         return results
 
 def getProjectUsers(id):
-    sql = "SELECT User_userID FROM projectuser WHERE projectuserDeleted = 0 AND Project_projectID = " + id
+    sql = "SELECT * FROM projectuser WHERE projectuserDeleted = 0 AND Project_projectID = " + id
     cur.execute(sql)
     results = cur.fetchall()
 
@@ -275,10 +285,8 @@ def deletePost(id):
         return False
 
 # ---------------------------------------Comment Related Functions--------------------------------------- #
-
-
 def getCommentByID(id):
-    sql = "SELECT * FROM comment WHERE commentDeleted = 0 AND commentPost = " + id
+    sql = "SELECT * FROM comment WHERE commentDeleted = 0 AND commentID = " + id
     cur.execute(sql)
     results = cur.fetchone()
 
@@ -294,3 +302,13 @@ def updateComment(id, content):
     connection.commit()
     cur.execute("SELECT * FROM comment WHERE commentDeleted = 0 AND commentID = " + id)
     return cur.fetchone()
+
+def deleteComment(id):
+    try:
+        sql = "UPDATE comment SET commentContent = 'Deze reactie is verwijderd', commentState = 'DELETED' WHERE commentID = " + id
+        cur.execute(sql)
+        connection.commit()
+        return True
+    except Exception as e:
+        print(e)
+        return False

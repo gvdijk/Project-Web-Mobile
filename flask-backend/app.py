@@ -345,13 +345,15 @@ def get_project():
         return jsonify({"error": "limit is not an integer"}), 400
     if offset is not None and not isInt(offset):
         return jsonify({"error": "offset is not an integer"}), 400
-    
-    # TODO: Return nested user objects
+
     data = database.getProjects(name, limit, offset)
-    if data is not None:
-        return jsonify(data), 200
-    else:
+    if data is None:
         return jsonify({"error": "No results found"}), 404
+    else:
+        for project in data:
+            user = database.getUserInfo(str(project['projectOwner']))
+            project['owner'] = user
+        return jsonify(data), 200
 
 @app.route('/project/<string:id>', methods=['GET'])
 def get_project_id(id):
@@ -359,12 +361,13 @@ def get_project_id(id):
     if not isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
-    # TODO: Return nested user objects
     data = database.getProjectByID(id)
-    if data is not None:
-        return jsonify(data), 200
-    else:
+    if data is None:
         return jsonify({"error": "No results found"}), 404
+    else:
+        user = database.getUserInfo(str(data['projectOwner']))
+        data['owner'] = user
+        return jsonify(data), 200
 
 @app.route('/project/<string:id>/users', methods=['GET'])
 def get_project_users(id):
@@ -377,12 +380,14 @@ def get_project_users(id):
     if project is None:
         return jsonify({"error": "Specified project does not exist"})
         
-    # TODO: Return nested user objects + roles
     data = database.getProjectUsers(id)
-    if data is not None:
-        return jsonify(data), 200
-    else:
+    if data is None:
         return jsonify({"error": "No results found"}), 404
+    else:
+        for projectuser in data:
+            user = database.getUserInfo(str(projectuser['User_userID']))
+            projectuser['user'] = user
+        return jsonify(data), 200
 
 @app.route('/project/<string:id>/posts', methods=['GET'])
 def get_project_post(id):
@@ -394,12 +399,14 @@ def get_project_post(id):
     if offset is not None and not isInt(offset):
         return jsonify({"error": "offset is not an integer"}), 400
 
-    # TODO: Return nested user objects
     data = database.getProjectPosts(id, limit, offset)
-    if data is not None:
-        return jsonify(data), 200
-    else:
+    if data is None:
         return jsonify({"error": "No results found"}), 404
+    else:
+        for projectpost in data:
+            user = database.getUserInfo(str(projectpost['postUser']))
+            projectpost['user'] = user
+        return jsonify(data), 200
 
 @app.route('/project/<string:id>', methods=['PUT'])
 @jwt_required
@@ -551,12 +558,13 @@ def get_post(id):
     if not isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
-    # TODO: Return nested user objects
     data = database.getPostByID(id)
-    if data is not None:
-        return jsonify(data), 200
-    else:
+    if data is None:
         return jsonify({"error": "No results found"}), 404
+    else:
+        user = database.getUserInfo(str(data['postUser']))
+        data['user'] = user
+        return jsonify(data), 200
 
 @app.route('/post/<string:id>/comments', methods=['GET'])
 def get_post_comments(id):
@@ -564,13 +572,15 @@ def get_post_comments(id):
     if not isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
     
+    # TODO: return nested comments instead of one big list
     data = database.getPostComments(id)
-    # TODO: return nested 
-    # TODO: Return nested user objects
-    if data is not None:
-        return jsonify(data), 200
-    else:
+    if data is None:
         return jsonify({"error": "No results found"}), 404
+    else:
+        for comment in data:
+            user = database.getUserInfo(str(comment['commentUser']))
+            comment['user'] = user
+        return jsonify(data), 200
 
 @app.route('/post/<string:id>', methods=['PUT'])
 @jwt_required
@@ -636,10 +646,25 @@ def put_comment(id):
     else:
         return jsonify({"error": "No results found"}), 404
 
+@app.route('/comment/<string:id>', methods=['DELETE'])
+@jwt_required
+def delete_comment(id):
+    # Check if specified ID is an integer
+    if not isInt(id):
+        return jsonify({"error": "id is not an integer"}), 400
 
-
-
-
+    # Check if comment actually exists
+    comment = database.getCommentByID(id)
+    if comment is None:
+        return jsonify({"error": "Specified comment does not exist"})
+    
+    # Delete comment
+    data = database.deleteComment(id)
+    if data is not None:
+        return jsonify({"Info": "Comment deleted successfully"}), 200
+    else:
+        return jsonify({"error": "No results found"}), 404
+    
 
 if(__name__ == '__main__'):
     app.run(debug=True)
