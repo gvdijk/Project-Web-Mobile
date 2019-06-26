@@ -6,10 +6,10 @@
       <label for="username">Gebruikersnaam</label>
       <input type="text" name="username" id="username" placeholder="Gebruikersnaam" v-model="username"> 
 
-      <label for="username">Wachtwoord</label>
+      <label for="password">Wachtwoord</label>
       <input type="password" name="password" id="password" placeholder="Wachtwoord"  v-model="password">
 
-      <label for="username">Bevestig wachtwoord</label>
+      <label for="confirmpass">Bevestig wachtwoord</label>
       <input type="password" name="confirmpass" id="confirmpass" placeholder="Bevestig Wachtwoord"  v-model="confirmpass">
 
       <button type="submit">Registreren</button>
@@ -34,31 +34,53 @@ export default {
   },
   methods: {
     register(){
-      //Returns a promise that either resolves or rejects based on form input
-      this.checkInput()
-      //Promise resolved: form input was valid
-      .then(response => {
-        console.log("Register OK")
-        //TODO: send http request to API for new user
-      })
-      //Promise rejected: form input was invalid
-      .catch(error => {
-        this.showError(error);
-      })
+        // Check to see if username meets the requirements
+        if(this.checkUsername()){
+            // Check to see if password meets the requirements
+            if(this.checkPassword()){
+                this.$store.dispatch('registerUser', {user: this.username, pass: this.password})
+                .then( response => {
+                    this.$router.push({path: '/explore'})
+                })
+                .catch( error => {
+                    console.log(error);
+                });
+            }else{ this.showError() }
+        }else{ this.showError() }
     },
-    checkInput(){
-      return new Promise((resolve, reject) => {
-        if(this.username.length < 3 || this.username.length > 15){
-          reject("Username must be between 3 and 15 characters");
-        }
-        else{
-          resolve();
-        }
-      })
+    checkUsername(){
+        if(this.username.length < 3){
+            this.errorMsg = "Accountnaam moet minstens 3 karakters lang zijn";
+            return false;
+        }else if(this.username.length > 20){
+            this.errorMsg = "Accountnaam mag niet meer dan 20 karakters lang zijn";
+            return false;
+        }else if(!this.username.match(new RegExp("^[ A-Za-z0-9_-]*$"))){
+            this.errorMsg = "Er mogen geen speciale karakters in de accountnaam voorkomen";
+            return false;
+        }else return true;
     },
-    showError(errormsg){
-      this.error = true;
-      this.errorMsg = errormsg;
+    checkPassword(){
+        if(this.password.length < 6){
+            this.errorMsg = "Wachtwoord moet minstens 6 karakters lang zijn";
+            return false;
+        }else if(!this.password.match(new RegExp("[a-z]"))){
+            this.errorMsg = "Wachtwoord moet ten minste 1 kleine letter bevatten";
+            return false;
+        }else if(!this.password.match(new RegExp("[A-Z]"))){
+            this.errorMsg = "Wachtwoord moet ten minste 1 grote letter bevatten";
+            return false;
+        }else if(!this.password.match(new RegExp("[0-9]"))){
+            this.errorMsg = "Wachtwoord moet ten minste 1 cijfer letter bevatten";
+            return false;
+        }else if(this.password != this.confirmpass){
+            this.errorMsg = "Wachtwoorden komen niet overeen";
+            return false;
+        }else return true;
+    },
+    showError(){
+        this.error = true;
+        setTimeout(() => {this.error = false}, 5000)
     },
   },
 }
@@ -93,8 +115,7 @@ h1 {
 label {
   display: block;
   float: left;
-  padding-bottom: 15px;
-  padding-top: 15px;
+  padding-top: 10px;
 }
 
 input {
@@ -114,14 +135,16 @@ input:focus {
 }
 
 button {
-  width: 100%;
-  margin-top: 40px;
-  margin-bottom: 40px;
-  padding: 14px 12px;
-  font-size: 18px;
+  width: 100px;
+  height: 40px;
+  float: right;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  font-size: 15px;
   background: var(--dark-green);
   color: var(--white-pure);
   border-radius: 3px;
+  border-style: none;
   cursor: pointer;
   transition-duration: .5s;
 }

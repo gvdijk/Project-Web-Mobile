@@ -9,6 +9,9 @@
         </div>
         <div class="modal-actions">
             <div class="modal-button" @click="loginAction">Inloggen</div>
+            <transition name="fade">
+                <span class="error" v-show="error">{{ errorMsg }}</span>
+            </transition>
         </div>
     </div>
 </template>
@@ -19,24 +22,44 @@ export default {
     data() {
         return {
             username: "",
-            password: ""
+            password: "",
+            error: false,
+            errorMsg: "",
         }
     },
     methods: {
         loginAction() {
-            //TODO: Axios login action
-             console.log(`Login attempt with \r\n username: ${this.username} \r\n password: ${this.password}`);
-             if (/*login succesful */ false) {
+            console.log(`Login attempt with \r\n username: ${this.username} \r\n password: ${this.password}`);
+            // Send login attempt to the api server
+            this.$store.dispatch('loginUser', {user: this.username, pass: this.password})
+            // Login succesfull
+            .then( response => {
                 this.$emit('closeModal');
-                //TODO: Update site content for user on login
-             } else {
-                 // Display login error
-             }
+            })
+            // Something wrong with the login
+            .catch( error => {
+                this.errorMsg = error;
+                this.showError();
+            });
+        },
+        showError(){
+            this.error = true;
+            setTimeout(() => {this.error = false}, 5000);
         }
     }
 }
 </script>
 
 <style scoped>
+    .error{
+        padding: 16px;
+        color: red;
+    }
 
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity 1s;
+    }
+    .fade-enter, .fade-leave-to {
+        opacity: 0;
+    }
 </style>

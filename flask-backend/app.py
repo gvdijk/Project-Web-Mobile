@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, jsonify
-from flask_mysqldb import MySQL
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
@@ -7,7 +6,7 @@ from flask_jwt_extended import (
 from flask_cors import CORS
 import mysql.connector
 import database
-import datetime
+import function
 
 app = Flask(__name__)
 
@@ -19,7 +18,7 @@ database_name = 'mydb'
 database.connect(user, password, host, database_name)
 
 # Configure CORS parameters
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:8080"}})
 
 # Configure JWT parameters
 app.config['JWT_SECRET_KEY'] = 'super-secret-JWT-key'
@@ -39,27 +38,73 @@ def isInt(var):
     except ValueError as e:
         return False
 
+# Authentication
+@app.route('/login', methods=['POST'])
+def login():
+    # Get user details from request body
+    userDetails = request.get_json()
+    name = userDetails.get('name')
+    password = userDetails.get('password')
+
+    # Check if the user details are set
+    if name is None:
+        return jsonify({"error": "Username not specified"}), 400
+    if password is None:
+        return jsonify({"error": "Password not specified"}), 400
+
+    # Check if the user exists
+    user = database.getUserByName(name)
+    if user is None:
+        return jsonify({"error": "User with username " + name + " does not exist"}), 400
+
+    # Check the hashed password against the one provided
+    if function.verify_hashed_password(user['userPass'], password):
+        jwt_token = create_access_token(identity=user['userID'])
+        return jsonify({"id": user['userID'], "jwt_token": jwt_token}), 200
+    else:
+        return jsonify({"error": "Incorrect password"}), 401
+
+
+
 # USERS
 @app.route('/user', methods=['POST'])
 def add_user():
     # Fetch form data
     userDetails = request.get_json()
-    name = userDetails['name']
-    password = userDetails['password']
+    name = userDetails.get('name')
+    password = userDetails.get('password')
 
     # Check if all data is supplied
     if name is None:
         return jsonify({"error": "Username not specified"}), 400
     if password is None:
         return jsonify({"error": "Password not specified"}), 400
+
+    # Strip leading and trailing spaces
+    name = name.strip()
     
-    # TODO: Check for duplicate username
-    # TODO: password validation
-    # TODO: password hashing
-    userid = database.addUser(name, password)
+    # Check is username and password comply to the requirements
+    username_message = function.check_username(name)
+    password_message = function.check_password(password)
+    if(username_message is not "ok"):
+        return jsonify({"error": username_message}), 400
+    elif(password_message is not "ok"):
+        return jsonify({"error": password_message}), 400
+    
+    # Check if the user already exists
+    user = database.getUserByName(name)
+    if user is not None:
+        return "Username already exists"
+
+    # Hash the userpassword for secure storage
+    hashedpass = function.hash_password(password)
+
+    # Add user to the database and return newly created userID
+    userid = database.addUser(name, hashedpass)
     return jsonify({"id": userid}), 201
 
 @app.route('/user/<string:id>', methods=['GET'])
+@jwt_required
 def get_user(id):
     # Check if specified ID is an integer
     if not isInt(id):
@@ -72,6 +117,7 @@ def get_user(id):
         return jsonify({"error": "No results found"}), 404
 
 @app.route('/user/<string:id>/projects', methods=['GET'])
+@jwt_required
 def get_user_projects(id):
     # Check if specified ID is an integer
     if not isInt(id):
@@ -89,6 +135,7 @@ def get_user_projects(id):
         return jsonify({"error": "No results found"}), 404
 
 @app.route('/user/<string:id>/posts', methods=['GET'])
+@jwt_required
 def get_user_posts(id):
     # Check if specified ID is an integer
     if not isInt(id):
@@ -106,6 +153,7 @@ def get_user_posts(id):
         return jsonify({"error": "No results found"}), 404
 
 @app.route('/user/<string:id>/comments', methods=['GET'])
+@jwt_required
 def get_user_comments(id):
     # Check if specified ID is an integer
     if not isInt(id):
@@ -123,6 +171,7 @@ def get_user_comments(id):
         return jsonify({"error": "No results found"}), 404
 
 @app.route('/user', methods=['GET'])
+@jwt_required
 def get_user_name():
     name = request.args.get('name')
     limit = request.args.get('limit')
@@ -140,14 +189,15 @@ def get_user_name():
         return jsonify({"error": "No results found"}), 404
 
 @app.route('/user/<string:id>', methods=['PUT'])
+@jwt_required
 def put_user(id):
     # Check if specified ID is an integer
     if not isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
     # Fetch form data
     userDetails = request.get_json()
-    name = userDetails['name']
-    password = userDetails['password']
+    name = userDetails.get('name')
+    password = userDetails.get('password')
 
     # Check if all data is supplied
     if name is None:
@@ -160,16 +210,25 @@ def put_user(id):
     if user is None:
         return jsonify({"error": "Specified user does not exist"})
 
-    # TODO: Check for duplicate username
-    # TODO: password validation
-    # TODO: password hashing
-    data = database.updateUser(id, name, password)
+    # Check is username and password comply to the requirements
+    username_message = function.check_username(name)
+    password_message = function.check_password(password)
+    if(username_message is not "ok"):
+        return jsonify({"error": username_message}), 400
+    elif(password_message is not "ok"):
+        return jsonify({"error": password_message}), 400
+    
+    # Hash the userpassword for secure storage
+    hashedpass = function.hash_password(password)
+
+    data = database.updateUser(id, name, hashedpass)
     if data is not None:
         return jsonify(data), 200
     else:
         return jsonify({"error": "No results found"}), 404
     
 @app.route('/user/<string:id>', methods=['DELETE'])
+@jwt_required
 def del_user(id):
     # Check if specified ID is an integer
     if not isInt(id):
@@ -190,13 +249,14 @@ def del_user(id):
 
 # Projects
 @app.route('/project', methods=['POST'])
+@jwt_required
 def add_project():
     # Fetch form data
     projectDetails = request.get_json()
-    name = projectDetails['name']
-    description = projectDetails['description']
-    visibility = projectDetails['visibility']
-    owner = projectDetails['ownerID']
+    name = projectDetails.get('name')
+    description = projectDetails.get('description')
+    visibility = projectDetails.get('visibility')
+    owner = projectDetails.get('ownerID')
 
     # Check if all data is supplied correctly
     if name is None:
@@ -217,6 +277,7 @@ def add_project():
     return jsonify({"id": projectid}), 201
 
 @app.route('/project/<string:id>/posts', methods=['POST'])
+@jwt_required
 def add_post(id):
     # Check if specified ID is an integer
     if not isInt(id):
@@ -224,9 +285,9 @@ def add_post(id):
 
     # Fetch form data
     projectDetails = request.get_json()
-    title = projectDetails['title']
-    content = projectDetails['content']
-    owner = projectDetails['userID']
+    title = projectDetails.get('title')
+    content = projectDetails.get('content')
+    owner = projectDetails.get('userID')
 
     # Check if all data is supplied
     if title is None:
@@ -248,11 +309,12 @@ def add_post(id):
     return jsonify({"id": postid}), 201
 
 @app.route('/project/<string:id>/users', methods=['POST'])
+@jwt_required
 def add_project_user(id):
     # Fetch form data
     projectDetails = request.get_json()
-    user = projectDetails['user']
-    role = projectDetails['role']
+    user = projectDetails.get('user')
+    role = projectDetails.get('role')
 
     # Check if all data is supplied
     if user is None:
@@ -333,6 +395,7 @@ def get_project_post(id):
         return jsonify({"error": "No results found"}), 404
 
 @app.route('/project/<string:id>', methods=['PUT'])
+@jwt_required
 def put_project(id):
     # Check if specified ID is an integer
     if not isInt(id):
@@ -340,9 +403,9 @@ def put_project(id):
 
     # Fetch form data
     projectDetails = request.get_json()
-    title = projectDetails['title']
-    content = projectDetails['content']
-    visibility = projectDetails['visibility']
+    title = projectDetails.get('title')
+    content = projectDetails.get('content')
+    visibility = projectDetails.get('visibility')
 
     # Check if all data is supplied
     if title is None:
@@ -366,6 +429,7 @@ def put_project(id):
         return jsonify({"error": "No results found"}), 404
 
 @app.route('/project/<string:id>/users', methods=['PUT'])
+@jwt_required
 def put_project_user(id):
     # Check if specified ID is an integer
     if not isInt(id):
@@ -373,8 +437,8 @@ def put_project_user(id):
 
     # Fetch form data
     projectDetails = request.get_json()
-    user = projectDetails['user']
-    role = projectDetails['role']
+    user = projectDetails.get('user')
+    role = projectDetails.get('role')
 
     # Check if all data is supplied
     if user is None:
@@ -396,6 +460,7 @@ def put_project_user(id):
         return jsonify({"error": "No results found"}), 404
 
 @app.route('/project/<string:id>', methods=['DELETE'])
+@jwt_required
 def del_project(id):
     # Check if specified ID is an integer
     if not isInt(id):
@@ -413,6 +478,7 @@ def del_project(id):
         return jsonify({"erorr": "Something went wrong deleting the project"}), 500
 
 @app.route('/project/<string:id>/users', methods=['DELETE'])
+@jwt_required
 def del_project_user(id):
     # Check if specified ID is an integer
     if not isInt(id):
@@ -420,7 +486,7 @@ def del_project_user(id):
 
     # Fetch form data
     projectDetails = request.get_json()
-    user = projectDetails['user']
+    user = projectDetails.get('user')
 
     if user is None:
         return jsonify({"error": "Projectuser id not specified"}), 400
@@ -440,6 +506,7 @@ def del_project_user(id):
 
 # POSTS
 @app.route('/post/<string:id>/comments', methods=['POST'])
+@jwt_required
 def add_comment(id):
     # Check if specified ID is an integer
     if not isInt(id):
@@ -447,9 +514,9 @@ def add_comment(id):
 
     # Fetch form data
     postDetails = request.get_json()
-    content = postDetails['content']
-    parent = postDetails['parent']
-    userID = postDetails['userID']
+    content = postDetails.get('content')
+    parent = postDetails.get('parent')
+    userID = postDetails.get('userID')
 
     if content is None:
         return jsonify({"error": "Comment content not specified"}), 400
@@ -488,6 +555,7 @@ def get_post_comments(id):
         return jsonify({"error": "No results found"}), 404
 
 @app.route('/post/<string:id>', methods=['PUT'])
+@jwt_required
 def put_post(id):
     # Check if specified ID is an integer
     if not isInt(id):
@@ -495,8 +563,8 @@ def put_post(id):
 
     # Fetch form data
     postDetails = request.get_json()
-    title = postDetails['title']
-    content = postDetails['content']
+    title = postDetails.get('title')
+    content = postDetails.get('content')
 
     if content is None:
         return jsonify({"error": "Post content not specified"}), 400
@@ -511,6 +579,7 @@ def put_post(id):
         return jsonify({"error": "No results found"}), 404
 
 @app.route('/post/<string:id>', methods=['DELETE'])
+@jwt_required
 def del_post(id): 
     # Check if specified ID is an integer
     if not isInt(id):
@@ -532,6 +601,7 @@ def del_post(id):
 
 # COMMENTS
 @app.route('/comment/<string:id>', methods=['PUT'])
+@jwt_required
 def put_comment(id):
     # Check if specified ID is an integer
     if not isInt(id):
@@ -539,7 +609,7 @@ def put_comment(id):
 
     # Fetch form data
     commentDetails = request.get_json()
-    content = commentDetails['content']
+    content = commentDetails.get('content')
 
     if content is None:
         return jsonify({"error": "Comment content not specified"}), 400

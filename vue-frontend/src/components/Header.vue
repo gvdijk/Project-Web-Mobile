@@ -14,8 +14,9 @@
                 <input type="search" name="headerSearch" id="headerSearch" placeholder="Doorzoek de website">
             </div>
             <div class="account-wrapper">
-                <span class=account-label @click="$emit('requestModal', 'login', {})">Inloggen</span>
-                <router-link class=account-label to="/register"><a>Registreren</a></router-link>
+                <span v-if="!authenticated" class=account-label @click="$emit('requestModal', 'login', {})">Inloggen</span>
+                <span v-if="authenticated" class=account-label @click="logout">Uitloggen</span>
+                <router-link v-if="!authenticated" class=account-label to="/register"><a>Registreren</a></router-link>
             </div>
         </div>
     </header>
@@ -26,13 +27,21 @@ export default {
     name: 'Header',
     methods: {
         login() { },
-        toggleMenu() { this.menuCollapse = !this.menuCollapse; }
+        toggleMenu() { this.menuCollapse = !this.menuCollapse; },
+        logout(){
+            this.$store.dispatch('logoutUser')
+        },
     },
     data() {
         return {
             menuCollapse: true
         }
-    }
+    },
+    computed: {
+        authenticated(){
+            return this.$store.getters.authenticated;
+        },
+  }
 }
 </script>
 
