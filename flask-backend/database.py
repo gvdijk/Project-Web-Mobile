@@ -230,9 +230,9 @@ def deleteProjectUser(projectID, userID):
         return False
 
 # -----------------------------------------Post Related Functions---------------------------------------- #
-def addPostComment(content, parentID, userID):
-    sql = "INSERT INTO comment(commentContent, commentUser, commentPost) VALUES(%s, " +  userID + ", " + parentID + ")"
-    data = (content,)
+def addPostComment(content, parentID, userID, id):
+    sql = "INSERT INTO comment(commentContent, commentUser, commentParent, commentPost) VALUES(%s, %s, %s, %s)"
+    data = (content,userID,parentID,id)
     cur.execute(sql, data)
     connection.commit()
     return cur.lastrowid
@@ -257,9 +257,9 @@ def getPostComments(id):
     else:
         return results
 
-def updatePost(id, title, content):
-    sql = "UPDATE post SET postTitle = %s, postContent = %s WHERE postID = " + id
-    data = (title, content)
+def updatePost(id, content):
+    sql = "UPDATE post SET postContent = %s WHERE postID = " + id
+    data = (content,)
     cur.execute(sql, data)
     connection.commit()
     return getPostByID(id)
@@ -275,6 +275,18 @@ def deletePost(id):
         return False
 
 # ---------------------------------------Comment Related Functions--------------------------------------- #
+
+
+def getCommentByID(id):
+    sql = "SELECT * FROM comment WHERE commentDeleted = 0 AND commentPost = " + id
+    cur.execute(sql)
+    results = cur.fetchone()
+
+    if (results is not None and len(results) == 0):
+        return None
+    else:
+        return results
+
 def updateComment(id, content):
     sql = "UPDATE comment SET commentContent = %s WHERE commentID = " + id
     data = (content,)
