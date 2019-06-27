@@ -145,10 +145,13 @@ def get_user_posts(id):
     if data is None:
         return jsonify({"error": "No results found"}), 404
     else:
+        userPosts = []
         for post in data:
             project = database.getProjectByID(str(post['postProject']))
             post['project'] = project
-        return jsonify(data), 200
+            if project is not None:
+                userPosts.append(post)
+        return jsonify(userPosts), 200
 
 @app.route('/user/<string:id>/comments', methods=['GET'])
 @jwt_required
@@ -166,10 +169,13 @@ def get_user_comments(id):
     if data is None:
         return jsonify({"error": "No results found"}), 404
     else:
+        userComments = []
         for comment in data:
             post = database.getPostByID(str(comment['commentPost']))
             comment['post'] = post
-        return jsonify(data), 200
+            if post is not None:
+                userComments.append(comment)
+        return jsonify(userComments), 200
 
 @app.route('/user', methods=['GET'])
 @jwt_required

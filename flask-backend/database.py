@@ -361,6 +361,11 @@ def getPostByID(id):
     cur.close()
     connection.close()
 
+    if results is not None:
+        project = getProjectByID(str(results['postProject']))
+        if project is None:
+            results = None
+
     if (results is not None and len(results) == 0):
         return None
     else:
