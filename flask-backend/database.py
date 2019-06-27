@@ -1,27 +1,34 @@
 import mysql.connector
+from mysql.connector.pooling import MySQLConnectionPool
 
-connection = None
-cur = None
+connectionPool = None
 
-def connect(user, password, host, database):
-    global connection
-    global cur
-    connection = mysql.connector.connect(
-                                    user=user, password=password,
-                                    host=host,
-                                    database=database)
-    cur = connection.cursor(dictionary=True)
+def init(user, password, host, database):
+    global connectionPool
+    dbconfig = {
+        "host": host,
+        "user": user,
+        "password": password,
+        "database": database
+    }
+    connectionPool = MySQLConnectionPool(pool_name='connection_pool',
+                                        pool_size=10,
+                                        pool_reset_session=True,
+                                        **dbconfig)
 
-def close_connection():
-    cur.close()
-    connection.close()
+def getConnection():
+    return connectionPool.get_connection()
 
 # -----------------------------------------Login Related Functions--------------------------------------- #
 def getUserByName(name):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "SELECT * FROM user WHERE userDeleted = 0 AND userName = %s"
     data = (name,)
     cur.execute(sql, data)
     results = cur.fetchone()
+    cur.close()
+    connection.close()
 
     if (results is not None and len(results) == 0):
         return None
@@ -30,9 +37,27 @@ def getUserByName(name):
 
 # -----------------------------------------User Related Functions---------------------------------------- #
 def getUserByID(id):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "SELECT * FROM user WHERE userDeleted = 0 AND userID = " + id
     cur.execute(sql)
     results = cur.fetchone()
+    cur.close()
+    connection.close()
+
+    if (results is not None and len(results) == 0):
+        return None
+    else:
+        return results
+
+def getUserInfo(id):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
+    sql = "SELECT userCreated, userID, userName, userPicture FROM user WHERE userDeleted = 0 AND userID = " + id
+    cur.execute(sql)
+    results = cur.fetchone()
+    cur.close()
+    connection.close()
 
     if (results is not None and len(results) == 0):
         return None
@@ -40,16 +65,25 @@ def getUserByID(id):
         return results
 
 def addUser(name, password):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "INSERT INTO user(userName, userPass) VALUES(%s, %s)"
     data = (name, password)
     cur.execute(sql, data)
     connection.commit()
-    return cur.lastrowid
+    lastID = cur.lastrowid
+    cur.close()
+    connection.close()
+    return lastID
 
 def getUserProjects(id):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "SELECT * FROM projectuser WHERE projectuserDeleted = 0 AND User_userID = " + id
     cur.execute(sql)
     results = cur.fetchall()
+    cur.close()
+    connection.close()
 
     if (results is not None and len(results) == 0):
         return None
@@ -57,9 +91,13 @@ def getUserProjects(id):
         return results
 
 def getUserPosts(id):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "SELECT * FROM post WHERE postDeleted = 0 AND postUser = " + id
     cur.execute(sql)
     results = cur.fetchall()
+    cur.close()
+    connection.close()
 
     if (results is not None and len(results) == 0):
         return None
@@ -67,9 +105,13 @@ def getUserPosts(id):
         return results
 
 def getUserComments(id):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "SELECT * FROM comment WHERE commentDeleted = 0 AND commentUser = " + id
     cur.execute(sql)
     results = cur.fetchall()
+    cur.close()
+    connection.close()
 
     if (results is not None and len(results) == 0):
         return None
@@ -77,6 +119,8 @@ def getUserComments(id):
         return results
 
 def getUser(name, limit, offset):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "SELECT userID, userName, userPicture, userCreated FROM user "\
     "WHERE userDeleted = 0"
     data = ()
@@ -91,6 +135,8 @@ def getUser(name, limit, offset):
         sql += " ORDER BY userName"
     cur.execute(sql, data)
     results = cur.fetchall()
+    cur.close()
+    connection.close()
 
     if (results is not None and len(results) == 0):
         return None
@@ -98,45 +144,73 @@ def getUser(name, limit, offset):
         return results
 
 def updateUser(id, name, password):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "UPDATE user SET userName = %s, userPass = %s WHERE userID = " + id
     data = (name, password)
     cur.execute(sql, data)
     connection.commit()
-    return getUserByID(id)
+    user = getUserByID(id)
+    cur.close()
+    connection.close()
+    return user
 
 def deleteUser(id):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     try:
         sql = "UPDATE user SET userDeleted = true WHERE userID = " + id
         cur.execute(sql)
         connection.commit()
+        cur.close()
+        connection.close()
         return True
     except Exception as e:
+        cur.close()
+        connection.close()
         print(e)
         return False
 
 # ---------------------------------------Project Related Functions--------------------------------------- #
 def addProject(name, description, visibility, owner):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "INSERT INTO project(projectName, projectDescription, projectVisibility, projectOwner) VALUES(%s, %s, %s, %s)"
     data = (name, description, visibility, owner)
     cur.execute(sql, data)
     connection.commit()
-    return cur.lastrowid
+    lastID = cur.lastrowid
+    cur.close()
+    connection.close()
+    return lastID
 
 def addProjectPost(title, content, owner, projectID):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "INSERT INTO post(postTitle, postContent, postUser, postProject) VALUES(%s, %s, %s, %s)"
     data = (title, content, owner, projectID)
     cur.execute(sql, data)
     connection.commit()
-    return cur.lastrowid
+    lastID = cur.lastrowid
+    cur.close()
+    connection.close()
+    return lastID
 
 def addProjectUser(userID, projectID, role):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "INSERT INTO projectuser(User_userID, Project_projectID, projectuserRole) VALUES(%s, %s, %s)"
     data = (userID, projectID, role)
     cur.execute(sql, data)
     connection.commit()
-    return cur.lastrowid
+    lastID = cur.lastrowid
+    cur.close()
+    connection.close()
+    return lastID
 
 def getProjects(name, limit, offset):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "SELECT * FROM project "\
     "WHERE projectDeleted = 0 AND (projectVisibility = 'PUBLIC' OR projectVisibility = 'RESTRICTED')"
     data = ()
@@ -151,6 +225,8 @@ def getProjects(name, limit, offset):
         sql += " ORDER BY projectName"
     cur.execute(sql, data)
     results = cur.fetchall()
+    cur.close()
+    connection.close()
 
     if (results is not None and len(results) == 0):
         return None
@@ -159,9 +235,13 @@ def getProjects(name, limit, offset):
 
 
 def getProjectByID(id):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "SELECT * FROM project WHERE projectDeleted = 0 AND projectID = " + id
     cur.execute(sql)
     results = cur.fetchone()
+    cur.close()
+    connection.close()
 
     if (results is not None and len(results) == 0):
         return None
@@ -169,9 +249,13 @@ def getProjectByID(id):
         return results
 
 def getProjectUsers(id):
-    sql = "SELECT User_userID FROM projectuser WHERE projectuserDeleted = 0 AND Project_projectID = " + id
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
+    sql = "SELECT * FROM projectuser WHERE projectuserDeleted = 0 AND Project_projectID = " + id
     cur.execute(sql)
     results = cur.fetchall()
+    cur.close()
+    connection.close()
 
     if (results is not None and len(results) == 0):
         return None
@@ -179,6 +263,8 @@ def getProjectUsers(id):
         return results
 
 def getProjectPosts(id, limit, offset):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "SELECT * FROM post WHERE postDeleted = 0 AND postProject = " + id
     if limit is not None:
         sql += " ORDER BY postCreated LIMIT " + limit
@@ -188,6 +274,8 @@ def getProjectPosts(id, limit, offset):
         sql += " ORDER BY postCreated"
     cur.execute(sql)
     results = cur.fetchall()
+    cur.close()
+    connection.close()
 
     if (results is not None and len(results) == 0):
         return None
@@ -195,52 +283,83 @@ def getProjectPosts(id, limit, offset):
         return results
 
 def updateProject(id, title, content, visibility):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "UPDATE project SET projectName = %s, projectDescription = %s, projectVisibility = %s WHERE projectID = " + id
     data = (title, content, visibility)
     cur.execute(sql, data)
     connection.commit()
-    return getProjectByID(id)
+    project = getProjectByID(id)
+    cur.close()
+    connection.close()
+    return project
 
 def updateProjectUser(projectID, userID, role):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "UPDATE projectuser SET projectuserRole = %s WHERE User_userID = " + userID + " AND Project_projectID = " + projectID
     data = (role,)
     cur.execute(sql, data)
     connection.commit()
     cur.execute("SELECT * FROM projectuser WHERE projectuserDeleted = 0 AND Project_projectID = " + projectID + " AND User_userID = " + userID)
-    return cur.fetchone()
+    result = cur.fetchone()
+    cur.close()
+    connection.close()
+    return result
 
 def deleteProject(id):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     try:
         sql = "UPDATE project SET projectDeleted = true WHERE projectID = " + id
         cur.execute(sql)
         connection.commit()
+        cur.close()
+        connection.close()
         return True
     except Exception as e:
+        cur.close()
+        connection.close()
         print(e)
         return False
 
 def deleteProjectUser(projectID, userID):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     try:
         sql = "UPDATE projectuser SET projectuserDeleted = true WHERE Project_projectID = " + projectID + " AND User_userID = " + userID
         cur.execute(sql)
         connection.commit()
+        cur.close()
+        connection.close()
         return True
     except Exception as e:
+        cur.close()
+        connection.close()
         print(e)
         return False
 
 # -----------------------------------------Post Related Functions---------------------------------------- #
-def addPostComment(content, parentID, userID, id):
+def addPostComment(content, parentID, userID):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "INSERT INTO comment(commentContent, commentUser, commentParent, commentPost) VALUES(%s, %s, %s, %s)"
     data = (content,userID,parentID,id)
     cur.execute(sql, data)
     connection.commit()
-    return cur.lastrowid
+    lastID = cur.lastrowid
+    cur.close()
+    connection.close()
+    return lastID
 
 def getPostByID(id):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "SELECT * FROM post WHERE postDeleted = 0 AND postID = " + id
     cur.execute(sql)
     results = cur.fetchone()
+    cur.close()
+    connection.close()
 
     if (results is not None and len(results) == 0):
         return None
@@ -248,39 +367,56 @@ def getPostByID(id):
         return results
 
 def getPostComments(id):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "SELECT * FROM comment WHERE commentDeleted = 0 AND commentPost = " + id
     cur.execute(sql)
     results = cur.fetchall()
+    cur.close()
+    connection.close()
 
     if (results is not None and len(results) == 0):
         return None
     else:
         return results
 
-def updatePost(id, content):
+def updatePost(id, title, content):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "UPDATE post SET postContent = %s WHERE postID = " + id
     data = (content,)
     cur.execute(sql, data)
     connection.commit()
-    return getPostByID(id)
+    result = getPostByID(id)
+    cur.close()
+    connection.close()
+    return result
 
 def deletePost(id):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     try:
         sql = "UPDATE post SET postDeleted = true WHERE postID = " + id
         cur.execute(sql)
         connection.commit()
+        cur.close()
+        connection.close()
         return True
     except Exception as e:
+        cur.close()
+        connection.close()
         print(e)
         return False
 
 # ---------------------------------------Comment Related Functions--------------------------------------- #
-
-
 def getCommentByID(id):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "SELECT * FROM comment WHERE commentDeleted = 0 AND commentPost = " + id
     cur.execute(sql)
     results = cur.fetchone()
+    cur.close()
+    connection.close()
 
     if (results is not None and len(results) == 0):
         return None
@@ -288,9 +424,30 @@ def getCommentByID(id):
         return results
 
 def updateComment(id, content):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
     sql = "UPDATE comment SET commentContent = %s WHERE commentID = " + id
     data = (content,)
     cur.execute(sql, data)
     connection.commit()
     cur.execute("SELECT * FROM comment WHERE commentDeleted = 0 AND commentID = " + id)
-    return cur.fetchone()
+    result = cur.fetchone()
+    cur.close()
+    connection.close()
+    return result
+
+def deleteComment(id):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
+    try:
+        sql = "UPDATE comment SET commentContent = 'Deze reactie is verwijderd', commentState = 'DELETED' WHERE commentID = " + id
+        cur.execute(sql)
+        connection.commit()
+        cur.close()
+        connection.close()
+        return True
+    except Exception as e:
+        cur.close()
+        connection.close()
+        print(e)
+        return False

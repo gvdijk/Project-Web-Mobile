@@ -15,7 +15,7 @@ host = 'localhost'
 user = 'webapp'
 password = 'admin' # Super encripted and safe password usage
 database_name = 'newdb'
-database.connect(user, password, host, database_name)
+database.init(user, password, host, database_name)
 
 # Configure CORS parameters
 CORS(app, resources={r"/*": {"origins": "http://localhost:8080"}})
@@ -29,14 +29,6 @@ JWTManager(app)
 allowed_project_visibilities = ("PUBLIC", "RESTRICTED", "PRIVATE")
 allowed_post_states = ("VISIBLE", "ARCHIVED", "DELETED")
 allowed_projectUser_states = ("OWNER", "USER", "ADMIN", "PENDING", "INVITED")
-
-# Helper function to check if a String represents an integer or not
-def isInt(var):
-    try:
-        int(var)
-        return True
-    except ValueError as e:
-        return False
 
 # Authentication
 @app.route('/login', methods=['POST'])
@@ -107,7 +99,7 @@ def add_user():
 @jwt_required
 def get_user(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     data = database.getUserByID(id)
@@ -120,7 +112,7 @@ def get_user(id):
 @jwt_required
 def get_user_projects(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Check if user actually exists
@@ -141,7 +133,7 @@ def get_user_projects(id):
 @jwt_required
 def get_user_posts(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Check if user actually exists
@@ -150,16 +142,19 @@ def get_user_posts(id):
         return jsonify({"error": "Specified user does not exist"})
 
     data = database.getUserPosts(id)
-    if data is not None:
-        return jsonify(data), 200
-    else:
+    if data is None:
         return jsonify({"error": "No results found"}), 404
+    else:
+        for post in data:
+            project = database.getProjectByID(str(post['postProject']))
+            post['project'] = project
+        return jsonify(data), 200
 
 @app.route('/user/<string:id>/comments', methods=['GET'])
 @jwt_required
 def get_user_comments(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Check if user actually exists
@@ -168,10 +163,13 @@ def get_user_comments(id):
         return jsonify({"error": "Specified user does not exist"})
 
     data = database.getUserComments(id)
-    if data is not None:
-        return jsonify(data), 200
-    else:
+    if data is None:
         return jsonify({"error": "No results found"}), 404
+    else:
+        for comment in data:
+            post = database.getPostByID(str(comment['commentPost']))
+            comment['post'] = post
+        return jsonify(data), 200
 
 @app.route('/user', methods=['GET'])
 @jwt_required
@@ -180,9 +178,9 @@ def get_user_name():
     limit = request.args.get('limit')
     offset = request.args.get('offset')
 
-    if limit is not None and not isInt(limit):
+    if limit is not None and not function.isInt(limit):
         return jsonify({"error": "limit is not an integer"}), 400
-    if offset is not None and not isInt(offset):
+    if offset is not None and not function.isInt(offset):
         return jsonify({"error": "offset is not an integer"}), 400
     
     data = database.getUser(name, limit, offset)
@@ -195,7 +193,7 @@ def get_user_name():
 @jwt_required
 def put_user(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
     # Fetch form data
     userDetails = request.get_json()
@@ -234,7 +232,7 @@ def put_user(id):
 @jwt_required
 def del_user(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
     
     # Check if user actually exists
@@ -272,7 +270,7 @@ def add_project():
             return jsonify({"error": "Project visibility not a legal value"}), 400
     if owner is None:
         return jsonify({"error": "Project owner not specified"}), 400
-    if not isInt(owner):
+    if not function.isInt(owner):
         return jsonify({"error": "ownerID should be string"})
     
     # Add project to the database
@@ -283,7 +281,7 @@ def add_project():
 @jwt_required
 def add_post(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Fetch form data
@@ -299,7 +297,7 @@ def add_post(id):
         return jsonify({"error": "Post content not specified"}), 400
     if owner is None:
         return jsonify({"error": "Project owner not specified"}), 400
-    if not isInt(owner):
+    if not function.isInt(owner):
         return jsonify({"error": "ownerID should be string"})
     
     # Check if project actually exists
@@ -341,35 +339,38 @@ def get_project():
     limit = request.args.get('limit')
     offset = request.args.get('offset')
 
-    if limit is not None and not isInt(limit):
+    if limit is not None and not function.isInt(limit):
         return jsonify({"error": "limit is not an integer"}), 400
-    if offset is not None and not isInt(offset):
+    if offset is not None and not function.isInt(offset):
         return jsonify({"error": "offset is not an integer"}), 400
-    
-    # TODO: Return nested user objects
+
     data = database.getProjects(name, limit, offset)
-    if data is not None:
-        return jsonify(data), 200
-    else:
+    if data is None:
         return jsonify({"error": "No results found"}), 404
+    else:
+        for project in data:
+            user = database.getUserInfo(str(project['projectOwner']))
+            project['user'] = user
+        return jsonify(data), 200
 
 @app.route('/project/<string:id>', methods=['GET'])
 def get_project_id(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
-    # TODO: Return nested user objects
     data = database.getProjectByID(id)
-    if data is not None:
-        return jsonify(data), 200
-    else:
+    if data is None:
         return jsonify({"error": "No results found"}), 404
+    else:
+        user = database.getUserInfo(str(data['projectOwner']))
+        data['user'] = user
+        return jsonify(data), 200
 
 @app.route('/project/<string:id>/users', methods=['GET'])
 def get_project_users(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Check if project actually exists
@@ -377,35 +378,39 @@ def get_project_users(id):
     if project is None:
         return jsonify({"error": "Specified project does not exist"})
         
-    # TODO: Return nested user objects + roles
     data = database.getProjectUsers(id)
-    if data is not None:
-        return jsonify(data), 200
-    else:
+    if data is None:
         return jsonify({"error": "No results found"}), 404
+    else:
+        for projectuser in data:
+            user = database.getUserInfo(str(projectuser['User_userID']))
+            projectuser['user'] = user
+        return jsonify(data), 200
 
 @app.route('/project/<string:id>/posts', methods=['GET'])
 def get_project_post(id):
     limit = request.args.get('limit')
     offset = request.args.get('offset')
 
-    if limit is not None and not isInt(limit):
+    if limit is not None and not function.isInt(limit):
         return jsonify({"error": "limit is not an integer"}), 400
-    if offset is not None and not isInt(offset):
+    if offset is not None and not function.isInt(offset):
         return jsonify({"error": "offset is not an integer"}), 400
 
-    # TODO: Return nested user objects
     data = database.getProjectPosts(id, limit, offset)
-    if data is not None:
-        return jsonify(data), 200
-    else:
+    if data is None:
         return jsonify({"error": "No results found"}), 404
+    else:
+        for projectpost in data:
+            user = database.getUserInfo(str(projectpost['postUser']))
+            projectpost['user'] = user
+        return jsonify(data), 200
 
 @app.route('/project/<string:id>', methods=['PUT'])
 @jwt_required
 def put_project(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Fetch form data
@@ -439,7 +444,7 @@ def put_project(id):
 @jwt_required
 def put_project_user(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Fetch form data
@@ -470,7 +475,7 @@ def put_project_user(id):
 @jwt_required
 def del_project(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
     
     # Check if project actually exists
@@ -488,7 +493,7 @@ def del_project(id):
 @jwt_required
 def del_project_user(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Fetch form data
@@ -516,7 +521,7 @@ def del_project_user(id):
 @jwt_required
 def add_comment(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Fetch form data
@@ -548,35 +553,38 @@ def add_comment(id):
 @app.route('/post/<string:id>', methods=['GET'])
 def get_post(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
-    # TODO: Return nested user objects
     data = database.getPostByID(id)
-    if data is not None:
-        return jsonify(data), 200
-    else:
+    if data is None:
         return jsonify({"error": "No results found"}), 404
+    else:
+        user = database.getUserInfo(str(data['postUser']))
+        data['user'] = user
+        return jsonify(data), 200
 
 @app.route('/post/<string:id>/comments', methods=['GET'])
 def get_post_comments(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
     
     data = database.getPostComments(id)
-    # TODO: return nested 
-    # TODO: Return nested user objects
-    if data is not None:
-        return jsonify(data), 200
-    else:
+    if data is None:
         return jsonify({"error": "No results found"}), 404
+    else:
+        for comment in data:
+            user = database.getUserInfo(str(comment['commentUser']))
+            comment['user'] = user
+        data = function.nest_comments(data)
+        return jsonify(data), 200
 
 @app.route('/post/<string:id>', methods=['PUT'])
 @jwt_required
 def put_post(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Fetch form data
@@ -597,7 +605,7 @@ def put_post(id):
 @jwt_required
 def del_post(id): 
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Check if post actually exists
@@ -619,7 +627,7 @@ def del_post(id):
 @jwt_required
 def put_comment(id):
     # Check if specified ID is an integer
-    if not isInt(id):
+    if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
 
     # Fetch form data
@@ -636,10 +644,25 @@ def put_comment(id):
     else:
         return jsonify({"error": "No results found"}), 404
 
+@app.route('/comment/<string:id>', methods=['DELETE'])
+@jwt_required
+def delete_comment(id):
+    # Check if specified ID is an integer
+    if not function.isInt(id):
+        return jsonify({"error": "id is not an integer"}), 400
 
-
-
-
+    # Check if comment actually exists
+    comment = database.getCommentByID(id)
+    if comment is None:
+        return jsonify({"error": "Specified comment does not exist"})
+    
+    # Delete comment
+    data = database.deleteComment(id)
+    if data is not None:
+        return jsonify({"Info": "Comment deleted successfully"}), 200
+    else:
+        return jsonify({"error": "No results found"}), 404
+    
 
 if(__name__ == '__main__'):
     app.run(debug=True)

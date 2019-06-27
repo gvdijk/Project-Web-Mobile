@@ -4,6 +4,14 @@ import hashlib
 import binascii
 import database
 
+# Helper function to check if a String represents an integer or not
+def isInt(var):
+    try:
+        int(var)
+        return True
+    except ValueError as e:
+        return False
+
 # Hashes a password using HMAC-SHA512 for cryptographically secure storing
 # Credit to https://www.vitoshacademy.com/hashing-passwords-in-python/ for the code implementation
 def hash_password(password):
@@ -53,3 +61,13 @@ def check_password(password):
         return "Password must contain at least one digit"
     else:
         return "ok"
+
+def nest_comments(comments):
+    root = { 'top': { 'children': [] } }
+    for comment in comments:
+        parentID = comment['commentParent'] or 'top'
+        root.setdefault(parentID, { 'children': [] })
+        root.setdefault(comment['commentID'], { 'children': [] })
+        root[comment['commentID']].update(comment)
+        root[parentID]['children'].append(root[comment['commentID']])
+    return root['top']['children']
