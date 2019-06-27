@@ -20,8 +20,7 @@ export default {
     data() {
         return {
             extended: false,
-            usersPlaceholder: 'x',
-            createdPlaceholder: 'dd/mm/yyyy',
+            usersPlaceholder: 'x'
         }
     },
     // TODO: See if extentiosion is necessary

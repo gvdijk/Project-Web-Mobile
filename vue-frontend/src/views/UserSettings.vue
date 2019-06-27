@@ -108,24 +108,24 @@ export default {
     },
     methods: {
         fetchUser(){
-            this.$store.dispatch('getUserByID', this.userID)
+            this.$store.dispatch('getUser')
             .then(response => this.user = response)
             .catch(error => console.log(error.response))
         },
         fetchUserProjects(){
-            this.$store.dispatch('getUserProjects', this.userID)
+            this.$store.dispatch('getUserProjects')
             .then(response => this.projects = response)
-            .catch(error => console.log(error))
+            .catch(error => console.log(error.response))
         },
         fetchUserPosts(){
-            this.$store.dispatch('getUserPosts', this.userID)
-            .then(response => this.posts = response)
-            .catch(error => console.log(error))
+            this.$store.dispatch('getUserPosts')
+            .then(response => { this.posts = response; console.log(response) })
+            .catch(error => console.log(error.response))
         },
         fetchUserComments(){
-            this.$store.dispatch('getUserComments', this.userID)
-            .then(response => this.comments = response)
-            .catch(error => console.log(error))
+            this.$store.dispatch('getUserComments')
+            .then(response => { this.comments = response; console.log(response) })
+            .catch(error => console.log(error.response))
         },
         updateDetails(){
             this.$store.dispatch('updateProject', {

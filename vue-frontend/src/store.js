@@ -86,11 +86,10 @@ export default new Vuex.Store({
                 .catch(error => reject(error))
             )
         },
-        getUserByID(context, userID){
+        getUser(context){
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
-            console.log(userID);
             return new Promise((resolve, reject) => 
-                axios.get(`/user/${userID}`)
+                axios.get(`/user/${context.state.userID}`)
                 .then(response => resolve(response.data))
                 .catch(error => reject(error))
             )
