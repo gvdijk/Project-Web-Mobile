@@ -3,7 +3,7 @@
         <div class="projects-view">
             <ProjectTile v-for="project in projects" :key="project.id" v-bind:project="project" />
         </div>
-        <PageSelector v-bind:visiblePages="3" v-bind:totalEntries="projects.length" v-bind:entriesPerPage="5" v-on:pageChanged="pageChanged"/>
+        <PageSelector v-bind:visiblePages="3" v-bind:totalEntries="count" v-bind:entriesPerPage="limit" v-on:pageChanged="pageChanged"/>
     </div>
 </template>
 
@@ -20,28 +20,27 @@ export default {
     data() {
         return {
             projects: [],
-            startIndex: 0,
-            endIndex: 0
+            offset: 0,
+            limit: 5,
+            count: 0,
         }
     },
     methods: {
-        fetchProjects(){
-            this.$store.dispatch('getProjects')
-            .then( response => this.projects = response)
+        fetchProjects(offset, limit){
+            this.$store.dispatch('getProjects', {offset: offset, limit: limit})
+            .then( response => {
+                this.projects = response.data;
+                this.count = response.count
+            })
             .catch( error => console.log(error))
         },
-        pageChanged(startIndex, endIndex){
-            this.startIndex = startIndex;
-            this.endIndex = endIndex;
-        },
-    },
-    computed: {
-        paginatedProjects(){
-            return this.projects.slice(this.startIndex, this.endIndex);
+        pageChanged(offset){
+            this.offset = offset;
+            this.fetchProjects(this.offset, this.limit);
         },
     },
     created(){
-        this.fetchProjects();
+        this.fetchProjects(this.offset, this.limit);
     }
 }
 </script>

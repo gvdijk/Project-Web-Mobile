@@ -41,9 +41,8 @@ export default {
             }
         },
         pageChanged(){
-            let startIndex = (this.currentPage - 1) * this.entriesPerPage;
-            let endIndex = ((startIndex + this.entriesPerPage) > this.totalEntries) ? this.totalEntries-1 : startIndex + this.entriesPerPage;
-            this.$emit('pageChanged', startIndex, endIndex);
+            let offset= (this.currentPage - 1) * this.entriesPerPage;
+            this.$emit('pageChanged', offset);
         }
     },
     computed: {
