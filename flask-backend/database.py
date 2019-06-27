@@ -412,7 +412,7 @@ def deletePost(id):
 def getCommentByID(id):
     connection = getConnection()
     cur = connection.cursor(dictionary=True)
-    sql = "SELECT * FROM comment WHERE commentDeleted = 0 AND commentID = " + id
+    sql = "SELECT * FROM comment WHERE commentDeleted = 0 AND commentPost = " + id
     cur.execute(sql)
     results = cur.fetchone()
     cur.close()
