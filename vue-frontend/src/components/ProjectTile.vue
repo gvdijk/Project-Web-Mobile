@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
     name: 'ProjectTile',
     data() {
@@ -28,7 +29,21 @@ export default {
         viewLess() { this.extended = false; },
         viewMore() { this.extended = true; }
     },
-    props: ['project']
+    props: ['project'],
+    computed: {
+        ...mapGetters(["userProjects"]),
+        projectRelation() { 
+            if (this.project.projectID in (this.userProjects['projectID'])) {
+                console.log("Yeah")
+                switch (this.project.projectVisibility) {
+                    case "PUBLIC": break;
+                        
+                }
+            } else {
+                console.log("Noh")
+            }
+        }
+    }
 }
 </script>
 

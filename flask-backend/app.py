@@ -12,8 +12,8 @@ app = Flask(__name__)
 
 # Connect to the MySQL database
 host = 'localhost'
-user = 'root'
-password = 'MySQL55BoeM!' # Super encripted and safe password usage
+user = 'webapp'
+password = 'admin' # Super encripted and safe password usage
 database_name = 'newdb'
 database.init(user, password, host, database_name)
 
