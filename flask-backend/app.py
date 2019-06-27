@@ -142,10 +142,13 @@ def get_user_posts(id):
         return jsonify({"error": "Specified user does not exist"})
 
     data = database.getUserPosts(id)
-    if data is not None:
-        return jsonify(data), 200
-    else:
+    if data is None:
         return jsonify({"error": "No results found"}), 404
+    else:
+        for post in data:
+            project = database.getProjectByID(str(post['postProject']))
+            post['project'] = project
+        return jsonify(data), 200
 
 @app.route('/user/<string:id>/comments', methods=['GET'])
 @jwt_required
@@ -160,10 +163,13 @@ def get_user_comments(id):
         return jsonify({"error": "Specified user does not exist"})
 
     data = database.getUserComments(id)
-    if data is not None:
-        return jsonify(data), 200
-    else:
+    if data is None:
         return jsonify({"error": "No results found"}), 404
+    else:
+        for comment in data:
+            post = database.getPostByID(str(comment['commentPost']))
+            comment['post'] = post
+        return jsonify(data), 200
 
 @app.route('/user', methods=['GET'])
 @jwt_required
@@ -345,7 +351,7 @@ def get_project():
         for project in data:
             user = database.getUserInfo(str(project['projectOwner']))
             project['owner'] = user
-        return jsonify(data), 200
+        return jsonify(data*10), 200
 
 @app.route('/project/<string:id>', methods=['GET'])
 def get_project_id(id):
