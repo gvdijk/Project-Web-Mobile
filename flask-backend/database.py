@@ -340,7 +340,7 @@ def deleteProjectUser(projectID, userID):
         return False
 
 # -----------------------------------------Post Related Functions---------------------------------------- #
-def addPostComment(content, parentID, userID):
+def addPostComment(content, parentID, userID, id):
     connection = getConnection()
     cur = connection.cursor(dictionary=True)
     sql = "INSERT INTO comment(commentContent, commentUser, commentParent, commentPost) VALUES(%s, %s, %s, %s)"
