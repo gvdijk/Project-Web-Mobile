@@ -53,3 +53,15 @@ def check_password(password):
         return "Password must contain at least one digit"
     else:
         return "ok"
+
+def nest_comments(comments):
+    root = { 0: { 'children': [] } }
+    for comment in comments:
+        if comment['commentParent'] == None:
+            comment['commentParent'] = 0
+    for comment in comments:
+        root.setdefault(comment['commentParent'], { 'children': [] })
+        root.setdefault(comment['commentID'], { 'children': [] })
+        root[comment['commentID']].update(comment)
+        root[comment['commentParent']]['children'].append(root[comment['commentID']])
+    return root[0]['children']

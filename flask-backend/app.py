@@ -577,6 +577,7 @@ def get_post_comments(id):
         for comment in data:
             user = database.getUserInfo(str(comment['commentUser']))
             comment['user'] = user
+        data = function.nest_comments(data)
         return jsonify(data), 200
 
 @app.route('/post/<string:id>', methods=['PUT'])
