@@ -208,6 +208,26 @@ def addProjectUser(userID, projectID, role):
     connection.close()
     return lastID
 
+def getProjectsCount(name):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
+    sql = "SELECT count(*) as count FROM project "\
+    "WHERE projectDeleted = 0 AND (projectVisibility = 'PUBLIC' OR projectVisibility = 'RESTRICTED')"
+    data = ()
+    if (name is not None):
+        sql += " AND projectName LIKE %s"
+        data = data + ("%" + name + "%",)
+    sql += " ORDER BY projectName"
+    cur.execute(sql, data)
+    results = cur.fetchone()
+    cur.close()
+    connection.close()
+
+    if (results is not None and len(results) == 0):
+        return None
+    else:
+        return results
+
 def getProjects(name, limit, offset):
     connection = getConnection()
     cur = connection.cursor(dictionary=True)
@@ -254,6 +274,20 @@ def getProjectUsers(id):
     sql = "SELECT * FROM projectuser WHERE projectuserDeleted = 0 AND Project_projectID = " + id
     cur.execute(sql)
     results = cur.fetchall()
+    cur.close()
+    connection.close()
+
+    if (results is not None and len(results) == 0):
+        return None
+    else:
+        return results
+
+def getProjectPostsCount(id):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
+    sql = "SELECT count(*) as count FROM post WHERE postDeleted = 0 AND postProject = " + id
+    cur.execute(sql)
+    results = cur.fetchone()
     cur.close()
     connection.close()
 

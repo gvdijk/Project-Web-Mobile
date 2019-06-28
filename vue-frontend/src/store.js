@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
+import router from './router'
 
 axios.defaults.baseURL = 'http://localhost:5000/';
 
@@ -44,9 +45,12 @@ export default new Vuex.Store({
         }
     },
     actions: {
-        getProjects(context){
-            return new Promise((resolve, reject) => 
-                axios.get(`/project`)
+        getProjects(context, payload){
+            let limit = payload.limit.toString();
+            let offset = payload.offset.toString();
+            let str = '?offset='+offset+'&limit='+limit
+            return new Promise((resolve, reject) =>
+                axios.get(`/project` + str)
                 .then(response => resolve(response.data))
                 .catch(error => reject(error))
             )
@@ -58,9 +62,13 @@ export default new Vuex.Store({
                 .catch(error => reject(error))
             )
         },
-        getProjectPosts(context, projectID){
+        getProjectPosts(context, payload){
+            let projectID = payload.projectID
+            let limit = payload.limit.toString();
+            let offset = payload.offset.toString();
+            let str = '?offset='+offset+'&limit='+limit
             return new Promise((resolve, reject) => 
-                axios.get(`/project/${projectID}/posts`)
+                axios.get(`/project/${projectID}/posts` + str)
                 .then(response => resolve(response.data))
                 .catch(error => reject(error))
             )
@@ -91,7 +99,10 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => 
                 axios.get(`/user/${context.state.userID}`)
                 .then(response => resolve(response.data))
-                .catch(error => reject(error))
+                .catch(error => {
+                    context.dispatch('checkTokenExpiration', error.response);
+                    reject(error);
+                })
             )
         },
         getUserProjects(context){
@@ -102,7 +113,10 @@ export default new Vuex.Store({
                     resolve(response.data);
                     context.commit('setUserProjects', response.data);
                 })
-                .catch(error => reject(error))
+                .catch(error => {
+                    context.dispatch('checkTokenExpiration', error.response);
+                    reject(error);
+                })
             )
         },
         getUserPosts(context){
@@ -110,7 +124,10 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => 
                 axios.get(`/user/${context.state.userID}/posts`)
                 .then(response => resolve(response.data))
-                .catch(error => reject(error))
+                .catch(error => {
+                    context.dispatch('checkTokenExpiration', error.response);
+                    reject(error);
+                })
             )
         },
         getUserComments(context){
@@ -118,7 +135,10 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => 
                 axios.get(`/user/${context.state.userID}/comments`)
                 .then(response => resolve(response.data))
-                .catch(error => reject(error))
+                .catch(error => {
+                    context.dispatch('checkTokenExpiration', error.response);
+                    reject(error);
+                })
             )
         },
 
@@ -133,7 +153,10 @@ export default new Vuex.Store({
                     ownerID: context.state.userID
                 })
                 .then(response => resolve(response))
-                .catch(error => reject(error))
+                .catch(error => {
+                    context.dispatch('checkTokenExpiration', error.response);
+                    reject(error);
+                })
             )
         },
         createPost(context, post) {
@@ -145,7 +168,10 @@ export default new Vuex.Store({
                     content: post.content                  
                 })
                 .then(response => resolve(response))
-                .catch(error => reject(error))
+                .catch(error => {
+                    context.dispatch('checkTokenExpiration', error.response);
+                    reject(error);
+                })
             )
         },
         createComment(context, comment) {
@@ -157,7 +183,10 @@ export default new Vuex.Store({
                     userID: context.state.userID
                 })
                 .then(response => resolve(response))
-                .catch(error => reject(error))
+                .catch(error => {
+                    context.dispatch('checkTokenExpiration', error.response);
+                    reject(error);
+                })
             )
         },
 
@@ -172,7 +201,10 @@ export default new Vuex.Store({
                     visibility: project.visibility
                 })
                 .then(response => resolve(response.data))
-                .catch(error => reject(error))
+                .catch(error => {
+                    context.dispatch('checkTokenExpiration', error.response);
+                    reject(error);
+                })
             )
         },
         updatePost(context, post) {
@@ -182,7 +214,10 @@ export default new Vuex.Store({
                     content: post.text
                 })
                 .then(response => resolve(response.data))
-                .catch(error => reject(error))
+                .catch(error => {
+                    context.dispatch('checkTokenExpiration', error.response);
+                    reject(error);
+                })
             )
         },
         updateComment(context, comment) {
@@ -192,7 +227,10 @@ export default new Vuex.Store({
                     content: comment.text
                 })
                 .then(response => resolve(response.data))
-                .catch(error => reject(error))
+                .catch(error => {
+                    context.dispatch('checkTokenExpiration', error.response);
+                    reject(error);
+                })
             )
         },
 
@@ -202,7 +240,10 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => 
                 axios.delete(`/project/${projectID}`)
                 .then(response => resolve(response.data))
-                .catch(error => reject(error))
+                .catch(error => {
+                    context.dispatch('checkTokenExpiration', error.response);
+                    reject(error);
+                })
             )
         },
         deletePost(context, postID) {
@@ -210,7 +251,10 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => 
                 axios.delete(`/post/${postID}`)
                 .then(response => resolve(response.data))
-                .catch(error => reject(error))
+                .catch(error => {
+                    context.dispatch('checkTokenExpiration', error.response);
+                    reject(error);
+                })
             )
         },
         deleteComment(context, commentID) {
@@ -218,7 +262,10 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => 
                 axios.delete(`/comment/${commentID}`)
                 .then(response => resolve(response.data))
-                .catch(error => reject(error))
+                .catch(error => {
+                    context.dispatch('checkTokenExpiration', error.response);
+                    reject(error);
+                })
             )
         },
 
@@ -226,7 +273,6 @@ export default new Vuex.Store({
 
         registerUser(context, payload){
             return new Promise((resolve, reject) => {
-                console.log(payload.user + "    " + payload.pass)
                 axios.post('http://localhost:5000/user', {
                     name: payload.user,
                     password: payload.pass
@@ -262,5 +308,16 @@ export default new Vuex.Store({
             localStorage.removeItem('userID');
         },
 
+
+
+        checkTokenExpiration(context, response){
+            if(response.status === 401){
+                if(response.data.msg === "Token has expired"){
+                    context.dispatch('logoutUser');
+                    console.log("User has been logged out because login token expired")
+                    router.push({path: '/'});
+                }
+            }
+        }
     }
 })

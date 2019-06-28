@@ -21,7 +21,7 @@
         <div class="posts-view">
             <PostTile v-for="post in posts" :key="post.postID" v-bind:post="post" />
         </div>
-        <PageSelector v-bind:visiblePages="3" v-bind:totalEntries="posts.length" v-bind:entriesPerPage="5" v-on:pageChanged="pageChanged"/>
+        <PageSelector v-bind:visiblePages="3" v-bind:totalEntries="count" v-bind:entriesPerPage="limit" v-on:pageChanged="pageChanged"/>
     </div>
 </template>
 
@@ -41,8 +41,9 @@ export default {
             userIsAdmin: true,
             project: {},
             posts: [],
-            startIndex: 0,
-            endIndex: 0
+            offset: 0,
+            limit: 5,
+            count: 0,
         }
     },
     methods: {
@@ -51,24 +52,22 @@ export default {
             .then( response => this.project = response)
             .catch( error => console.log(error))
         },
-        fetchPosts(){
-            this.$store.dispatch('getProjectPosts', this.$route.params.id)
-            .then( response => this.posts = response)
+        fetchPosts(limit, offset){
+            this.$store.dispatch('getProjectPosts', {projectID: this.$route.params.id, limit: limit, offset: offset})
+            .then( response => {
+                this.posts = response.data
+                this.count = response.count
+            })
             .catch( error => console.log(error))
         },
-        pageChanged(startIndex, endIndex){
-            this.startIndex = startIndex;
-            this.endIndex = endIndex;
-        }
-    },
-    computed: {
-        paginatedPosts(){
-            return this.posts.slice(this.startIndex, this.endIndex);
+        pageChanged(offset){
+            this.offset = offset;
+            this.fetchPosts(this.limit, this.offset)
         }
     },
     created(){
         this.fetchProject();
-        this.fetchPosts();
+        this.fetchPosts(this.limit, this.offset);
     }
 }
 </script>

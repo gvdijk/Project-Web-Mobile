@@ -17,6 +17,10 @@ export default new Router({
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
+      meta: {
+        title: "Register Page",
+        requiresVisitor: true,
+      },
       component: () => import(/* webpackChunkName: "about" */ './views/Register.vue')
     },
     {
@@ -42,16 +46,28 @@ export default new Router({
     {
       path: '/project/:id/settings',
       name: 'projectsettings',
+      meta: {
+        title: "Project instellingen",
+        requiresAuthenticated: true,
+      },
       component: () => import(/* webpackChunkName: "about" */ './views/ProjectSettings.vue')
     },
     {
       path: '/new',
       name: 'newproject',
+      meta: {
+        title: "Project aanmaken",
+        requiresAuthenticated: true,
+      },
       component: () => import(/* webpackChunkName: "about" */ './views/NewProject.vue')
     },
     {
       path: '/profile',
       name: 'usersettings',
+      meta: {
+        title: "Profiel instellingen",
+        requiresAuthenticated: true,
+      },
       component: () => import(/* webpackChunkName: "about" */ './views/UserSettings.vue')
     }
   ]
