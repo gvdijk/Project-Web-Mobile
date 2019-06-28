@@ -282,6 +282,20 @@ def getProjectUsers(id):
     else:
         return results
 
+def getProjectPostsCount(id):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
+    sql = "SELECT count(*) as count FROM post WHERE postDeleted = 0 AND postProject = " + id
+    cur.execute(sql)
+    results = cur.fetchone()
+    cur.close()
+    connection.close()
+
+    if (results is not None and len(results) == 0):
+        return None
+    else:
+        return results
+
 def getProjectPosts(id, limit, offset):
     connection = getConnection()
     cur = connection.cursor(dictionary=True)

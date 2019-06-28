@@ -61,9 +61,13 @@ export default new Vuex.Store({
                 .catch(error => reject(error))
             )
         },
-        getProjectPosts(context, projectID){
+        getProjectPosts(context, payload){
+            let projectID = payload.projectID
+            let limit = payload.limit.toString();
+            let offset = payload.offset.toString();
+            let str = '?offset='+offset+'&limit='+limit
             return new Promise((resolve, reject) => 
-                axios.get(`/project/${projectID}/posts`)
+                axios.get(`/project/${projectID}/posts` + str)
                 .then(response => resolve(response.data))
                 .catch(error => reject(error))
             )

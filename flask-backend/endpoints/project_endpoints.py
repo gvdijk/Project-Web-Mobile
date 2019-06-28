@@ -161,6 +161,7 @@ def get_project_post(id):
     if offset is not None and not function.isInt(offset):
         return jsonify({"error": "offset is not an integer"}), 400
 
+    dataCount = database.getProjectPostsCount(id)
     data = database.getProjectPosts(id, limit, offset)
     if data is None:
         return jsonify({"error": "No results found"}), 404
@@ -168,7 +169,8 @@ def get_project_post(id):
         for projectpost in data:
             user = database.getUserInfo(str(projectpost['postUser']))
             projectpost['user'] = user
-        return jsonify(data), 200
+        dataCount['data'] = data
+        return jsonify(dataCount), 200
 
 @project_endpoints.route('/project/<string:id>', methods=['PUT'])
 @jwt_required
