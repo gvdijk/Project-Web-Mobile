@@ -1,29 +1,22 @@
 <template>
     <div class="usersettings">
-        <h1>Gebruikers Instellingen</h1>
-        <section>
-            <label>Naam</label>
-            <span>{{user.userName}}</span>
-            <label>Afbeelding</label>
-            <div class="button" @click="updateDetails">Aanpassen</div>
-        </section>
-        <h2>Projecten</h2>
+        <h1>{{user.userName}} Instellingen</h1>
         <section>
             <label>Projecten overzicht</label>
             <table>
                 <tr>
                     <th>Project</th>
-                    <th>Rol</th>
+                    <th>Status</th>
                     <th>Lid sinds</th>
                     <th>Acties</th>
                 </tr>
                 <tr :key="project.projectID" v-for="project in projects">
-                    <td>{{project.projectName}}</td>
+                    <td>{{project.project.projectName}}</td>
                     <td>
-                        Gebruiker
+                        {{userRole(project.projectuserRole)}}
                     </td>
                     <td>
-                        16 Augustus 2018
+                        {{project.projectuserJoined}}
                     </td>
                     <td>
                         <div class="user-button" title="Accepteren"><i class="fa fa-check"></i></div>
@@ -33,7 +26,6 @@
                 </tr>
             </table>
         </section>
-        <h2>Berichten</h2>
         <section>
             <label>Berichten overzicht</label>
             <table>
@@ -44,43 +36,48 @@
                     <th>Acties</th>
                 </tr>
                 <tr :key="post.postID" v-for="post in posts">
-                    <td>{{post.postTitle}}</td>
+                    <td><router-link class="router-link" :to="{ path:`/project/${post.project.projectID}/post/${post.postID}`}">{{post.postTitle}}</router-link></td>
                     <td>
-                        <!-- {{post.project.projectName}} -->
+                        <router-link class="router-link" :to="{ path:`/project/${post.project.projectID}`}">{{post.project.projectName}}</router-link>
                     </td>
                     <td>
-                        16 Augustus 2018
+                        {{post.postCreated}}
                     </td>
                     <td>
-                        <div class="user-button" title="Accepteren"><i class="fa fa-check"></i></div>
-                        <div class="user-button" title="Weigeren"><i class="fa fa-times"></i></div>
-                        <div class="user-button" title="Leave"><i class="fa fa-minus"></i></div>
+                        <div class="user-button" title="Reageren" 
+                        @click="$emit('requestModal', 'create', {'type': 'comment', 'id': post.postID})"><i class="fa fa-reply"></i></div>
+                        <div class="user-button" title="Bewerken"
+                        @click="$emit('requestModal', 'edit', {'type': 'post', 'id': post.postID, 'text': post.postContent})"><i class="fa fa-edit"></i></div>
+                        <div class="user-button" title="Verwijderen"
+                        @click="$emit('requestModal', 'delete', {'type': 'post', 'id': post.postID})"><i class="fa fa-times"></i></div>
                     </td>
                 </tr>
             </table>
         </section>
-        <h2>Reacties</h2>
         <section>
             <label>Reacties overzicht</label>
             <table>
                 <tr>
                     <th>Reacties</th>
-                    <th>Project</th>
+                    <th>Bericht</th>
                     <th>Geplaatst</th>
                     <th>Acties</th>
                 </tr>
                 <tr :key="comment.commentID" v-for="comment in comments">
-                    <td>{{comment.commentContent}}</td>
+                    <td><router-link class="router-link" :to="{ path:`/project/${comment.post.postProject}/post/${comment.post.postID}`}">{{comment.commentContent}}</router-link></td>
                     <td>
-                        <!-- {{comment.post.postTitle}} -->
+                        <router-link class="router-link" :to="{ path:`/project/${comment.post.postProject}/post/${comment.post.postID}`}">{{comment.post.postTitle}}</router-link>
                     </td>
                     <td>
-                        16 Augustus 2018
+                        {{comment.commentCreated}}
                     </td>
                     <td>
-                        <div class="user-button" title="Leave"><i class="fa fa-reply"></i></div>
-                        <div class="user-button" title="Accepteren"><i class="fa fa-edit"></i></div>
-                        <div class="user-button" title="Weigeren"><i class="fa fa-times"></i></div>
+                        <div class="user-button" title="Reageren" 
+                        @click="$emit('requestModal', 'create', {'type': 'child', 'id': comment.commentPost, 'parent': comment.commentID})"><i class="fa fa-reply"></i></div>
+                        <div class="user-button" title="Bewerken"
+                        @click="$emit('requestModal', 'edit', {'type': 'comment', 'id': comment.commentID, 'text': comment.commentContent})"><i class="fa fa-edit"></i></div>
+                        <div class="user-button" title="Verwijderen"
+                        @click="$emit('requestModal', 'delete', {'type': 'comment', 'id': comment.commentID})"><i class="fa fa-times"></i></div>
                     </td>
                 </tr>
             </table>
@@ -107,6 +104,14 @@ export default {
         ...mapGetters(["userID"])
     },
     methods: {
+        userRole(role) {
+            switch(role) {
+                case "USER": return "Gebruiker";
+                case "ADMIN": return "Administrator";
+                case "INVITED": return "Uitgenodigd";
+                case "PENDING": return "Aangevraagd";
+            }
+        },
         fetchUser(){
             this.$store.dispatch('getUser')
             .then(response => this.user = response)
@@ -119,12 +124,12 @@ export default {
         },
         fetchUserPosts(){
             this.$store.dispatch('getUserPosts')
-            .then(response => { this.posts = response; console.log(response) })
+            .then(response => this.posts = response)
             .catch(error => console.log(error.response))
         },
         fetchUserComments(){
             this.$store.dispatch('getUserComments')
-            .then(response => { this.comments = response; console.log(response) })
+            .then(response => this.comments = response)
             .catch(error => console.log(error.response))
         },
         updateDetails(){
@@ -276,8 +281,25 @@ th {
     text-align: left;
 }
 
+td {
+    color: var(--black-mid);
+    font-style: italic;
+}
+
 td:last-child {
     width: 80px;
+}
+
+.router-link {
+    text-decoration: none;
+    color: var(--black-mid);
+    cursor: pointer;
+    transition-duration: 0.1s;
+    font-style: normal;
+}
+
+.router-link:hover {
+    color: var(--green);
 }
 
 .user-button {

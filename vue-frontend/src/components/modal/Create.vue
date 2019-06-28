@@ -39,7 +39,10 @@ export default {
                    title: this.title,
                    content: this.description  
                 })
-                .then(response => this.$router.push(`/project/${this.body.id}/post/${response.data.id}`))
+                .then(response => {
+                    this.$router.push(`/project/${this.body.id}/post/${response.data.id}`);
+                    this.$emit('closeModal');
+                })
                 .catch(error => console.log(error))
             } else {
                 this.$store.dispatch('createComment', {
@@ -47,7 +50,7 @@ export default {
                    parent: this.body.parent || null,
                    content: this.description
                 })
-                .then(response => this.post = response)
+                .then(response => this.$emit('closeModal'))
                 .catch(error => console.log(error))
             }
             //TODO: If type=post, go to page on succesful creation?

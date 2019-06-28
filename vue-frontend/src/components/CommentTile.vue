@@ -5,18 +5,21 @@
                 {{ comment.user.userName }} | Geplaatst op {{ comment.commentCreated }}
                 <span v-if="comment.commentEdited"> | Laatst bewerkt op {{ comment.commentEdited }}</span>
             </span>
-            <div class="comment-button delete-button"
+            <div class="comment-button delete-button" 
+                title="Verwijderen" 
                 v-if="isAdmin || isOwner" 
-                 @click="$emit('requestModal', 'delete', {'type': 'comment', 'id': comment.commentID})">
+                @click="$emit('requestModal', 'delete', {'type': 'comment', 'id': comment.commentID})">
                 <i class="fa fa-trash"></i>
             </div>
-            <div class="comment-button edit-button"
+            <div class="comment-button edit-button" 
+                title="Bewerken" 
                 v-if="isAdmin || isOwner"
                 @click="$emit('requestModal', 'edit', {'type': 'comment', 'id': comment.commentID, 'text': comment.commentContent})">
                 <i class="fa fa-edit"></i>
             </div>
-            <div class="comment-button"
-                 @click="$emit('requestModal', 'create', {'type': 'child', 'id': comment.commentPost, 'parent': comment.commentID})">
+            <div class="comment-button" 
+                title="Reageren" 
+                @click="$emit('requestModal', 'create', {'type': 'child', 'id': comment.commentPost, 'parent': comment.commentID})">
                 <i class="fa fa-reply"></i>
             </div>
         </div>

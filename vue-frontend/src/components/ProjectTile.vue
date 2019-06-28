@@ -7,7 +7,7 @@
             <div @click="viewLess" v-if="extended" class="description-extender">Lees minder...</div>
             <div @click="viewMore" v-else class="description-extender">Lees meer...</div>
             <router-link class="project-button" :to="{ path:`/project/${this.project.projectID}`}"><a>Bekijken</a></router-link>
-            <div v-if="project.access" class="project-button">Deelnemen</div>
+            <div v-if="projectRelation" class="project-button">Deelnemen</div>
             <div v-else class="project-button">Aanvragen</div>
         </div>
     </div>
@@ -32,15 +32,21 @@ export default {
     computed: {
         ...mapGetters(["userProjects"]),
         projectRelation() { 
-            if (this.project.projectID in (this.userProjects['projectID'])) {
-                console.log("Yeah")
-                switch (this.project.projectVisibility) {
-                    case "PUBLIC": break;
+            // let index = this.userProjects.findIndex(this.project.projectID);
+            console.log(this.userProjects);
+            // if (this.userProjects.map(a => a.projectID).include()) {
+            //     console.log("Yeah")
+            //     switch () {
+            //         case "PUBLIC": break;
                         
-                }
-            } else {
-                console.log("Noh")
-            }
+            //     }
+            // } else {
+            //     console.log("Noh")
+            //     switch (this.project.projectVisibility) {
+            //         case "PUBLIC": break;
+                        
+            //     }
+            // }
         }
     }
 }
