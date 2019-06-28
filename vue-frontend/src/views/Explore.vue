@@ -1,5 +1,7 @@
 <template>
     <div class="home">
+        <h1>Explore</h1>
+        <h3>Ontdek projecten om aan deel te nemen</h3>
         <div class="projects-view">
             <ProjectTile v-for="project in projects" :key="project.id" v-bind:project="project" />
         </div>
@@ -46,5 +48,11 @@ export default {
 </script>
 
 <style scoped>
+    h1{
+        color: var(--dark-green);
+    }
 
+    h3{
+        color: var(--dark-green);
+    }
 </style>

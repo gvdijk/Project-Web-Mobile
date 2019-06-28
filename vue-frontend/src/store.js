@@ -233,7 +233,6 @@ export default new Vuex.Store({
 
         registerUser(context, payload){
             return new Promise((resolve, reject) => {
-                console.log(payload.user + "    " + payload.pass)
                 axios.post('http://localhost:5000/user', {
                     name: payload.user,
                     password: payload.pass

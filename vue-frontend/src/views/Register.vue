@@ -40,6 +40,7 @@ export default {
             if(this.checkPassword()){
                 this.$store.dispatch('registerUser', {user: this.username, pass: this.password})
                 .then( response => {
+                    this.$store.dispatch('loginUser', {user: this.username, pass: this.password})
                     this.$router.push({path: '/explore'})
                 })
                 .catch( error => {

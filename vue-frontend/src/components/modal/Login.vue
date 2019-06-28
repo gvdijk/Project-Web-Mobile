@@ -35,6 +35,7 @@ export default {
             // Login succesfull
             .then( response => {
                 this.$emit('closeModal');
+                this.$router.push({path: '/explore'});
             })
             // Something wrong with the login
             .catch( error => {

@@ -30,7 +30,8 @@ export default {
         login() { },
         toggleMenu() { this.menuCollapse = !this.menuCollapse; },
         logout(){
-            this.$store.dispatch('logoutUser')
+            this.$store.dispatch('logoutUser');
+            this.$router.push({path: '/'});
         },
     },
     data() {
