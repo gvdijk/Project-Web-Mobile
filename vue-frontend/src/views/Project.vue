@@ -4,12 +4,10 @@
             <div class="project-header">
                 <div class="project-title">{{project.projectName}}</div>
                 <div class="project-actions">
-                    <div class="project-button" v-if="!userIsJoined && !project.access">Aanvragen</div>
-                    <div class="project-button" v-if="!userIsJoined && project.access">Deelnemen</div>
-                    <div class="project-button" v-if="userIsJoined" @click="$emit('requestModal', 'create', {'type': 'post', 'id': project.projectID})">Nieuw bericht</div>
+                    <div class="project-button" @click="$emit('requestModal', 'create', {'type': 'post', 'id': project.projectID})">Nieuw bericht</div>
                     <router-link 
                         class="project-button settings-button" 
-                        v-if="userIsJoined && userIsAdmin"
+                        v-if="isAdmin"
                         :to="{ path:`/project/${this.project.projectID}/settings`}">
                         Instellingen
                     </router-link>
@@ -37,13 +35,13 @@ export default {
     },
     data() {
         return {
-            userIsJoined: true,
-            userIsAdmin: true,
+            isAdmin: false,
             project: {},
             posts: [],
             offset: 0,
             limit: 5,
             count: 0,
+            userprojects: []
         }
     },
     methods: {
@@ -63,11 +61,30 @@ export default {
         pageChanged(offset){
             this.offset = offset;
             this.fetchPosts(this.limit, this.offset)
-        }
+        },
+        // projectRelation() {
+        //     let index = this.userprojects.findIndex((el) => el.Project_projectID == this.project.projectID);
+        //     let role = this.userprojects[index].projectuserRole; 
+        //     (role == "OWNER" || role == "ADMIN") ? this.isAdmin = true : this.isAdmin = false;
+        // }
     },
     created(){
         this.fetchProject();
         this.fetchPosts(this.limit, this.offset);
+        this.$store.dispatch('getUserProjects')
+            .then(response => this.userprojects = response)
+            .catch(error => console.log(error.response));
+    },
+    watch: {
+        userprojects: function() {
+            let index = this.userprojects.findIndex((el) => el.Project_projectID == this.project.projectID);
+            if (index > -1) {
+                let role = this.userprojects[index].projectuserRole; 
+                (role == "ADMIN" || role == "OWNER") ? this.isAdmin = true : this.isAdmin = false;
+            } else {
+                //FIXME: User should not be here
+            }
+        }
     }
 }
 </script>

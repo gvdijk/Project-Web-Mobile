@@ -11,7 +11,9 @@
                     <th>Acties</th>
                 </tr>
                 <tr :key="project.projectID" v-for="project in projects">
-                    <td>{{project.project.projectName}}</td>
+                    <td>
+                        <router-link class="router-link" :to="{ path:`/project/${project.project.projectID}`}">{{project.project.projectName}}</router-link>
+                    </td>
                     <td>
                         {{userRole(project.projectuserRole)}}
                     </td>
@@ -19,9 +21,16 @@
                         {{project.projectuserJoined}}
                     </td>
                     <td>
-                        <div class="user-button" title="Accepteren"><i class="fa fa-check"></i></div>
-                        <div class="user-button" title="Weigeren"><i class="fa fa-times"></i></div>
-                        <div class="user-button" title="Leave"><i class="fa fa-minus"></i></div>
+                        <div class="user-button" title="Accepteren" 
+                        v-if="project.projectuserRole == 'INVITED'"
+                        @click="acceptInvite(project)"><i class="fa fa-check"></i></div>
+                        <div class="user-button" title="Weigeren" 
+                        v-if="project.projectuserRole == 'INVITED'"
+                        @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': project.project.projectID, 'userID': null})"><i class="fa fa-times"></i></div>
+                        <div class="user-button" title="Instellingen" 
+                        v-if="project.projectuserRole == 'OWNER' || project.projectuserRole == 'ADMIN'"><i class="fa fa-cog"></i></div>
+                        <div class="user-button" title="Verlaten" 
+                        @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': project.project.projectID, 'userID': null})"><i class="fa fa-minus"></i></div>
                     </td>
                 </tr>
             </table>
@@ -82,9 +91,9 @@
                 </tr>
             </table>
         </section>
-        <section>
+        <!-- <section>
             <div class="delete-button" @click="$emit('requestModal', 'delete', {'type': 'user', 'id': userID})">Account Verwijderen</div>
-        </section>
+        </section> -->
     </div>
 </template>
 
@@ -110,7 +119,11 @@ export default {
                 case "ADMIN": return "Administrator";
                 case "INVITED": return "Uitgenodigd";
                 case "PENDING": return "Aangevraagd";
+                case "OWNER": return "Eigenaar";
             }
+        },
+        acceptInvite(project) {
+            console.log(project);
         },
         fetchUser(){
             this.$store.dispatch('getUser')
@@ -282,8 +295,9 @@ th {
 }
 
 td {
-    color: var(--black-mid);
+    color: var(--black-smooth);
     font-style: italic;
+    font-size: 10pt;
 }
 
 td:last-child {
@@ -296,6 +310,7 @@ td:last-child {
     cursor: pointer;
     transition-duration: 0.1s;
     font-style: normal;
+    font-size: 12pt;
 }
 
 .router-link:hover {
@@ -307,6 +322,7 @@ td:last-child {
     width: 24px;
     height: 24px;
     cursor: pointer;
+    font-size: 12pt;
 }
 
 

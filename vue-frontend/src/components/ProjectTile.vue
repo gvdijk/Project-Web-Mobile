@@ -7,47 +7,87 @@
             <div @click="viewLess" v-if="extended" class="description-extender">Lees minder...</div>
             <div @click="viewMore" v-else class="description-extender">Lees meer...</div>
             <router-link class="project-button" :to="{ path:`/project/${this.project.projectID}`}"><a>Bekijken</a></router-link>
-            <div v-if="projectRelation" class="project-button">Deelnemen</div>
-            <div v-else class="project-button">Aanvragen</div>
+            <div v-if="isPending" class="project-button disabled">Aangevraagd</div>
+            <div v-if="isInvited" class="project-button disabled">Uitgenodigd</div>
+            <div v-if="joinVisible" @click="participateInProject" class="project-button">Deelnemen</div>
+            <div v-if="requestVisible" @click="requestParticipationInProject" class="project-button">Aanvragen</div>
         </div>
-    </div>
+    </div> 
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 export default {
     name: 'ProjectTile',
     data() {
         return {
             extended: false,
-            usersPlaceholder: 'x'
+            usersPlaceholder: 'x',
+            joinVisible: false,
+            requestVisible: false,
+            isInvited: false,
+            isPending: false
         }
     },
-    // TODO: See if extentiosion is necessary
+    
     methods: {
         viewLess() { this.extended = false; },
-        viewMore() { this.extended = true; }
-    },
-    props: ['project'],
-    computed: {
-        ...mapGetters(["userProjects"]),
-        projectRelation() { 
-            // let index = this.userProjects.findIndex(this.project.projectID);
-            console.log(this.userProjects);
-            // if (this.userProjects.map(a => a.projectID).include()) {
-            //     console.log("Yeah")
-            //     switch () {
-            //         case "PUBLIC": break;
-                        
-            //     }
-            // } else {
-            //     console.log("Noh")
-            //     switch (this.project.projectVisibility) {
-            //         case "PUBLIC": break;
-                        
-            //     }
-            // }
+        viewMore() { this.extended = true; },
+        participateInProject(){
+            this.$store.dispatch('createProjectUser', {
+                projectID: this.project.projectID,
+                role: "USER"
+            })
+            .then(response => this.$router.push({path: `/project/${this.project.projectID}`}))
+            .catch(error => console.log(error))
+        },
+        requestParticipationInProject(){
+            this.$store.dispatch('createProjectUser', {
+                projectID: this.project.projectID,
+                role: "PENDING"
+            })
+            .then(response => {
+                this.requestVisible = false;
+                this.isInvited = true;
+            })
+            .catch(error => console.log(error.response))
+        },
+        infoChanged() {
+            let index = this.userprojects.findIndex((el) => el.Project_projectID == this.project.projectID);
+    
+            if (index > -1) {
+                this.joinVisible = false;
+                this.requestVisible = false;
+
+                let role = this.userprojects[index].projectuserRole; 
+
+                if (role == "INVITED") {
+                    this.isInvited = true;
+                    this.isPending = false;
+                } else if (role == "PENDING") {
+                    this.isInvited = false;
+                    this.isPending = true;
+                } else {
+                    this.isInvited = false;
+                    this.isPending = false;
+                }
+              
+            } else {
+                if (this.project.projectVisibility == "PUBLIC") {
+                    this.joinVisible = true;
+                    this.requestVisible = false;
+                } else {
+                    this.joinVisible = false;
+                    this.requestVisible = true;
+                }
+            }
         }
+    },
+    props: ['project', 'userprojects'],
+    created() {
+        this.infoChanged();
+    },
+    watch: {
+        project: function() {this.infoChanged()}
     }
 }
 </script>
@@ -121,4 +161,13 @@ export default {
 .project-button:hover {
     background-color: var(--green);
 }
+
+.disabled {
+    cursor: default;
+    background-color: var(--gray-dark);
+}
+.disabled:hover {
+    background-color: var(--gray-dark);
+}
+
 </style>

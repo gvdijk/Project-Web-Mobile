@@ -24,7 +24,7 @@
                 <div class="side-pane-arrow" v-bind:class="{'arrow-up': !extendedProjects, 'arrow-down': extendedProjects}"></div>
             </div>
             <div class="side-pane-content" v-if="extendedProjects">
-                <router-link :key="project.id" v-for="project in userProjects" to="/project/${project.projectID}"><a>{{project.projectName}}</a></router-link>
+                <router-link :key="project.id" v-for="project in userprojects" to="/project/${project.projectID}"><a>{{project.projectName}}</a></router-link>
             </div>
         </div>
         <!-- <div class="side-pane" v-if="authenticated">
@@ -46,7 +46,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 export default {
     name: 'Sidebar',
     data() {
@@ -56,6 +55,7 @@ export default {
             extendedProjects: true,
             extendedRecent: true,
             myProjects: [],
+            userprojects: [],
             recentProjects: [
                 {
                     id: 1,
@@ -77,9 +77,6 @@ export default {
         toggleMyProjectsVisibility() { this.extendedProjects = !this.extendedProjects; },
         toggleRecentProjectsVisibility() { this.extendedRecent = !this.extendedRecent; },
 
-    },
-    computed: {
-        ...mapGetters(["userProjects"])
     },
     props: ['extended']
 }

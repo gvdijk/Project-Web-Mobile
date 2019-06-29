@@ -38,20 +38,26 @@
                         16 Augustus 2018
                     </td>
                     <td>
-                        <div class="user-button" title="Accepteren"><i class="fa fa-check"></i></div>
-                        <div class="user-button" title="Weigeren"><i class="fa fa-times"></i></div>
-                        <div class="user-button" title="Annuleren"><i class="fa fa-minus"></i></div>
-                        <div class="user-button" title="Promoveer naar administrator"><i class="fa fa-star"></i></div>
-                        <div class="user-button" title="Degradeer naar gebruiker"><i class="fa fa-star is-admin"></i></div>
-                        <div class="user-button" title="Verwijder gebruiker van project"><i class="fa fa-minus"></i></div>
-                        <div class="user-button" title="Ban gebruiker van project"><i class="fa fa-ban"></i></div>
+                        <div class="user-button" title="Accepteren"
+                        v-if="user.projectuserRole == 'PENDING'"><i class="fa fa-check"></i></div>
+                        <div class="user-button" title="Weigeren"
+                        v-if="user.projectuserRole == 'PENDING'"><i class="fa fa-times"></i></div>
+                        <div class="user-button" title="Annuleren"
+                        v-if="user.projectuserRole == 'INVITED'"><i class="fa fa-minus"></i></div>
+                        <div class="user-button" title="Promoveer naar administrator"
+                        v-if="user.projectuserRole == 'USER' && isOwner"><i class="fa fa-star"></i></div>
+                        <div class="user-button" title="Degradeer naar gebruiker"
+                        v-if="user.projectuserRole == 'ADMIN' && isOwner"><i class="fa fa-star is-admin"></i></div>
+                        <div class="user-button" title="Verwijder gebruiker van project"
+                        v-if="(user.projectuserRole == 'USER' && isAdmin) || (user.projectuserRole == 'ADMIN' && isOwner) "><i class="fa fa-minus"></i></div>
+                        <!-- <div class="user-button" title="Ban gebruiker van project"><i class="fa fa-ban"></i></div> -->
                     </td>
                 </tr>
             </table>
         </section>
-        <section>
-            <div class="delete-button" @click="$emit('requestModal', 'delete', {'type': 'project', 'id': project.projectID})">Project Verwijderen</div>
-        </section>
+        <!-- <section>
+            <div class="delete-button" v-if="isOwner" @click="$emit('requestModal', 'delete', {'type': 'project', 'id': project.projectID})">Project Verwijderen</div>
+        </section> -->
     </div>
 </template>
 
@@ -62,7 +68,10 @@ export default {
         return {
             project: {},
             users: [],
-            inviteUserName: ""
+            inviteUserName: "",
+            userprojects: [],
+            isAdmin: false,
+            isOwner: false
         }
     },
     methods: {
@@ -91,7 +100,21 @@ export default {
     created() {
         this.fetchProject();
         this.fetchProjectUsers();
-
+        this.$store.dispatch('getUserProjects')
+            .then(response => this.userprojects = response)
+            .catch(error => console.log(error.response));
+    },
+    watch: {
+        userprojects: function() {
+            let index = this.userprojects.findIndex((el) => el.Project_projectID == this.project.projectID);
+            if (index > -1) {
+                let role = this.userprojects[index].projectuserRole; 
+                if (role == "ADMIN") this.isAdmin = true;
+                if (role == "OWNER") this.isOwner = true;
+            } else {
+                //FIXME: User should not be here
+            }
+        }
     }
 }
 </script>

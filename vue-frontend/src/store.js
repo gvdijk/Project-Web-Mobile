@@ -189,6 +189,20 @@ export default new Vuex.Store({
                 })
             )
         },
+        createProjectUser(context, project) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
+            return new Promise((resolve, reject) => 
+                axios.post(`/project/${project.projectID}/users`, {
+                    user: context.state.userID,
+                    role: project.role,
+                })
+                .then(response => resolve(response))
+                .catch(error => {
+                    context.dispatch('checkTokenExpiration', error.response);
+                    reject(error);
+                })
+            )
+        },
 
 
 
@@ -263,6 +277,22 @@ export default new Vuex.Store({
                 axios.delete(`/comment/${commentID}`)
                 .then(response => resolve(response.data))
                 .catch(error => {
+                    context.dispatch('checkTokenExpiration', error.response);
+                    reject(error);
+                })
+            )
+        },
+        deleteProjectUser(context, projectUser) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
+            return new Promise((resolve, reject) => 
+                axios.delete(`/project/${projectUser.projectID}/users`, {
+                    data: {
+                        user: projectUser.userID ? projectUser.userID : context.state.userID
+                    }
+                })
+                .then(response => resolve(response.data))
+                .catch(error => {
+                    console.log(error);
                     context.dispatch('checkTokenExpiration', error.response);
                     reject(error);
                 })

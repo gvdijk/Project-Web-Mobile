@@ -3,7 +3,7 @@
         <h1>Explore</h1>
         <h3>Ontdek projecten om aan deel te nemen</h3>
         <div class="projects-view">
-            <ProjectTile v-for="project in projects" :key="project.id" v-bind:project="project" />
+            <ProjectTile v-for="project in projects" :key="project.id" v-bind:project="project" v-bind:userprojects="userprojects" ref="projectTile" />
         </div>
         <PageSelector v-bind:visiblePages="3" v-bind:totalEntries="count" v-bind:entriesPerPage="limit" v-on:pageChanged="pageChanged"/>
     </div>
@@ -25,6 +25,7 @@ export default {
             offset: 0,
             limit: 5,
             count: 0,
+            userprojects: []
         }
     },
     methods: {
@@ -32,17 +33,20 @@ export default {
             this.$store.dispatch('getProjects', {offset: offset, limit: limit})
             .then( response => {
                 this.projects = response.data;
-                this.count = response.count
+                this.count = response.count;
             })
             .catch( error => console.log(error))
         },
         pageChanged(offset){
             this.offset = offset;
             this.fetchProjects(this.offset, this.limit);
-        },
+        }
     },
     created(){
         this.fetchProjects(this.offset, this.limit);
+        this.$store.dispatch('getUserProjects')
+            .then(response => {this.userprojects = response; console.log(response)})
+            .catch(error => console.log(error.response))
     }
 }
 </script>

@@ -4,6 +4,8 @@
         <div class="modal-text">
             Weet je zeker dat je 
             <span v-if="body.type == 'post'">dit bericht</span>
+            <span v-if="body.type == 'project'">dit project</span>
+            <span v-if="body.type == 'projectuser'">deze gebruiker</span>
             <span v-else>deze reactie</span> 
             wilt verwijderen?
 
@@ -18,21 +20,29 @@
 <script>
 /*
  *  body should be of format { 
- *      type: [project || post || comment],
+ *      type: [project || projectuser || post || comment],
  *      id: [projectID || postID || commentID]
+ *      userID: []
  *  }
  */
 export default {
     name: 'Delete',
     methods: {
         deleteAction() {
-             console.log(`Deleted ${this.body.type} with id ${this.body.id}`);
+            //  console.log(`Deleted ${this.body.type} with id ${this.body.id}`);
             if (this.body.type == 'project') {
                 this.$store.dispatch('deleteProject', this.body.id)
                 .then(this.$emit('closeModal'))
                 .catch(error => console.log(error));
             } else if (this.body.type == 'post') {
                 this.$store.dispatch('deletePost', this.body.id)
+                .then(this.$emit('closeModal'))
+                .catch(error => console.log(error));
+            } else if (this.body.type == 'projectuser') {
+                this.$store.dispatch('deleteProjectUser', {
+                    projectID: this.body.id,
+                    userID: this.body.userID
+                })
                 .then(this.$emit('closeModal'))
                 .catch(error => console.log(error));
             } else {
