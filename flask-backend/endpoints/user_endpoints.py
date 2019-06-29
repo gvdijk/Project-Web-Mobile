@@ -148,6 +148,11 @@ def put_user(id):
     # Check if specified ID is an integer
     if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
+
+    # Check if token identity corresponds to the user being updated
+    if not(int(id) == get_jwt_identity()):
+        return jsonify({"error": "Not allowed to update this users information"}), 403
+
     # Fetch form data
     userDetails = request.get_json()
     name = userDetails.get('name')
@@ -187,6 +192,10 @@ def del_user(id):
     # Check if specified ID is an integer
     if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
+
+    # Check if token identity corresponds to the user being deleted
+    if not(int(id) == get_jwt_identity()):
+        return jsonify({"error": "Not allowed to delete this user"}), 403
     
     # Check if user actually exists
     user = database.getUserByID(id)

@@ -9,6 +9,7 @@ comment_endpoints = Blueprint('comment_endpoints', __name__)
 @comment_endpoints.route('/comment/<string:id>', methods=['PUT'])
 @jwt_required
 def put_comment(id):
+    # TODO: Only project member can comment on post
     # Check if specified ID is an integer
     if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
@@ -30,6 +31,7 @@ def put_comment(id):
 @comment_endpoints.route('/comment/<string:id>', methods=['DELETE'])
 @jwt_required
 def delete_comment(id):
+    # TODO: Only comment owner can delete comment
     # Check if specified ID is an integer
     if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400

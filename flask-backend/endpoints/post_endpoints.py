@@ -9,6 +9,7 @@ post_endpoints = Blueprint('post_endpoints', __name__)
 @post_endpoints.route('/post/<string:id>/comments', methods=['POST'])
 @jwt_required
 def add_comment(id):
+    # TODO: Only project members can comment on a post
     # Check if specified ID is an integer
     if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
@@ -72,6 +73,7 @@ def get_post_comments(id):
 @post_endpoints.route('/post/<string:id>', methods=['PUT'])
 @jwt_required
 def put_post(id):
+    # TODO: Only post owner can update post
     # Check if specified ID is an integer
     if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
@@ -93,6 +95,7 @@ def put_post(id):
 @post_endpoints.route('/post/<string:id>', methods=['DELETE'])
 @jwt_required
 def del_post(id): 
+    # TODO: Only post owner can delete post
     # Check if specified ID is an integer
     if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400

@@ -34,9 +34,11 @@ def add_project():
         return jsonify({"error": "Project owner not specified"}), 400
     if not function.isInt(owner):
         return jsonify({"error": "ownerID should be string"})
-    
+
     # Add project to the database
     projectid = database.addProject(name, description, visibility, owner)
+    # Add owner of project to projectusers
+    userid = database.addProjectUser(owner, projectid, 'OWNER')
     return jsonify({"id": projectid}), 201
 
 @project_endpoints.route('/project/<string:id>/posts', methods=['POST'])
@@ -67,6 +69,11 @@ def add_post(id):
     if project is None:
         return jsonify({"error": "Specified project does not exist"})
 
+    # Check if you have permission to post on this project
+    userRole = function.getProjectUserRole(get_jwt_identity(), id)
+    if not function.isProjectMember(userRole):
+        return jsonify({"error": "Must be a user member to add post"}), 403
+
     # Add post to the database
     postid = database.addProjectPost(title, content, owner, id)
     return jsonify({"id": postid}), 201
@@ -91,6 +98,11 @@ def add_project_user(id):
     project = database.getProjectByID(id)
     if project is None:
         return jsonify({"error": "Specified project does not exist"})
+
+    # Check if you have permission to add a user
+    userRole = function.getProjectUserRole(get_jwt_identity(), id)
+    if not function.isProjectAdmin(userRole):
+        return jsonify({"error": "Must be a project admin to add user"}), 403
 
     projectUserID = database.addProjectUser(user, id, role)
     return jsonify({"id": projectUserID}), 201
@@ -118,6 +130,7 @@ def get_project():
         return jsonify(dataCount), 200
 
 @project_endpoints.route('/project/<string:id>', methods=['GET'])
+@jwt_required
 def get_project_id(id):
     # Check if specified ID is an integer
     if not function.isInt(id):
@@ -127,11 +140,16 @@ def get_project_id(id):
     if data is None:
         return jsonify({"error": "No results found"}), 404
     else:
+        if(data['projectVisibility'] == 'PRIVATE'):
+            userRole = function.getProjectUserRole(get_jwt_identity(), id)
+            if not function.isProjectMember(userRole):
+                return jsonify({"error": "Must be project member to view project"}), 403
         user = database.getUserInfo(str(data['projectOwner']))
         data['owner'] = user
         return jsonify(data), 200
 
 @project_endpoints.route('/project/<string:id>/users', methods=['GET'])
+@jwt_required
 def get_project_users(id):
     # Check if specified ID is an integer
     if not function.isInt(id):
@@ -152,6 +170,7 @@ def get_project_users(id):
         return jsonify(data), 200
 
 @project_endpoints.route('/project/<string:id>/posts', methods=['GET'])
+@jwt_required
 def get_project_post(id):
     limit = request.args.get('limit')
     offset = request.args.get('offset')
@@ -166,6 +185,11 @@ def get_project_post(id):
     if data is None:
         return jsonify({"error": "No results found"}), 404
     else:
+        project = database.getProjectByID(id)
+        if(project['projectVisibility'] == 'PRIVATE'):
+            userRole = function.getProjectUserRole(get_jwt_identity(), id)
+            if not function.isProjectMember(userRole):
+                return jsonify({"error": "Must be project member to view project posts"}), 403
         for projectpost in data:
             user = database.getUserInfo(str(projectpost['postUser']))
             projectpost['user'] = user
@@ -200,6 +224,11 @@ def put_project(id):
     if project is None:
         return jsonify({"error": "Specified project does not exist"})
 
+    # Check if you have permission to update the project
+    userRole = function.getProjectUserRole(get_jwt_identity(), id)
+    if not function.isProjectAdmin(userRole):
+        return jsonify({"error": "Must be a project admin to update the project"}), 403
+
     data = database.updateProject(id, title, content, visibility)
     if data is not None:
         return jsonify(data), 200
@@ -231,6 +260,22 @@ def put_project_user(id):
     if project is None:
         return jsonify({"error": "Specified project does not exist"})
 
+    # Check that you are not trying to change project owner
+    if role == 'OWNER':
+        return jsonify({"error": "Cannot set or tranfer project ownership"}), 403
+    # Retrieve projectrole of user
+    userRole = function.getProjectUserRole(get_jwt_identity(), id)
+    # If user issuing the request is not changing his own data, check if user is admin
+    if not (get_jwt_identity() == user):
+        if not function.isProjectAdmin(userRole):
+            return jsonify({"error": "Must be a project admin to update user roles"}), 403
+    # If user issuing the request is changing own data, he can only change himself from invited to user
+    elif userRole == 'PENDING':
+        if role != 'USER':
+            return jsonify({"error": "May only change your own role from pending to user"}), 403
+    else:
+        return jsonify({"error": "May only change your own role from pending to user"}), 403
+
     data = database.updateProjectUser(id, user, role)
     if data is not None:
         return jsonify(data), 200
@@ -249,6 +294,11 @@ def del_project(id):
     if project is None:
         return jsonify({"error": "Specified project does not exist"})
     
+    # Check if you are the owner of the project you are trying to delete
+    userRole = function.getProjectUserRole(get_jwt_identity(), id)
+    if not function.isProjectOwner(userRole):
+        return jsonify({"error": "Must be project owner to delete a project"}), 403
+
     # Delete project
     if database.deleteProject(id):
         return jsonify({"Info": "Project deleted successfully"}), 200
@@ -273,6 +323,31 @@ def del_project_user(id):
     project = database.getProjectByID(id)
     if project is None:
         return jsonify({"error": "Specified project does not exist"})
+
+    # Retrieve projectrole of user
+    userRole = function.getProjectUserRole(get_jwt_identity(), id)
+    # Retrieve projectrole of target
+    targetRole = function.getProjectUserRole(user, id)
+
+    # Check if both users are part of the same project
+    if userRole is None:
+        return jsonify({"error": "Must be a project member to delete users"}), 403
+    elif targetRole is None:
+        return jsonify({"error": "Target user is not a member of specified project"}), 403
+
+    # User is trying to delete somebody else
+    if not (get_jwt_identity() == user):
+        if userRole not in ['ADMIN', 'OWNER']:
+            return jsonify({"error": "Cannot delete project users without ADMIN or OWNER status"}), 403
+        elif targetRole == 'OWNER':
+            return jsonify({"error": "Cannot delete the owner of a project"}), 403
+        elif targetRole == 'ADMIN':
+            if userRole != 'OWNER':
+                return jsonify({"error": "Cannot delete a project admin without OWNER permission"}), 403
+    # User is trying to deleting himself, check that he is not the owner of the project
+    else:
+        if userRole == 'OWNER':
+            return jsonify({"error": "Cannot delete yourself from your own project"}), 403
     
     # Delete project user
     if database.deleteProjectUser(id, user):
