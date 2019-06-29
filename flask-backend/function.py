@@ -71,3 +71,20 @@ def nest_comments(comments):
         root[comment['commentID']].update(comment)
         root[parentID]['children'].append(root[comment['commentID']])
     return root['top']['children']
+
+# Check the role of a user in a project
+def getProjectUserRole(userID, projectID):
+    projectUser = database.getProjectUserByID(str(userID), str(projectID))
+    if projectUser is None:
+        return None
+    else:
+        return projectUser['projectuserRole']
+
+def isProjectMember(userRole):
+    return userRole in ['USER', 'ADMIN', 'OWNER']
+
+def isProjectAdmin(userRole):
+    return userRole in ['ADMIN', 'OWNER']
+
+def isProjectOwner(userRole):
+    return userRole == 'OWNER'

@@ -39,7 +39,7 @@ def getUserByName(name):
 def getUserByID(id):
     connection = getConnection()
     cur = connection.cursor(dictionary=True)
-    sql = "SELECT * FROM user WHERE userDeleted = 0 AND userID = " + id
+    sql = "SELECT userCreated, userID, userName, userPicture FROM user WHERE userDeleted = 0 AND userID = " + id
     cur.execute(sql)
     results = cur.fetchone()
     cur.close()
@@ -274,6 +274,20 @@ def getProjectUsers(id):
     sql = "SELECT * FROM projectuser WHERE projectuserDeleted = 0 AND Project_projectID = " + id
     cur.execute(sql)
     results = cur.fetchall()
+    cur.close()
+    connection.close()
+
+    if (results is not None and len(results) == 0):
+        return None
+    else:
+        return results
+
+def getProjectUserByID(userID, projectID):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
+    sql = "SELECT * FROM projectuser WHERE projectuserDeleted = 0 AND Project_projectID = " + projectID + " AND User_userID = " + userID
+    cur.execute(sql)
+    results = cur.fetchone()
     cur.close()
     connection.close()
 
