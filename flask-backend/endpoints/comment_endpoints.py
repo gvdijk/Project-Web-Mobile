@@ -9,7 +9,6 @@ comment_endpoints = Blueprint('comment_endpoints', __name__)
 @comment_endpoints.route('/comment/<string:id>', methods=['PUT'])
 @jwt_required
 def put_comment(id):
-    # TODO: Only project member can comment on post
     # Check if specified ID is an integer
     if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
@@ -20,6 +19,15 @@ def put_comment(id):
 
     if content is None:
         return jsonify({"error": "Comment content not specified"}), 400
+
+    # Check if comment actually exists
+    comment = database.getCommentByID(id)
+    if comment is None:
+        return jsonify({"error": "Specified comment does not exist"})
+
+    # Check if the user trying to update the comment is the comment owner
+    if comment['commentUser'] != get_jwt_identity():
+        return jsonify({"error": "Only comment owner can update post"}), 400
     
     # Update comment
     data = database.updateComment(id, content)
@@ -31,7 +39,6 @@ def put_comment(id):
 @comment_endpoints.route('/comment/<string:id>', methods=['DELETE'])
 @jwt_required
 def delete_comment(id):
-    # TODO: Only comment owner can delete comment
     # Check if specified ID is an integer
     if not function.isInt(id):
         return jsonify({"error": "id is not an integer"}), 400
@@ -40,10 +47,17 @@ def delete_comment(id):
     comment = database.getCommentByID(id)
     if comment is None:
         return jsonify({"error": "Specified comment does not exist"})
+
+    # Check if the user trying to delete the post is the post owner
+    post = database.getPostByID(comment['commentPost'])
+    userRole = function.getProjectUserRole(get_jwt_identity(), post['postProject'])
+    if not function.isProjectAdmin(userRole):
+        if post['postUser'] != get_jwt_identity():
+            return jsonify({"error": "Must be admin to delete comment of other user"}), 400
     
     # Delete comment
-    data = database.deleteComment(id)
-    if data is not None:
+    commentDeleted = database.deleteComment(id)
+    if commentDeleted is True:
         return jsonify({"Info": "Comment deleted successfully"}), 200
     else:
-        return jsonify({"error": "No results found"}), 404
+        return jsonify({"error": "Something went wrong deleting the comment"}), 500
