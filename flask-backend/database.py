@@ -242,7 +242,7 @@ def getProjects(name, limit, offset):
         if offset is not None:
             sql += " OFFSET " + offset
     else:
-        sql += " ORDER BY projectName"
+        sql += " ORDER BY projectCreated"
     cur.execute(sql, data)
     results = cur.fetchall()
     cur.close()
@@ -450,6 +450,22 @@ def deletePost(id):
     cur = connection.cursor(dictionary=True)
     try:
         sql = "UPDATE post SET postDeleted = true WHERE postID = " + id
+        cur.execute(sql)
+        connection.commit()
+        cur.close()
+        connection.close()
+        return True
+    except Exception as e:
+        cur.close()
+        connection.close()
+        print(e)
+        return False
+
+def deltePostComments(id):
+    connection = getConnection()
+    cur = connection.cursor(dictionary=True)
+    try:
+        sql = "UPDATE comment SET commentDeleted = true WHERE commentPost = " + id
         cur.execute(sql)
         connection.commit()
         cur.close()

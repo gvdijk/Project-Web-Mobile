@@ -19,7 +19,7 @@ def add_project():
     name = projectDetails.get('name')
     description = projectDetails.get('description')
     visibility = projectDetails.get('visibility')
-    owner = projectDetails.get('ownerID')
+    owner = get_jwt_identity()
 
     # Check if all data is supplied correctly
     if name is None:
@@ -52,7 +52,7 @@ def add_post(id):
     projectDetails = request.get_json()
     title = projectDetails.get('title')
     content = projectDetails.get('content')
-    owner = projectDetails.get('userID')
+    owner = get_jwt_identity()
 
     # Check if all data is supplied
     if title is None:
@@ -72,7 +72,7 @@ def add_post(id):
     # Check if you have permission to post on this project
     userRole = function.getProjectUserRole(get_jwt_identity(), id)
     if not function.isProjectMember(userRole):
-        return jsonify({"error": "Must be a user member to add post"}), 403
+        return jsonify({"error": "Must be a project member to add post"}), 403
 
     # Add post to the database
     postid = database.addProjectPost(title, content, owner, id)
@@ -99,10 +99,30 @@ def add_project_user(id):
     if project is None:
         return jsonify({"error": "Specified project does not exist"})
 
-    # Check if you have permission to add a user
+    # Check if you have permission to add a user to this project
+    projectVisibility = project['projectVisibility']
     userRole = function.getProjectUserRole(get_jwt_identity(), id)
-    if not function.isProjectAdmin(userRole):
-        return jsonify({"error": "Must be a project admin to add user"}), 403
+    if userRole is None:
+        if projectVisibility == 'PUBLIC':
+            if role not in ['INVITED', 'USER']:
+                return jsonify({"error": "May only invite or add user on public project"})
+        elif projectVisibility == 'RESTRICTED':
+            if role == 'INVITED':
+                if not function.isProjectAdmin(userRole):
+                    return jsonify({"error": "Only admins can invite users on restricted projects"})
+            elif role == 'PENDING':
+                if user != get_jwt_identity():
+                    return jsonify({"error": "Only a user can request membership for himself"})
+            else:
+                return jsonify({"error": "May only invite or request user on restricted project"})
+        elif projectVisibility == 'PRIVATE':
+            if role == 'INVITED':
+                if not function.isProjectAdmin(userRole):
+                    return jsonify({"error": "Only admins can invite users on private projects"})
+            else:
+                return jsonify({"error": "You may only invite users for private projects"})
+    else:
+        return jsonify({"error": "User already has a project role"})
 
     projectUserID = database.addProjectUser(user, id, role)
     return jsonify({"id": projectUserID}), 201
