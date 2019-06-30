@@ -3,93 +3,99 @@
         <h1>{{user.userName}} Instellingen</h1>
         <section>
             <label>Projecten overzicht</label>
-            <table>
-                <tr>
-                    <th>Project</th>
-                    <th>Status</th>
-                    <th>Lid sinds</th>
-                    <th>Acties</th>
-                </tr>
-                <tr :key="project.projectID" v-for="project in projects">
-                    <td>
-                        <router-link class="router-link" :to="{ path:`/project/${project.project.projectID}`}">{{project.project.projectName}}</router-link>
-                    </td>
-                    <td>
-                        {{userRole(project.projectuserRole)}}
-                    </td>
-                    <td>
-                        {{project.projectuserJoined}}
-                    </td>
-                    <td>
-                        <div class="user-button" title="Accepteren" 
-                        v-if="project.projectuserRole == 'INVITED'"
-                        @click="acceptInvite(project)"><i class="fa fa-check"></i></div>
-                        <div class="user-button" title="Weigeren" 
-                        v-if="project.projectuserRole == 'INVITED'"
-                        @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': project.project.projectID, 'userID': null})"><i class="fa fa-times"></i></div>
-                        <div class="user-button" title="Instellingen" 
-                        v-if="project.projectuserRole == 'OWNER' || project.projectuserRole == 'ADMIN'"><i class="fa fa-cog"></i></div>
-                        <div class="user-button" title="Verlaten" 
-                        @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': project.project.projectID, 'userID': null})"><i class="fa fa-minus"></i></div>
-                    </td>
-                </tr>
-            </table>
+            <div class="table-wrapper">
+                <table>
+                    <tr>
+                        <th>Project</th>
+                        <th>Status</th>
+                        <th>Lid sinds</th>
+                        <th>Acties</th>
+                    </tr>
+                    <tr :key="project.projectID" v-for="project in projects">
+                        <td>
+                            <router-link class="router-link" :to="{ path:`/project/${project.project.projectID}`}">{{project.project.projectName}}</router-link>
+                        </td>
+                        <td>
+                            {{userRole(project.projectuserRole)}}
+                        </td>
+                        <td>
+                            {{project.projectuserJoined}}
+                        </td>
+                        <td>
+                            <div class="user-button" title="Accepteren" 
+                            v-if="project.projectuserRole == 'INVITED'"
+                            @click="acceptInvite(project)"><i class="fa fa-check"></i></div>
+                            <div class="user-button" title="Weigeren" 
+                            v-if="project.projectuserRole == 'INVITED'"
+                            @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': project.project.projectID, 'userID': null})"><i class="fa fa-times"></i></div>
+                            <div class="user-button" title="Instellingen" 
+                            v-if="project.projectuserRole == 'OWNER' || project.projectuserRole == 'ADMIN'"><i class="fa fa-cog"></i></div>
+                            <div class="user-button" title="Verlaten" 
+                            @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': project.project.projectID, 'userID': null})"><i class="fa fa-minus"></i></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </section>
         <section>
             <label>Berichten overzicht</label>
-            <table>
-                <tr>
-                    <th>Bericht</th>
-                    <th>Project</th>
-                    <th>Geplaatst</th>
-                    <th>Acties</th>
-                </tr>
-                <tr :key="post.postID" v-for="post in posts">
-                    <td><router-link class="router-link" :to="{ path:`/project/${post.project.projectID}/post/${post.postID}`}">{{post.postTitle}}</router-link></td>
-                    <td>
-                        <router-link class="router-link" :to="{ path:`/project/${post.project.projectID}`}">{{post.project.projectName}}</router-link>
-                    </td>
-                    <td>
-                        {{post.postCreated}}
-                    </td>
-                    <td>
-                        <div class="user-button" title="Reageren" 
-                        @click="$emit('requestModal', 'create', {'type': 'comment', 'id': post.postID})"><i class="fa fa-reply"></i></div>
-                        <div class="user-button" title="Bewerken"
-                        @click="$emit('requestModal', 'edit', {'type': 'post', 'id': post.postID, 'text': post.postContent})"><i class="fa fa-edit"></i></div>
-                        <div class="user-button" title="Verwijderen"
-                        @click="$emit('requestModal', 'delete', {'type': 'post', 'id': post.postID})"><i class="fa fa-times"></i></div>
-                    </td>
-                </tr>
-            </table>
+            <div class="table-wrapper">
+                <table>
+                    <tr>
+                        <th>Bericht</th>
+                        <th>Project</th>
+                        <th>Geplaatst</th>
+                        <th>Acties</th>
+                    </tr>
+                    <tr :key="post.postID" v-for="post in posts">
+                        <td><router-link class="router-link" :to="{ path:`/project/${post.project.projectID}/post/${post.postID}`}">{{post.postTitle}}</router-link></td>
+                        <td>
+                            <router-link class="router-link" :to="{ path:`/project/${post.project.projectID}`}">{{post.project.projectName}}</router-link>
+                        </td>
+                        <td>
+                            {{post.postCreated}}
+                        </td>
+                        <td>
+                            <div class="user-button" title="Reageren" 
+                            @click="$emit('requestModal', 'create', {'type': 'comment', 'id': post.postID})"><i class="fa fa-reply"></i></div>
+                            <div class="user-button" title="Bewerken"
+                            @click="$emit('requestModal', 'edit', {'type': 'post', 'id': post.postID, 'text': post.postContent})"><i class="fa fa-edit"></i></div>
+                            <div class="user-button" title="Verwijderen"
+                            @click="$emit('requestModal', 'delete', {'type': 'post', 'id': post.postID})"><i class="fa fa-times"></i></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </section>
         <section>
             <label>Reacties overzicht</label>
-            <table>
-                <tr>
-                    <th>Reacties</th>
-                    <th>Bericht</th>
-                    <th>Geplaatst</th>
-                    <th>Acties</th>
-                </tr>
-                <tr :key="comment.commentID" v-for="comment in comments">
-                    <td><router-link class="router-link" :to="{ path:`/project/${comment.post.postProject}/post/${comment.post.postID}`}">{{comment.commentContent}}</router-link></td>
-                    <td>
-                        <router-link class="router-link" :to="{ path:`/project/${comment.post.postProject}/post/${comment.post.postID}`}">{{comment.post.postTitle}}</router-link>
-                    </td>
-                    <td>
-                        {{comment.commentCreated}}
-                    </td>
-                    <td>
-                        <div class="user-button" title="Reageren" 
-                        @click="$emit('requestModal', 'create', {'type': 'child', 'id': comment.commentPost, 'parent': comment.commentID})"><i class="fa fa-reply"></i></div>
-                        <div class="user-button" title="Bewerken"
-                        @click="$emit('requestModal', 'edit', {'type': 'comment', 'id': comment.commentID, 'text': comment.commentContent})"><i class="fa fa-edit"></i></div>
-                        <div class="user-button" title="Verwijderen"
-                        @click="$emit('requestModal', 'delete', {'type': 'comment', 'id': comment.commentID})"><i class="fa fa-times"></i></div>
-                    </td>
-                </tr>
-            </table>
+            <div class="table-wrapper">
+                <table>
+                    <tr>
+                        <th>Reacties</th>
+                        <th>Bericht</th>
+                        <th>Geplaatst</th>
+                        <th>Acties</th>
+                    </tr>
+                    <tr :key="comment.commentID" v-for="comment in comments">
+                        <td><router-link class="router-link" :to="{ path:`/project/${comment.post.postProject}/post/${comment.post.postID}`}">{{comment.commentContent}}</router-link></td>
+                        <td>
+                            <router-link class="router-link" :to="{ path:`/project/${comment.post.postProject}/post/${comment.post.postID}`}">{{comment.post.postTitle}}</router-link>
+                        </td>
+                        <td class="date-col">
+                            {{comment.commentCreated}}
+                        </td>
+                        <td>
+                            <div class="user-button" title="Reageren" 
+                            @click="$emit('requestModal', 'create', {'type': 'child', 'id': comment.commentPost, 'parent': comment.commentID})"><i class="fa fa-reply"></i></div>
+                            <div class="user-button" title="Bewerken"
+                            @click="$emit('requestModal', 'edit', {'type': 'comment', 'id': comment.commentID, 'text': comment.commentContent})"><i class="fa fa-edit"></i></div>
+                            <div class="user-button" title="Verwijderen"
+                            @click="$emit('requestModal', 'delete', {'type': 'comment', 'id': comment.commentID})"><i class="fa fa-times"></i></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </section>
         <!-- <section>
             <div class="delete-button" @click="$emit('requestModal', 'delete', {'type': 'user', 'id': userID})">Account Verwijderen</div>
@@ -174,20 +180,12 @@ export default {
 
 <style scoped>
 
-h1 {
-    font-size: 24pt;
-    color: var(--green);
-    font-weight: 500;
-}
-
-h2 {
-    font-size: 16pt;
-    color: var(--green);
-    font-weight: 400;
-}
-
 section {
     padding-bottom: 36px;
+}
+
+.table-wrapper {
+    overflow-x: auto;
 }
 
 .button {
@@ -287,21 +285,35 @@ table {
 }
 
 tr {
-    border-bottom: 1px solid var(--gray-bright);
+    /* border-bottom: 1px solid var(--gray-bright); */
 }
 
 th {
     text-align: left;
+    border-bottom: 1px solid var(--gray-bright);
 }
 
 td {
     color: var(--black-smooth);
     font-style: italic;
     font-size: 10pt;
+    min-width: 90px;
+    border-bottom: 1px solid var(--gray-bright);
+    padding: 0 2px 4px;
+    word-break: break-all;
+    word-break: break-word;
+    overflow: hidden;
+    max-width: 60vw;
+}
+
+td:first-child {
+    min-width: 240px;
 }
 
 td:last-child {
+    min-width: 80px;
     width: 80px;
+    max-width: 80px;
 }
 
 .router-link {

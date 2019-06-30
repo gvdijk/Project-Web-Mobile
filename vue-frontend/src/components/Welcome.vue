@@ -57,6 +57,8 @@ export default {
     position: relative;
     width: 100vw;
     height: 400px;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .banner-text {
@@ -94,15 +96,15 @@ export default {
 .banner-actions {
     display: block;
     text-align: center;
-    margin-top: 10px;
+    margin-top: 16px;
 }
 
 .banner-button {
     display: inline-block;
-    padding: 6px 16px 8px;
+    padding: 4px 16px 6px;
     background-color: var(--dark-green);
     color: var(--white-soft);
-    font-size: 14pt;
+    font-size: 13pt;
     margin: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
@@ -136,6 +138,7 @@ export default {
 
 .info-column {
     align-self: flex-start;
+    margin: 10px 0;
 }
 
 .info-column-title {
@@ -144,10 +147,32 @@ export default {
     font-size: 18pt;
     margin-bottom: 5px;
     font-weight: 600;
+    text-align: center;
 }
 
 .info-column-content {
     color: var(--black-mid);
+    text-align: center;
+}
+
+
+@media screen and (max-width: 600px) {
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .banner-title {
+        font-size: 24pt;
+    }
+
+    .banner-subtitle {
+        font-size: 16pt;
+    }
+
+    .banner-button:hover {
+        background-color: var(--green);
+    }
 }
 
 </style>

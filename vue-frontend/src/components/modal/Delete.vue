@@ -36,7 +36,10 @@ export default {
                 .catch(error => console.log(error));
             } else if (this.body.type == 'post') {
                 this.$store.dispatch('deletePost', this.body.id)
-                .then(this.$emit('closeModal'))
+                .then(response => { 
+                    this.$router.push({path: `/project/${this.body.projectID}`});
+                    this.$emit('closeModal');
+                })
                 .catch(error => console.log(error));
             } else if (this.body.type == 'projectuser') {
                 this.$store.dispatch('deleteProjectUser', {

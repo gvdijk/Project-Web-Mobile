@@ -128,5 +128,23 @@ body {
 }
 
 
+h1 {
+    font-size: 24pt;
+    color: var(--green);
+    font-weight: 600;
+}
+
+h2 {
+    font-size: 20pt;
+    color: var(--green);
+    font-weight: 500;
+}
+
+h3 {
+    font-size: 16pt;
+    color: var(--green);
+    font-weight: 400;
+}
+
 
 </style>

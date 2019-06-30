@@ -12,7 +12,7 @@
                         @click="$emit('requestModal', 'edit', {'type': 'post', 'id': post.postID, 'text': post.postContent})">
                         Bewerken
                     </div>
-                    <div class="post-button delete-button" v-if="isAdmin || isOwner" @click="$emit('requestModal', 'delete', {'type': 'post', 'id': post.postID})">Verwijderen</div>
+                    <div class="post-button delete-button" v-if="isAdmin || isOwner" @click="$emit('requestModal', 'delete', {'type': 'post', 'id': post.postID, 'projectID': post.postProject})">Verwijderen</div>
                 </div>
             </div>
             <div class="post-description">{{post.postContent}}</div>

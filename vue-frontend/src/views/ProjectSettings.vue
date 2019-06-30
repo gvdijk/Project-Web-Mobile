@@ -22,38 +22,40 @@
         </section>
         <section>
             <label>Gebruikers overzicht</label>
-            <table>
-                <tr>
-                    <th>Naam</th>
-                    <th>Type</th>
-                    <th>Lid sinds</th>
-                    <th>Acties</th>
-                </tr>
-                <tr :key="user.User_userID" v-for="user in users">
-                    <td>{{user.User_userID}}</td>
-                    <td>
-                        Gebruiker
-                    </td>
-                    <td>
-                        16 Augustus 2018
-                    </td>
-                    <td>
-                        <div class="user-button" title="Accepteren"
-                        v-if="user.projectuserRole == 'PENDING'"><i class="fa fa-check"></i></div>
-                        <div class="user-button" title="Weigeren"
-                        v-if="user.projectuserRole == 'PENDING'"><i class="fa fa-times"></i></div>
-                        <div class="user-button" title="Annuleren"
-                        v-if="user.projectuserRole == 'INVITED'"><i class="fa fa-minus"></i></div>
-                        <div class="user-button" title="Promoveer naar administrator"
-                        v-if="user.projectuserRole == 'USER' && isOwner"><i class="fa fa-star"></i></div>
-                        <div class="user-button" title="Degradeer naar gebruiker"
-                        v-if="user.projectuserRole == 'ADMIN' && isOwner"><i class="fa fa-star is-admin"></i></div>
-                        <div class="user-button" title="Verwijder gebruiker van project"
-                        v-if="(user.projectuserRole == 'USER' && isAdmin) || (user.projectuserRole == 'ADMIN' && isOwner) "><i class="fa fa-minus"></i></div>
-                        <!-- <div class="user-button" title="Ban gebruiker van project"><i class="fa fa-ban"></i></div> -->
-                    </td>
-                </tr>
-            </table>
+            <div class="table-wrapper">
+                <table>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Type</th>
+                        <th>Lid sinds</th>
+                        <th>Acties</th>
+                    </tr>
+                    <tr :key="user.User_userID" v-for="user in users">
+                        <td>{{user.user.userName}}</td>
+                        <td>
+                            {{userRole(user.projectuserRole)}}
+                        </td>
+                        <td>
+                            16 Augustus 2018
+                        </td>
+                        <td>
+                            <div class="user-button" title="Accepteren"
+                            v-if="user.projectuserRole == 'PENDING'"><i class="fa fa-check"></i></div>
+                            <div class="user-button" title="Weigeren"
+                            v-if="user.projectuserRole == 'PENDING'"><i class="fa fa-times"></i></div>
+                            <div class="user-button" title="Annuleren"
+                            v-if="user.projectuserRole == 'INVITED'"><i class="fa fa-minus"></i></div>
+                            <div class="user-button" title="Promoveer naar administrator"
+                            v-if="user.projectuserRole == 'USER' && isOwner"><i class="fa fa-star"></i></div>
+                            <div class="user-button" title="Degradeer naar gebruiker"
+                            v-if="user.projectuserRole == 'ADMIN' && isOwner"><i class="fa fa-star is-admin"></i></div>
+                            <div class="user-button" title="Verwijder gebruiker van project"
+                            v-if="(user.projectuserRole == 'USER' && (isAdmin || isOwner)) || (user.projectuserRole == 'ADMIN' && isOwner) "><i class="fa fa-minus"></i></div>
+                            <!-- <div class="user-button" title="Ban gebruiker van project"><i class="fa fa-ban"></i></div> -->
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </section>
         <!-- <section>
             <div class="delete-button" v-if="isOwner" @click="$emit('requestModal', 'delete', {'type': 'project', 'id': project.projectID})">Project Verwijderen</div>
@@ -75,6 +77,15 @@ export default {
         }
     },
     methods: {
+        userRole(role) {
+            switch(role) {
+                case "USER": return "Gebruiker";
+                case "ADMIN": return "Administrator";
+                case "INVITED": return "Uitgenodigd";
+                case "PENDING": return "Aangevraagd";
+                case "OWNER": return "Eigenaar";
+            }
+        },
         fetchProject(){
             this.$store.dispatch('getProjectByID', this.$route.params.id)
             .then(response => this.project = response)
@@ -120,21 +131,12 @@ export default {
 </script>
 
 <style scoped>
-
-h1 {
-    font-size: 24pt;
-    color: var(--green);
-    font-weight: 500;
-}
-
-h2 {
-    font-size: 16pt;
-    color: var(--green);
-    font-weight: 400;
-}
-
 section {
     padding-bottom: 36px;
+}
+
+.table-wrapper {
+    overflow-x: auto;
 }
 
 .button {
@@ -234,16 +236,37 @@ table {
 }
 
 tr {
-    border-bottom: 1px solid var(--gray-bright);
+    /* border-bottom: 1px solid var(--gray-bright); */
 }
 
 th {
     text-align: left;
+    border-bottom: 1px solid var(--gray-bright);
+}
+
+td {
+    color: var(--black-smooth);
+    font-style: italic;
+    font-size: 10pt;
+    min-width: 90px;
+    border-bottom: 1px solid var(--gray-bright);
+    padding: 0 2px 4px;
+    word-break: break-all;
+    word-break: break-word;
+    overflow: hidden;
+    max-width: 60vw;
+}
+
+td:first-child {
+    min-width: 240px;
 }
 
 td:last-child {
+    min-width: 80px;
     width: 80px;
+    max-width: 80px;
 }
+
 
 .user-button {
     display: inline-block;

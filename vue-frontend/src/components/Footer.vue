@@ -2,16 +2,10 @@
     <footer>
         <div class="footer-filler">
             <div class="footer-content">
-                <div class="footer-column">
-                    <a>Home</a>
-                    <a>Over ons</a>
-                    <a>Sitemap</a>
+                <div class="logo-wrapper">
+                    <img src="../assets/Logo_Full_White.svg" alt="logo">
                 </div>
-                <div class="footer-column">
-                    <a>Mobiele website</a>
-                    <a>Help</a>
-                    <a>Contact</a>
-                </div>
+                <span class="footer-message">Project Planner &#9400;2019</span>
             </div>
         </div>
     </footer>
@@ -52,13 +46,15 @@ footer {
     height: 100%;
     width: 600px;
     max-width: 80%;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+    grid-template-rows: 2fr 1fr;
     align-items: center;
     grid-column-gap: 50px;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
+    padding: 30px 0;
+    box-sizing: border-box;
 }
 
 .footer-column {
@@ -79,4 +75,31 @@ footer {
     color: var(--green);
 }
 
+.logo-wrapper {
+    position: relative;
+    display: inline-block;
+    height: 70px;
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.logo-wrapper img {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 280px;
+    max-height: 100%;
+    cursor: pointer;
+}
+
+.footer-message {
+    color: var(--white-soft);
+    font-size: 13pt;
+    font-weight: 300;
+    display: block;
+    width: 100%;
+    text-align: center;
+}
 </style>

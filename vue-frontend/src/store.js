@@ -56,6 +56,7 @@ export default new Vuex.Store({
             )
         },
         getProjectByID(context, projectID){
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
             return new Promise((resolve, reject) => 
                 axios.get(`/project/${projectID}`)
                 .then(response => resolve(response.data))
@@ -63,6 +64,7 @@ export default new Vuex.Store({
             )
         },
         getProjectPosts(context, payload){
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
             let projectID = payload.projectID
             let limit = payload.limit.toString();
             let offset = payload.offset.toString();
@@ -74,6 +76,7 @@ export default new Vuex.Store({
             )
         },
         getPostByID(context, postID){
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
             return new Promise((resolve, reject) => 
                 axios.get(`/post/${postID}`)
                 .then(response => resolve(response.data))
@@ -81,6 +84,7 @@ export default new Vuex.Store({
             )
         },
         getPostComments(context, postID){
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
             return new Promise((resolve, reject) => 
                 axios.get(`/post/${postID}/comments`)
                 .then(response => resolve(response.data))
@@ -88,6 +92,7 @@ export default new Vuex.Store({
             )
         },
         getProjectUsers(context, projectID){
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
             return new Promise((resolve, reject) => 
                 axios.get(`/project/${projectID}/users`)
                 .then(response => resolve(response.data))

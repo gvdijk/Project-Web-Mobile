@@ -6,6 +6,10 @@
             <input type="text" v-model="username" placeholder="Gebruikersnaam">
             <label>Wachtwoord</label>
             <input type="password" v-model="password" placeholder="Wachtwoord">
+            <label>
+                Nog geen account? 
+                <span class="register-link" to="/register" @click="goToRegister">Registreer hier</span>
+            </label>
         </div>
         <div class="modal-actions">
             <div class="modal-button" @click="loginAction">Inloggen</div>
@@ -28,6 +32,10 @@ export default {
         }
     },
     methods: {
+        goToRegister() {
+            this.$emit('closeModal');
+            this.$router.push({path: '/register'});
+        },
         loginAction() {
             console.log(`Login attempt with \r\n username: ${this.username} \r\n password: ${this.password}`);
             // Send login attempt to the api server
@@ -63,4 +71,15 @@ export default {
     .fade-enter, .fade-leave-to {
         opacity: 0;
     }
+
+    .register-link {
+        color: var(--white-soft);
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    .register-link:hover {
+        color: var(--green);
+    }
+
 </style>

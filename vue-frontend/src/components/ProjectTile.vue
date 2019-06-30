@@ -6,7 +6,7 @@
         <div class="project-actions"> 
             <div @click="viewLess" v-if="extended" class="description-extender">Lees minder...</div>
             <div @click="viewMore" v-else class="description-extender">Lees meer...</div>
-            <router-link class="project-button" :to="{ path:`/project/${this.project.projectID}`}"><a>Bekijken</a></router-link>
+            <router-link v-if="accessible" class="project-button" :to="{ path:`/project/${this.project.projectID}`}"><a>Bekijken</a></router-link>
             <div v-if="isPending" class="project-button disabled">Aangevraagd</div>
             <div v-if="isInvited" class="project-button disabled">Uitgenodigd</div>
             <div v-if="joinVisible" @click="participateInProject" class="project-button">Deelnemen</div>
@@ -25,7 +25,8 @@ export default {
             joinVisible: false,
             requestVisible: false,
             isInvited: false,
-            isPending: false
+            isPending: false,
+            accessible: false
         }
     },
     
@@ -38,7 +39,7 @@ export default {
                 role: "USER"
             })
             .then(response => this.$router.push({path: `/project/${this.project.projectID}`}))
-            .catch(error => console.log(error))
+            .catch(error => console.log(error.response))
         },
         requestParticipationInProject(){
             this.$store.dispatch('createProjectUser', {
@@ -63,15 +64,18 @@ export default {
                 if (role == "INVITED") {
                     this.isInvited = true;
                     this.isPending = false;
+                    this.accessible = false;
                 } else if (role == "PENDING") {
                     this.isInvited = false;
                     this.isPending = true;
+                    this.accessible = false;
                 } else {
                     this.isInvited = false;
                     this.isPending = false;
+                    this.accessible = true;
                 }
-              
             } else {
+                    this.accessible = false;
                 if (this.project.projectVisibility == "PUBLIC") {
                     this.joinVisible = true;
                     this.requestVisible = false;

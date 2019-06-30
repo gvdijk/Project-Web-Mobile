@@ -4,20 +4,23 @@
             <div class="logo-wrapper">
                 <router-link to="/"><img src="../assets/Logo_Full_White.svg" alt="logo"></router-link>
             </div>
-            <div class="hamburger" v-bind:class="{'active-burger':menuCollapse}" @click="toggleMenu">
-                <div class="top"></div>
-                <div class="mid"></div>
-                <div class="bot"></div>
-            </div>
             <div class="search-wrapper">
                 <i class="fa fa-search"></i>
-                <input type="search" name="headerSearch" id="headerSearch" placeholder="Doorzoek de website">
+                <input type="search" name="headerSearch" v-model="searchQuery" placeholder="Doorzoek de website">
             </div>
+            <div class="search-filler"></div>
             <div class="account-wrapper">
-                <span v-if="!authenticated" class=account-label @click="$emit('requestModal', 'login', {})">Inloggen</span>
-                <router-link v-if="authenticated" class=account-label to="/profile"><a>Profiel</a></router-link>
-                <span v-if="authenticated" class=account-label @click="logout">Uitloggen</span>
-                <router-link v-if="!authenticated" class=account-label to="/register"><a>Registreren</a></router-link>
+                <span class="account-label search-label" @click="toggleSearch"><i class="fa fa-search"></i><span>Zoeken</span></span>
+                <span v-if="!authenticated" class="account-label" @click="$emit('requestModal', 'login', {})" title="Inloggen"><i class="fa fa-sign-in"></i><span>Inloggen</span></span>
+                <router-link v-if="authenticated" class="account-label" to="/profile" title="Profiel"><i class="fa fa-user"></i><span>Profiel</span></router-link>
+                <span v-if="authenticated" class="account-label" @click="logout" title="Uitloggen"><i class="fa fa-sign-out"></i><span>Uitloggen</span></span>
+                <router-link v-if="!authenticated" class="account-label" to="/register" title="Registreren"><i class="fa fa-paper-plane"></i><span>Registreren</span></router-link>
+            </div>
+        </div>
+        <div class="mobile-search-wrapper" v-bind:class="{ 'mobile-search-expanded': searchExpanded }">
+            <div class="mobile-search">
+                <i class="fa fa-search"></i>
+                <input type="search" name="headerSearch" v-model="searchQuery" placeholder="Doorzoek de website">
             </div>
         </div>
     </header>
@@ -29,14 +32,17 @@ export default {
     methods: {
         login() { },
         toggleMenu() { this.menuCollapse = !this.menuCollapse; },
-        logout(){
+        logout() {
             this.$store.dispatch('logoutUser');
             this.$router.push({path: '/'});
         },
+        toggleSearch() { this.searchExpanded = !this.searchExpanded; }
     },
     data() {
         return {
-            menuCollapse: true
+            menuCollapse: true,
+            searchQuery: "",
+            searchExpanded: false
         }
     },
     computed: {
@@ -56,29 +62,23 @@ header {
     width: 100vw;
     background-color: var(--black-soft);
     box-sizing: border-box;
-    overflow: hidden;
     z-index: 100;
     user-select: none;
     -moz-user-select: -moz-none;
 }
-
 .header-content {
     display: grid;
     position: relative;
     height: var(--header-height);
     width: var(--max-width);
     max-width: 94%;
-    grid-template-columns: 160px auto 180px;
+    grid-template-columns: 160px auto 140px;
     grid-column-gap: 10px;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
+    text-align: right;
 }
-
-.hamburger {
-    display: none;
-}
-
 .logo-wrapper {
     position: relative;
     display: inline-block;
@@ -148,11 +148,37 @@ header {
     text-decoration: none;
 }
 
+.search-label {
+    display: none;
+}
+
+.search-filler {
+    display: none;
+}
+
 .account-label:not(:first-child) {
     margin-left: 10px;
 }
 
-.account-label:hover {
+i {
+    width: 20px;
+    height: 20px;
+    font-size: 14pt;
+    color: var(--white-soft);
+    display: block;
+    text-align: center;
+    width: 100%;
+}
+
+.account-label span {
+    display: block;
+    font-size: 8pt;
+    font-weight: 500;
+    text-align: center;
+}
+
+.account-label:hover i,
+.account-label:hover span {
     color: var(--green);
 }
 
@@ -160,54 +186,76 @@ button:hover {
     background-color: var(--green);
 }
 
+.mobile-search-wrapper {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: var(--header-height);
+    background-color: var(--black-soft);
+    width: 70vw;
+    height: 0px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    border-bottom-left-radius: 5px;
+    overflow: hidden;
+    transition-duration: 0.2s;
+}
+
+.mobile-search {
+    position: relative;
+    align-self: center;
+}
+
+.mobile-search i {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    color: var(--gray-darker);
+    z-index: 888;
+    width: 16px;
+    height: 16px;
+    padding: 0 8px;
+    box-sizing: border-box;
+}
+
+.mobile-search input {
+    position: relative;
+    width: 100%;
+    height: 28px;
+    padding: 4px 8px 4px 28px;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    border-radius: 3px;
+}
+
+.mobile-search-expanded {
+    height: 37px;
+}
+
 
 @media screen and (max-width: 800px)  {
-    .search-wrapper {}
+    .search-wrapper {
+        position: absolute;
+        display: none;
+    }
+
+    .search-label {
+        display: inline-block;
+    }
+
+    .search-filler {
+        display: block;
+    }
 
     .header-content {
+        grid-template-columns: 160px auto 190px;
+    }
+
+    .mobile-search-wrapper {
         display: block;
-        height: var(--header-height);
-        width: var(--max-width);
-        max-width: 94%;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        align-content: center;
     }
 
-    .hamburger {
-        display: block;
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        right: 0;
-        cursor: pointer;
-    }
-
-    .hamburger div {
-        width: 25px;
-        height: 3px;
-        background-color: var(--white-soft);
-        margin: 6px 0;
-        opacity: 100;
-        transition-duration: 0.2s;
-    }
-
-    .active-burger div {
-        margin: -3px 0;
-    }
-
-    .active-burger .top {
-        transform: rotate(-45deg);
-    }
-
-    .active-burger .mid {
-        opacity: 0;
-    }
-
-    .active-burger .bot {
-        transform: rotate(45deg);
-    }
 }
 
 </style>

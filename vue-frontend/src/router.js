@@ -31,11 +31,19 @@ export default new Router({
     {
       path: '/project/:id',
       name: 'project',
+      meta: {
+        title: "Project",
+        requiresAuthenticated: true,
+      },
       component: () => import(/* webpackChunkName: "about" */ './views/Project.vue')
     },
     {
       path: '/project/:projectid/post/:id',
       name: 'post',
+      meta: {
+        title: "Bericht",
+        requiresAuthenticated: true,
+      },
       component: () => import(/* webpackChunkName: "about" */ './views/Post.vue')
     },
     {

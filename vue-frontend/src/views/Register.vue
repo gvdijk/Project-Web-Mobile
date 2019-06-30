@@ -92,9 +92,11 @@ export default {
   font-weight: bold;
   color: var(--gray-darker);
   margin-top: 100px;
-  max-width: 500px;
+  width: 500px;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 100px;
 }
 
 .error {
