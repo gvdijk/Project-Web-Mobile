@@ -13,12 +13,16 @@
                 <option value="PRIVATE">Verborgen</option>
             </select>
             <div class="button" @click="updateDetails">Aanpassen</div>
+            <span class="status">{{editStatus}}</span>
+            <span class="status error">{{editError}}</span>
         </section>
             <h2>Gebruikers</h2>
         <section>
             <label>Gebruiker uitnodigen</label>
             <input type="text" v-model="inviteUserName" placeholder="Gebruikersnaam">
-            <div class="button">Uitnodigen</div>
+            <div class="button" @click="inviteUser()">Uitnodigen</div>
+            <span class="status">{{inviteStatus}}</span>
+            <span class="status error">{{inviteError}}</span>
         </section>
         <section>
             <label>Gebruikers overzicht</label>
@@ -36,20 +40,23 @@
                             {{userRole(user.projectuserRole)}}
                         </td>
                         <td>
-                            16 Augustus 2018
+                            {{user.projectuserJoined}}
                         </td>
                         <td>
-                            <div class="user-button" title="Accepteren"
+                            <div class="user-button" title="Accepteren" @click="acceptUser(user.User_userID)"
                             v-if="user.projectuserRole == 'PENDING'"><i class="fa fa-check"></i></div>
                             <div class="user-button" title="Weigeren"
+                            @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': user.Project_projectID, 'userID': user.User_userID})"
                             v-if="user.projectuserRole == 'PENDING'"><i class="fa fa-times"></i></div>
                             <div class="user-button" title="Annuleren"
+                            @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': user.Project_projectID, 'userID': user.User_userID})"
                             v-if="user.projectuserRole == 'INVITED'"><i class="fa fa-minus"></i></div>
-                            <div class="user-button" title="Promoveer naar administrator"
+                            <div class="user-button" title="Promoveer naar administrator" @click="promoteUser(user.User_userID)"
                             v-if="user.projectuserRole == 'USER' && isOwner"><i class="fa fa-star"></i></div>
-                            <div class="user-button" title="Degradeer naar gebruiker"
+                            <div class="user-button" title="Degradeer naar gebruiker" @click="demoteUser(user.User_userID)"
                             v-if="user.projectuserRole == 'ADMIN' && isOwner"><i class="fa fa-star is-admin"></i></div>
                             <div class="user-button" title="Verwijder gebruiker van project"
+                            @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': user.Project_projectID, 'userID': user.User_userID})"
                             v-if="(user.projectuserRole == 'USER' && (isAdmin || isOwner)) || (user.projectuserRole == 'ADMIN' && isOwner) "><i class="fa fa-minus"></i></div>
                             <!-- <div class="user-button" title="Ban gebruiker van project"><i class="fa fa-ban"></i></div> -->
                         </td>
@@ -64,6 +71,7 @@
 </template>
 
 <script>
+import { setTimeout } from 'timers';
 export default {
     name: 'ProjectSettings',
     data() {
@@ -73,7 +81,11 @@ export default {
             inviteUserName: "",
             userprojects: [],
             isAdmin: false,
-            isOwner: false
+            isOwner: false,
+            inviteStatus: "",
+            editStatus: "",
+            editError: "",
+            inviteError: ""
         }
     },
     methods: {
@@ -103,8 +115,75 @@ export default {
                 description: this.project.projectDescription,
                 visibility: this.project.projectVisibility
             })
-            .then(response => this.project = response)
+            .then(response => {
+                this.project = response
+                this.editStatus = "Succesvol aangepast"
+                setTimeout(() => this.editStatus = "", 3000);
+            })
+            .catch(error => {
+                this.editError = "Aanpassen mislukt"
+                setTimeout(() => this.editError = "", 3000);
+            })
+        },
+        acceptUser(userID){
+            this.$store.dispatch('updateProjectUser', {
+                projectID: this.project.projectID,
+                userID: userID,
+                role: "USER"
+            })
+            .then(response => { 
+                let index = this.users.findIndex(user => user.User_userID === response.User_userID);
+                this.users[index].projectuserRole = "USER";
+            })
             .catch(error => console.log(error))
+        },
+        promoteUser(userID){
+            this.$store.dispatch('updateProjectUser', {
+                projectID: this.project.projectID,
+                userID: userID,
+                role: "ADMIN"
+            })
+            .then(response => { 
+                let index = this.users.findIndex(user => user.User_userID === response.User_userID);
+                this.users[index].projectuserRole = "ADMIN";
+            })
+            .catch(error => console.log(error))
+        },
+        demoteUser(userID){
+            this.$store.dispatch('updateProjectUser', {
+                projectID: this.project.projectID,
+                userID: userID,
+                role: "USER"
+            })
+            .then(response => { 
+                let index = this.users.findIndex(user => user.User_userID === response.User_userID);
+                this.users[index].projectuserRole = "USER";
+            })
+            .catch(error => console.log(error))
+        },
+        inviteUser(){
+            this.$store.dispatch('getUserByName', this.inviteUserName)
+            .then(response => { 
+                this.$store.dispatch('createProjectUser', {
+                    projectID: this.project.projectID,
+                    userID: response[0].userID,
+                    role: "INVITED"
+                })
+                .then(response => { 
+                    this.inviteStatus = "Gebruiker uitgenodigd";
+                    setTimeout(() => this.inviteStatus = "", 3000);
+                })
+                .catch(error => { 
+                    this.inviteError = "Uitnodigen mislukt, is de gebruiker al lid?";
+                    setTimeout(() => this.inviteError = "", 3000);
+                })
+            })
+            .catch(error => { 
+                this.inviteError = "Gebruiker niet gevonden";
+                    setTimeout(() => this.inviteError = "", 3000);
+                // FIXME: handle other errors
+            })
+
         },
 
     },
@@ -155,6 +234,24 @@ section {
     -moz-user-select: -moz-none;
     transition-duration: 0.2s;
 }
+
+.status {
+    display: block;
+    float: right;
+    padding: 4px 9px 6px;
+    color: var(--black-smooth);
+    font-size: 10pt;
+    margin: 10px 3px 5px;
+    user-select: none;
+    transition-duration: 0.2s;
+}
+
+.error {
+    color: var(--red);
+    padding: 4px 0 6px;
+    margin: 10px 0 5px;
+}
+
 
 .button:hover {
     background-color: var(--green);
@@ -242,6 +339,7 @@ tr {
 th {
     text-align: left;
     border-bottom: 1px solid var(--gray-bright);
+    color: var(--dark-green);
 }
 
 td {
@@ -259,6 +357,7 @@ td {
 
 td:first-child {
     min-width: 240px;
+    width: 500px;
 }
 
 td:last-child {

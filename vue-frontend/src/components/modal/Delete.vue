@@ -46,8 +46,8 @@ export default {
                     projectID: this.body.id,
                     userID: this.body.userID
                 })
-                .then(this.$emit('closeModal'))
-                .catch(error => console.log(error));
+                .then(response => { this.$emit('closeModal'); console.log(response); })
+                .catch(error => console.log(error.response));
             } else {
                 this.$store.dispatch('deleteComment', this.body.id)
                 .then(this.$emit('closeModal'))

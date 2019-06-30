@@ -29,9 +29,10 @@
                             v-if="project.projectuserRole == 'INVITED'"
                             @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': project.project.projectID, 'userID': null})"><i class="fa fa-times"></i></div>
                             <div class="user-button" title="Instellingen" 
-                            v-if="project.projectuserRole == 'OWNER' || project.projectuserRole == 'ADMIN'"><i class="fa fa-cog"></i></div>
+                            v-if="project.projectuserRole == 'OWNER' || project.projectuserRole == 'ADMIN'"
+                            @click="goToSettings(project)"><i class="fa fa-cog"></i></div>
                             <div class="user-button" title="Verlaten" 
-                            @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': project.project.projectID, 'userID': null})"><i class="fa fa-minus"></i></div>
+                            @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': project.project.projectID, 'userID': false})"><i class="fa fa-minus"></i></div>
                         </td>
                     </tr>
                 </table>
@@ -119,6 +120,9 @@ export default {
         ...mapGetters(["userID"])
     },
     methods: {
+        goToSettings(project) {
+            this.$router.push({path: `/project/${project.project.projectID}/settings`});
+        },
         userRole(role) {
             switch(role) {
                 case "USER": return "Gebruiker";
@@ -291,6 +295,7 @@ tr {
 th {
     text-align: left;
     border-bottom: 1px solid var(--gray-bright);
+    color: var(--dark-green);
 }
 
 td {
@@ -308,6 +313,7 @@ td {
 
 td:first-child {
     min-width: 240px;
+    width: 500px;
 }
 
 td:last-child {
@@ -353,7 +359,8 @@ i {
     color: var(--green);
 }
 
-.fa-edit:hover {
+.fa-edit:hover,
+.fa-cog:hover {
     color: var(--blue);
 }
 

@@ -110,6 +110,17 @@ export default new Vuex.Store({
                 })
             )
         },
+        getUserByName(context, name){
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
+            return new Promise((resolve, reject) => 
+                axios.get(`/user?name=${name}`)
+                .then(response => resolve(response.data))
+                .catch(error => {
+                    context.dispatch('checkTokenExpiration', error.response);
+                    reject(error);
+                })
+            )
+        },
         getUserProjects(context){
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
             return new Promise((resolve, reject) => 
@@ -198,12 +209,12 @@ export default new Vuex.Store({
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
             return new Promise((resolve, reject) => 
                 axios.post(`/project/${project.projectID}/users`, {
-                    user: context.state.userID,
+                    user: project.userID ? project.userID : context.state.userID,
                     role: project.role,
                 })
                 .then(response => resolve(response))
                 .catch(error => {
-                    context.dispatch('checkTokenExpiration', error.response);
+                    context.dispatch('checkTokenExpiration', error);
                     reject(error);
                 })
             )
@@ -244,6 +255,20 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => 
                 axios.put(`/comment/${comment.id}`, {
                     content: comment.text
+                })
+                .then(response => resolve(response.data))
+                .catch(error => {
+                    context.dispatch('checkTokenExpiration', error.response);
+                    reject(error);
+                })
+            )
+        },
+        updateProjectUser(context, projectUser) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
+            return new Promise((resolve, reject) => 
+                axios.put(`/project/${projectUser.projectID}/users`, {
+                    user: projectUser.userID ? projectUser.userID : context.state.userID,
+                    role: projectUser.role
                 })
                 .then(response => resolve(response.data))
                 .catch(error => {

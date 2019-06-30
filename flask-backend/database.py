@@ -285,8 +285,9 @@ def getProjectUsers(id):
 def getProjectUserByID(userID, projectID):
     connection = getConnection()
     cur = connection.cursor(dictionary=True)
-    sql = "SELECT * FROM projectuser WHERE projectuserDeleted = 0 AND Project_projectID = " + projectID + " AND User_userID = " + userID
-    cur.execute(sql)
+    sql = "SELECT * FROM projectuser WHERE projectuserDeleted = 0 AND Project_projectID = %s AND User_userID = %s"
+    data = (projectID, userID)
+    cur.execute(sql,data)
     results = cur.fetchone()
     cur.close()
     connection.close()
@@ -345,11 +346,13 @@ def updateProject(id, title, content, visibility):
 def updateProjectUser(projectID, userID, role):
     connection = getConnection()
     cur = connection.cursor(dictionary=True)
-    sql = "UPDATE projectuser SET projectuserRole = %s WHERE User_userID = " + userID + " AND Project_projectID = " + projectID
-    data = (role,)
+    sql = "UPDATE projectuser SET projectuserRole = %s WHERE User_userID = %s AND Project_projectID = %s"
+    data = (role,userID,projectID,)
     cur.execute(sql, data)
     connection.commit()
-    cur.execute("SELECT * FROM projectuser WHERE projectuserDeleted = 0 AND Project_projectID = " + projectID + " AND User_userID = " + userID)
+    sql = "SELECT * FROM projectuser WHERE projectuserDeleted = 0 AND Project_projectID = %s AND User_userID = %s"
+    data = (projectID,userID,)
+    cur.execute(sql, data)
     result = cur.fetchone()
     cur.close()
     connection.close()
@@ -375,8 +378,9 @@ def deleteProjectUser(projectID, userID):
     connection = getConnection()
     cur = connection.cursor(dictionary=True)
     try:
-        sql = "UPDATE projectuser SET projectuserDeleted = true WHERE Project_projectID = " + projectID + " AND User_userID = " + userID
-        cur.execute(sql)
+        sql = "DELETE FROM projectuser WHERE Project_projectID = %s AND User_userID = %s"
+        data = (projectID,userID)
+        cur.execute(sql,data)
         connection.commit()
         cur.close()
         connection.close()

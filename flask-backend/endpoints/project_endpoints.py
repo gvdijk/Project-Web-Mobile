@@ -102,7 +102,8 @@ def add_project_user(id):
     # Check if you have permission to add a user to this project
     projectVisibility = project['projectVisibility']
     userRole = function.getProjectUserRole(get_jwt_identity(), id)
-    if userRole is None:
+    validTarget = function.getProjectUserRole(role, id)
+    if validTarget is None:
         if projectVisibility == 'PUBLIC':
             if role not in ['INVITED', 'USER']:
                 return jsonify({"error": "May only invite or add user on public project"})

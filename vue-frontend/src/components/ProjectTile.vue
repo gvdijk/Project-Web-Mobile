@@ -48,7 +48,7 @@ export default {
             })
             .then(response => {
                 this.requestVisible = false;
-                this.isInvited = true;
+                this.isPending = true;
             })
             .catch(error => console.log(error.response))
         },
