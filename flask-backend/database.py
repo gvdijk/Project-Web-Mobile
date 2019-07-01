@@ -499,7 +499,7 @@ def getCommentByID(id):
 def updateComment(id, content):
     connection = getConnection()
     cur = connection.cursor(dictionary=True)
-    sql = "UPDATE comment SET commentContent = %s WHERE commentID = " + id
+    sql = "UPDATE comment SET commentContent = %s, commentEdited = current_timestamp() WHERE commentID = " + id
     data = (content,)
     cur.execute(sql, data)
     connection.commit()
