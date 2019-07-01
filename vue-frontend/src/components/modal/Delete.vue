@@ -32,13 +32,16 @@ export default {
             //  console.log(`Deleted ${this.body.type} with id ${this.body.id}`);
             if (this.body.type == 'project') {
                 this.$store.dispatch('deleteProject', this.body.id)
-                .then(this.$emit('closeModal'))
+                .then(response => {
+                    this.$emit('closeModal');
+                    this.body.cb(response);
+                })
                 .catch(error => console.log(error));
             } else if (this.body.type == 'post') {
                 this.$store.dispatch('deletePost', this.body.id)
                 .then(response => { 
-                    this.$router.push({path: `/project/${this.body.projectID}`});
                     this.$emit('closeModal');
+                    this.body.cb(this.body.id);
                 })
                 .catch(error => console.log(error));
             } else if (this.body.type == 'projectuser') {
@@ -46,11 +49,17 @@ export default {
                     projectID: this.body.id,
                     userID: this.body.userID
                 })
-                .then(response => { this.$emit('closeModal'); console.log(response); })
+                .then(response => { 
+                    this.$emit('closeModal'); 
+                    this.body.cb(response);
+                    })
                 .catch(error => console.log(error.response));
             } else {
                 this.$store.dispatch('deleteComment', this.body.id)
-                .then(this.$emit('closeModal'))
+                .then(response => {
+                    this.$emit('closeModal');
+                    this.body.cb(response);
+                })
                 .catch(error => console.log(error));
             }
         }

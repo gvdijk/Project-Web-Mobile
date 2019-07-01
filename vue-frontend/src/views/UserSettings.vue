@@ -24,7 +24,7 @@
                         <td>
                             <div class="user-button" title="Accepteren" 
                             v-if="project.projectuserRole == 'INVITED'"
-                            @click="acceptInvite(project)"><i class="fa fa-check"></i></div>
+                            @click="acceptInvite(project.Project_projectID)"><i class="fa fa-check"></i></div>
                             <div class="user-button" title="Weigeren" 
                             v-if="project.projectuserRole == 'INVITED'"
                             @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': project.project.projectID, 'userID': null})"><i class="fa fa-times"></i></div>
@@ -32,7 +32,8 @@
                             v-if="project.projectuserRole == 'OWNER' || project.projectuserRole == 'ADMIN'"
                             @click="goToSettings(project)"><i class="fa fa-cog"></i></div>
                             <div class="user-button" title="Verlaten" 
-                            @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': project.project.projectID, 'userID': false})"><i class="fa fa-minus"></i></div>
+                            v-if="project.projectuserRole != 'INVITED'"
+                            @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': project.project.projectID, 'userID': false, 'cb': deletedProject})"><i class="fa fa-minus"></i></div>
                         </td>
                     </tr>
                 </table>
@@ -62,7 +63,7 @@
                             <div class="user-button" title="Bewerken"
                             @click="$emit('requestModal', 'edit', {'type': 'post', 'id': post.postID, 'text': post.postContent})"><i class="fa fa-edit"></i></div>
                             <div class="user-button" title="Verwijderen"
-                            @click="$emit('requestModal', 'delete', {'type': 'post', 'id': post.postID})"><i class="fa fa-times"></i></div>
+                            @click="$emit('requestModal', 'delete', {'type': 'post', 'id': post.postID, 'cb': deletedPost})"><i class="fa fa-times"></i></div>
                         </td>
                     </tr>
                 </table>
@@ -92,7 +93,7 @@
                             <div class="user-button" title="Bewerken"
                             @click="$emit('requestModal', 'edit', {'type': 'comment', 'id': comment.commentID, 'text': comment.commentContent})"><i class="fa fa-edit"></i></div>
                             <div class="user-button" title="Verwijderen"
-                            @click="$emit('requestModal', 'delete', {'type': 'comment', 'id': comment.commentID})"><i class="fa fa-times"></i></div>
+                            @click="$emit('requestModal', 'delete', {'type': 'comment', 'id': comment.commentID, 'cb': deletedComment})"><i class="fa fa-times"></i></div>
                         </td>
                     </tr>
                 </table>
@@ -132,8 +133,29 @@ export default {
                 case "OWNER": return "Eigenaar";
             }
         },
-        acceptInvite(project) {
-            console.log(project);
+        deletedProject(projectID) {
+            let index = this.projects.findIndex(project => project.projectID === projectID);
+            this.comments.splice(index, 1);
+        },
+        deletedPost(postID) {
+            let index = this.posts.findIndex(post => post.postID === postID);
+            this.posts.splice(index, 1);
+        },
+        deletedComment(commentID) {
+            let index = this.comments.findIndex(comment => comment.commentID === commentID);
+            this.comments.splice(index, 1);
+        },
+        acceptInvite(projectID) {
+            this.$store.dispatch('updateProjectUser', {
+                projectID: projectID,
+                userID: null,
+                role: "USER"
+            })
+            .then(response => { 
+                let index = this.projects.findIndex(project => project.Project_projectID === response.Project_projectID);
+                this.projects[index].projectuserRole = "USER";
+            })
+            .catch(error => console.log(error.response))
         },
         fetchUser(){
             this.$store.dispatch('getUser')

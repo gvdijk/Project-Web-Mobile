@@ -287,11 +287,11 @@ def put_project_user(id):
     # Retrieve projectrole of user
     userRole = function.getProjectUserRole(get_jwt_identity(), id)
     # If user issuing the request is not changing his own data, check if user is admin
-    if not (get_jwt_identity() == user):
+    if not (str(get_jwt_identity()) == user):
         if not function.isProjectAdmin(userRole):
             return jsonify({"error": "Must be a project admin to update user roles"}), 403
     # If user issuing the request is changing own data, he can only change himself from invited to user
-    elif userRole == 'PENDING':
+    elif userRole == 'INVITED':
         if role != 'USER':
             return jsonify({"error": "May only change your own role from pending to user"}), 403
     else:
@@ -357,7 +357,7 @@ def del_project_user(id):
         return jsonify({"error": "Target user is not a member of specified project"}), 403
 
     # User is trying to delete somebody else
-    if not (get_jwt_identity() == user):
+    if not (str(get_jwt_identity()) == user):
         if userRole not in ['ADMIN', 'OWNER']:
             return jsonify({"error": "Cannot delete project users without ADMIN or OWNER status"}), 403
         elif targetRole == 'OWNER':
@@ -370,7 +370,7 @@ def del_project_user(id):
         if userRole == 'OWNER':
             return jsonify({"error": "Cannot delete yourself from your own project"}), 403
     
-    # Delete project user
+    # Delete project user 
     if database.deleteProjectUser(id, user):
         return jsonify({"Info": "Projectuser deleted successfully"}), 200
     else:

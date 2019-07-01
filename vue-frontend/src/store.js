@@ -306,7 +306,7 @@ export default new Vuex.Store({
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
             return new Promise((resolve, reject) => 
                 axios.delete(`/comment/${commentID}`)
-                .then(response => resolve(response.data))
+                .then(response => resolve(response))
                 .catch(error => {
                     context.dispatch('checkTokenExpiration', error.response);
                     reject(error);

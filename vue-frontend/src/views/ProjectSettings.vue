@@ -19,8 +19,10 @@
             <h2>Gebruikers</h2>
         <section>
             <label>Gebruiker uitnodigen</label>
-            <input type="text" v-model="inviteUserName" placeholder="Gebruikersnaam">
-            <div class="button" @click="inviteUser()">Uitnodigen</div>
+            <form action="#" @submit.prevent="inviteUser">
+                <input type="text" v-model="inviteUserName" placeholder="Gebruikersnaam">
+                <button class="button">Uitnodigen</button>
+            </form>
             <span class="status">{{inviteStatus}}</span>
             <span class="status error">{{inviteError}}</span>
         </section>
