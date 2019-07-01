@@ -36,10 +36,10 @@ def add_project():
         return jsonify({"error": "ownerID should be string"})
 
     # Add project to the database
-    projectid = database.addProject(name, description, visibility, owner)
+    project = database.addProject(name, description, visibility, owner)
     # Add owner of project to projectusers
-    userid = database.addProjectUser(owner, projectid, 'OWNER')
-    return jsonify({"id": projectid}), 201
+    user = database.addProjectUser(owner, project['projectID'], 'OWNER')
+    return jsonify(project), 201
 
 @project_endpoints.route('/project/<string:id>/posts', methods=['POST'])
 @jwt_required
@@ -75,8 +75,8 @@ def add_post(id):
         return jsonify({"error": "Must be a project member to add post"}), 403
 
     # Add post to the database
-    postid = database.addProjectPost(title, content, owner, id)
-    return jsonify({"id": postid}), 201
+    post = database.addProjectPost(title, content, owner, id)
+    return jsonify(post), 201
 
 @project_endpoints.route('/project/<string:id>/users', methods=['POST'])
 @jwt_required
@@ -124,8 +124,8 @@ def add_project_user(id):
     else:
         return jsonify({"error": "User already has a project role"})
 
-    projectUserID = database.addProjectUser(user, id, role)
-    return jsonify({"id": projectUserID}), 201
+    projectUser = database.addProjectUser(user, id, role)
+    return jsonify(projectUser), 201
 
 @project_endpoints.route('/project', methods=['GET'])
 def get_project():

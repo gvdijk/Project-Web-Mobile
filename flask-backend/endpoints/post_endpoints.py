@@ -42,8 +42,8 @@ def add_comment(id):
             return jsonify({"error": "Parent comment does not exist"}), 400
 
     # Add comment
-    commentID = database.addPostComment(content, parent, userID, id)
-    return jsonify({"id": commentID}), 201
+    comment = database.addPostComment(content, parent, userID, id)
+    return jsonify(comment), 201
 
 @post_endpoints.route('/post/<string:id>', methods=['GET'])
 def get_post(id):
