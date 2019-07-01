@@ -1,7 +1,7 @@
 <template>
     <div class="project-tile">
         <span class="project-title">{{ project.projectName }}</span>
-        <span class="project-subtitle">{{ usersPlaceholder }} deelnemers | Gemaakt op {{ project.projectCreated }}</span>
+        <span class="project-subtitle">Aangemaakt op {{ project.projectCreated }}</span>
         <span class="project-content" v-bind:class="{'project-content-extended': extended}">{{ project.projectDescription }}</span>
         <div class="project-actions"> 
             <div @click="viewLess" v-if="extended" class="description-extender">Lees minder...</div>
