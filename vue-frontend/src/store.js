@@ -49,6 +49,7 @@ export default new Vuex.Store({
             let limit = payload.limit.toString();
             let offset = payload.offset.toString();
             let str = '?offset='+offset+'&limit='+limit
+            if (payload.name) str += `&name=${payload.name}`
             return new Promise((resolve, reject) =>
                 axios.get(`/project` + str)
                 .then(response => resolve(response.data))

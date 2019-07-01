@@ -6,7 +6,9 @@
             </div>
             <div class="search-wrapper">
                 <i class="fa fa-search"></i>
-                <input type="search" name="headerSearch" v-model="searchQuery" placeholder="Doorzoek de website">
+                <form action="#" @submit.prevent="searchAction">
+                    <input type="search" name="headerSearch" v-model="searchQuery" placeholder="Doorzoek de website">
+                </form>
             </div>
             <div class="search-filler"></div>
             <div class="account-wrapper">
@@ -20,7 +22,9 @@
         <div class="mobile-search-wrapper" v-bind:class="{ 'mobile-search-expanded': searchExpanded }">
             <div class="mobile-search">
                 <i class="fa fa-search"></i>
-                <input type="search" name="headerSearch" v-model="searchQuery" placeholder="Doorzoek de website">
+                <form action="#" @submit.prevent="searchAction">
+                    <input type="search" name="headerSearch" v-model="searchQuery" placeholder="Doorzoek de website">
+                </form>
             </div>
         </div>
     </header>
@@ -30,13 +34,20 @@
 export default {
     name: 'Header',
     methods: {
-        login() { },
-        toggleMenu() { this.menuCollapse = !this.menuCollapse; },
+        toggleMenu() { 
+            this.menuCollapse = !this.menuCollapse; 
+        },
         logout() {
             this.$store.dispatch('logoutUser');
             this.$router.push({path: '/'});
         },
-        toggleSearch() { this.searchExpanded = !this.searchExpanded; }
+        toggleSearch() { 
+            this.searchExpanded = !this.searchExpanded; 
+        },
+        searchAction() {
+            if (this.searchQuery.length > 0) 
+                this.$router.push({path: `/search?q=${this.searchQuery}`});
+        }
     },
     data() {
         return {

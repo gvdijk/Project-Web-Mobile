@@ -1,15 +1,14 @@
 <template>
     <div class="home">
-        <h1>Explore</h1>
-        <h3>Ontdek projecten om aan deel te nemen</h3>
+        <h1>Zoekresultaten</h1>
+        <h3>Zoekresultaten voor {{searchQuery}}</h3>
         <div class="projects-view">
-            <ProjectTile 
-                v-for="project in projects" 
+            <ProjectTile v-for="project in projects" 
                 :key="project.id" 
                 v-bind:project="project" 
                 v-bind:userprojects="userprojects" 
                 ref="projectTile"
-                v-on:requestModal="exploreModalRequest" 
+                v-on:requestModal="searchModalRequest" 
             />
         </div>
         <PageSelector v-bind:visiblePages="3" v-bind:totalEntries="count" v-bind:entriesPerPage="limit" v-on:pageChanged="pageChanged"/>
@@ -21,7 +20,7 @@ import ProjectTile from '../components/ProjectTile.vue'
 import PageSelector from '../components/PageSelector.vue'
 
 export default {
-    name: 'Explore',
+    name: 'Search',
     components: {
         ProjectTile,
         PageSelector,
@@ -36,9 +35,10 @@ export default {
         }
     },
     methods: {
-        exploreModalRequest(type, body) { this.$emit('requestModal', type, body); },
+        searchModalRequest(type, body) { this.$emit('requestModal', type, body); },
         fetchProjects(offset, limit){
             this.$store.dispatch('getProjects', {
+                name: this.$route.query.q,
                 offset: offset, 
                 limit: limit
             })
@@ -58,6 +58,9 @@ export default {
         this.$store.dispatch('getUserProjects')
             .then(response => {this.userprojects = response; console.log(response)})
             .catch(error => console.log(error.response))
+    },
+    computed: {
+        searchQuery: function() { return `"${this.$route.query.q}"` }
     }
 }
 </script>

@@ -1,22 +1,24 @@
 <template>
     <div class="modal-content">
-        <div class="modal-header">Inloggen</div>
-        <div class="modal-text">
-            <label>Gebruikersnaam</label>
-            <input type="text" v-model="username" placeholder="Gebruikersnaam">
-            <label>Wachtwoord</label>
-            <input type="password" v-model="password" placeholder="Wachtwoord">
-            <label>
-                Nog geen account? 
-                <span class="register-link" to="/register" @click="goToRegister">Registreer hier</span>
-            </label>
-        </div>
-        <div class="modal-actions">
-            <div class="modal-button" @click="loginAction">Inloggen</div>
-            <transition name="fade">
-                <span class="error" v-show="error">{{ errorMsg }}</span>
-            </transition>
-        </div>
+        <form action="#" @submit.prevent="loginAction">
+            <div class="modal-header">Inloggen</div>
+            <div class="modal-text">
+                <label>Gebruikersnaam</label>
+                <input type="text" v-model="username" placeholder="Gebruikersnaam">
+                <label>Wachtwoord</label>
+                <input type="password" v-model="password" placeholder="Wachtwoord">
+                <label>
+                    Nog geen account? 
+                    <span class="register-link" to="/register" @click="goToRegister">Registreer hier</span>
+                </label>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-button" type="submit">Inloggen</button>
+                <transition name="fade">
+                    <span class="error" v-show="error">{{ errorMsg }}</span>
+                </transition>
+            </div>
+        </form>
     </div>
 </template>
 

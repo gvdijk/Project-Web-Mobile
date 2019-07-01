@@ -52,6 +52,11 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/Explore.vue')
     },
     {
+      path: '/search',
+      name: 'search',
+      component: () => import(/* webpackChunkName: "about" */ './views/Search.vue')
+    },
+    {
       path: '/project/:id/settings',
       name: 'projectsettings',
       meta: {

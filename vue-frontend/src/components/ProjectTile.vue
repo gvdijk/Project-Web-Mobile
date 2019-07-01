@@ -34,6 +34,10 @@ export default {
         viewLess() { this.extended = false; },
         viewMore() { this.extended = true; },
         participateInProject(){
+            if (!this.$store.getters.authenticated) {
+                this.$emit('requestModal', 'login', {});
+                return;
+            }
             this.$store.dispatch('createProjectUser', {
                 projectID: this.project.projectID,
                 role: "USER"
@@ -42,6 +46,10 @@ export default {
             .catch(error => console.log(error.response))
         },
         requestParticipationInProject(){
+            if (!this.$store.getters.authenticated) {
+                this.$emit('requestModal', 'login', {});
+                return;
+            }
             this.$store.dispatch('createProjectUser', {
                 projectID: this.project.projectID,
                 role: "PENDING"
