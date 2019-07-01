@@ -74,7 +74,7 @@ def addUser(name, password):
     lastID = cur.lastrowid
     cur.close()
     connection.close()
-    return lastID
+    return getUserByID(str(lastID))
 
 def getUserProjects(id):
     connection = getConnection()
@@ -182,7 +182,7 @@ def addProject(name, description, visibility, owner):
     lastID = cur.lastrowid
     cur.close()
     connection.close()
-    return lastID
+    return getProjectByID(str(lastID))
 
 def addProjectPost(title, content, owner, projectID):
     connection = getConnection()
@@ -194,7 +194,7 @@ def addProjectPost(title, content, owner, projectID):
     lastID = cur.lastrowid
     cur.close()
     connection.close()
-    return lastID
+    return getPostByID(str(lastID))
 
 def addProjectUser(userID, projectID, role):
     connection = getConnection()
@@ -206,7 +206,7 @@ def addProjectUser(userID, projectID, role):
     lastID = cur.lastrowid
     cur.close()
     connection.close()
-    return lastID
+    return getProjectUserByID(str(lastID), str(projectID))
 
 def getProjectsCount(name):
     connection = getConnection()
@@ -402,7 +402,7 @@ def addPostComment(content, parentID, userID, id):
     lastID = cur.lastrowid
     cur.close()
     connection.close()
-    return lastID
+    return getCommentByID(str(lastID))
 
 def getPostByID(id):
     connection = getConnection()
@@ -499,7 +499,7 @@ def getCommentByID(id):
 def updateComment(id, content):
     connection = getConnection()
     cur = connection.cursor(dictionary=True)
-    sql = "UPDATE comment SET commentContent = %s WHERE commentID = " + id
+    sql = "UPDATE comment SET commentContent = %s, commentEdited = current_timestamp() WHERE commentID = " + id
     data = (content,)
     cur.execute(sql, data)
     connection.commit()

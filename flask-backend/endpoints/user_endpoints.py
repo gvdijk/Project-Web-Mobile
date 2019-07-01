@@ -39,8 +39,8 @@ def add_user():
     hashedpass = function.hash_password(password)
 
     # Add user to the database and return newly created userID
-    userid = database.addUser(name, hashedpass)
-    return jsonify({"id": userid}), 201
+    user = database.addUser(name, hashedpass)
+    return jsonify(user), 201
 
 @user_endpoints.route('/user/<string:id>', methods=['GET'])
 @jwt_required

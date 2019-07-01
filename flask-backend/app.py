@@ -45,21 +45,21 @@ def login():
 
     # Check if the user details are set
     if name is None:
-        return jsonify({"error": "Username not specified"}), 400
+        return jsonify({"error": "Vul een gebruikersnaam in"}), 400
     if password is None:
-        return jsonify({"error": "Password not specified"}), 400
+        return jsonify({"error": "Vul een wachtwoord in"}), 400
 
     # Check if the user exists
     user = database.getUserByName(name)
     if user is None:
-        return jsonify({"error": "User with username " + name + " does not exist"}), 400
+        return jsonify({"error": "Gebruiker met naam " + name + " bestaat niet"}), 400
 
     # Check the hashed password against the one provided
     if function.verify_hashed_password(user['userPass'], password):
         jwt_token = create_access_token(identity=user['userID'])
         return jsonify({"id": user['userID'], "jwt_token": jwt_token}), 200
     else:
-        return jsonify({"error": "Incorrect password"}), 401
+        return jsonify({"error": "Incorrect wachtwoord"}), 401
 
 # Start the server
 if(__name__ == '__main__'):
