@@ -25,7 +25,7 @@
                 </div>
                 <div class="info-column">
                     <div class="info-column-title">Beheer leden</div>
-                    <div class="info-column-content">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Cras tincidunt lobortis feugiat vivamus at augue eget. Massa sapien faucibus et molestie ac feugiat sed lectus. Turpis egestas maecenas pharetra convallis posuere morbi leo. Cursus turpis massa tincidunt dui. Leo a diam sollicitudin tempor id eu nisl nunc mi. Tellus molestie nunc non blandit. Faucibus nisl tincidunt eget nullam non nisi. Pharetra convallis posuere morbi leo urna.</div>
+                    <div class="info-column-content">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Cras tincidunt lobortis feugiat vivamus at augue eget. Massa sapien faucibus et molestie ac feugiat sed lectus. Turpis egestas maecenas pharetra convallis posuere morbi leo. Cursus turpis massa tincidunt dui. Leo a diam sollicitudin tempor id eu nisl nunc mi.</div>
                 </div>
             </div>
         </div>

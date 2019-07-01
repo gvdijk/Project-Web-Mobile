@@ -61,6 +61,12 @@ export default {
     },
     computed: {
         searchQuery: function() { return `"${this.$route.query.q}"` }
+    },
+    watch: {
+        searchQuery: function() {
+            this.projects = [];
+            this.fetchProjects(this.offset, this.limit);
+        }
     }
 }
 </script>

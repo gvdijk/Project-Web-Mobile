@@ -83,7 +83,7 @@ header {
     height: var(--header-height);
     width: var(--max-width);
     max-width: 94%;
-    grid-template-columns: 160px auto 140px;
+    grid-template-columns: 140px auto 140px;
     grid-column-gap: 10px;
     top: 0;
     left: 50%;
@@ -260,7 +260,7 @@ button:hover {
     }
 
     .header-content {
-        grid-template-columns: 160px auto 190px;
+        grid-template-columns: 140px auto 190px;
     }
 
     .mobile-search-wrapper {
