@@ -51,7 +51,7 @@ export default {
                 })
                 .then(response => { 
                     this.$emit('closeModal'); 
-                    this.body.cb(response);
+                    this.body.cb(this.body.id);
                     })
                 .catch(error => console.log(error.response));
             } else {

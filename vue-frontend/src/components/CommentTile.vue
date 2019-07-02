@@ -7,13 +7,13 @@
             </span>
             <div class="comment-button delete-button" 
                 title="Verwijderen" 
-                v-if="isAdmin || isOwner" 
+                v-if="(isAdmin || isOwner) && comment.commentState != 'DELETED'" 
                 @click="$emit('requestModal', 'delete', {'type': 'comment', 'id': comment.commentID, 'cb': deletedComment})">
                 <i class="fa fa-trash"></i>
             </div>
             <div class="comment-button edit-button" 
                 title="Bewerken" 
-                v-if="isAdmin || isOwner"
+                v-if="isOwner && comment.commentState != 'DELETED'"
                 @click="$emit('requestModal', 'edit', {'type': 'comment', 'id': comment.commentID, 'text': comment.commentContent, 'cb': editedComment })">
                 <i class="fa fa-edit"></i>
             </div>
@@ -34,8 +34,7 @@ export default {
     name: 'CommentTile',
     data() {
         return {
-            //TODO: Read admin status
-            isAdmin: false
+
         }
     },
     methods: {
@@ -51,7 +50,7 @@ export default {
             this.comment.commentContent = "Deze reactie is verwijderd";
         }
     },
-    props: ['comment'],
+    props: ['comment', 'isAdmin'],
     computed: {
         children: function () { 
             return this.comment.children 

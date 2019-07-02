@@ -59,9 +59,9 @@
                         </td>
                         <td>
                             <div class="user-button" title="Reageren" 
-                            @click="$emit('requestModal', 'create', {'type': 'comment', 'id': post.postID})"><i class="fa fa-reply"></i></div>
+                            @click="$emit('requestModal', 'create', {'type': 'comment', 'id': post.postID, 'cb': addedComment})"><i class="fa fa-reply"></i></div>
                             <div class="user-button" title="Bewerken"
-                            @click="$emit('requestModal', 'edit', {'type': 'post', 'id': post.postID, 'text': post.postContent})"><i class="fa fa-edit"></i></div>
+                            @click="$emit('requestModal', 'edit', {'type': 'post', 'id': post.postID, 'text': post.postContent, 'cb': editedPost})"><i class="fa fa-edit"></i></div>
                             <div class="user-button" title="Verwijderen"
                             @click="$emit('requestModal', 'delete', {'type': 'post', 'id': post.postID, 'cb': deletedPost})"><i class="fa fa-times"></i></div>
                         </td>
@@ -89,9 +89,9 @@
                         </td>
                         <td>
                             <div class="user-button" title="Reageren" 
-                            @click="$emit('requestModal', 'create', {'type': 'child', 'id': comment.commentPost, 'parent': comment.commentID})"><i class="fa fa-reply"></i></div>
+                            @click="$emit('requestModal', 'create', {'type': 'child', 'id': comment.commentPost, 'parent': comment.commentID, 'cb': addedChildComment})"><i class="fa fa-reply"></i></div>
                             <div class="user-button" title="Bewerken"
-                            @click="$emit('requestModal', 'edit', {'type': 'comment', 'id': comment.commentID, 'text': comment.commentContent})"><i class="fa fa-edit"></i></div>
+                            @click="$emit('requestModal', 'edit', {'type': 'comment', 'id': comment.commentID, 'text': comment.commentContent, 'cb': editedComment})"><i class="fa fa-edit"></i></div>
                             <div class="user-button" title="Verwijderen"
                             @click="$emit('requestModal', 'delete', {'type': 'comment', 'id': comment.commentID, 'cb': deletedComment})"><i class="fa fa-times"></i></div>
                         </td>
@@ -134,12 +134,27 @@ export default {
             }
         },
         deletedProject(projectID) {
-            let index = this.projects.findIndex(project => project.projectID === projectID);
-            this.comments.splice(index, 1);
+            let index = this.projects.findIndex(project => project.project.projectID === projectID);
+            this.projects.splice(index, 1);
+        },
+        editedPost(response) {
+            this.$router.push({path: `/project/${response.postProject}/post/${response.postID}`});
         },
         deletedPost(postID) {
             let index = this.posts.findIndex(post => post.postID === postID);
             this.posts.splice(index, 1);
+        },
+        addedComment(response) {
+            let index = this.posts.findIndex(post => post.postID === response.commentPost);
+            this.$router.push({path: `/project/${this.posts[index].project.projectID}/post/${response.commentPost}`});
+        },
+        addedChildComment(response) {
+            let index = this.comments.findIndex(comment => comment.commentID === response.commentParent);
+            this.$router.push({path: `/project/${this.comments[index].post.postProject}/post/${response.commentPost}`});
+        },
+        editedComment(response) {
+            let index = this.comments.findIndex(comment => comment.commentID === response.commentID);
+            this.comments[index].commentContent = response.commentContent;
         },
         deletedComment(commentID) {
             let index = this.comments.findIndex(comment => comment.commentID === commentID);

@@ -64,10 +64,10 @@ export default {
 
 <style scoped>
     h1{
-        color: var(--dark-green);
+        color: var(--green);
     }
 
     h3{
-        color: var(--dark-green);
+        color: var(--green);
     }
 </style>

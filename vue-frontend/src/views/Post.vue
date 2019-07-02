@@ -5,10 +5,10 @@
                 <div class="post-title">{{post.postTitle}}</div>
                 <div class="post-actions">
                     <div class="post-button"
-                        @click="$emit('requestModal', 'create', {'type': 'comment', 'id': post.postID})">
+                        @click="$emit('requestModal', 'create', {'type': 'comment', 'id': post.postID, 'cb': addComment})">
                         Reageer
                     </div>
-                    <div class="post-button edit-button" v-if="isAdmin || isOwner" 
+                    <div class="post-button edit-button" v-if="isOwner" 
                         @click="$emit('requestModal', 'edit', {'type': 'post', 'id': post.postID, 'text': post.postContent})">
                         Bewerken
                     </div>
@@ -19,7 +19,7 @@
             <div class="post-stats">{{post.user.userName}} | {{comments.length}} reacties | Geplaatst op {{post.postCreated}} <span v-if="post.postEdited"> | Laatst bewerkt op {{post.postEdited}}</span></div>
         </div>
         <div class="posts-view">
-            <CommentTile v-for="comment in comments" :key="comment.id" v-bind:comment="comment" v-on:requestModal="commentModalRequest" />
+            <CommentTile v-for="comment in comments" :key="comment.id" v-bind:comment="comment" v-bind:isAdmin="isAdmin" v-on:requestModal="commentModalRequest" />
         </div>
     </div>
 </template>
@@ -40,10 +40,15 @@ export default {
             post: {
                 user: {}
             },
-            comments: []
+            comments: [],
+            userprojects: []
         }
     },
     methods: {
+        addComment(response) {
+            response.children = [];
+            this.comments.push(response);
+        },
         deletedPost(response) {
             this.$router.push({path: `/project/${this.post.postProject}`});
         },
@@ -62,12 +67,24 @@ export default {
     created() {
         this.fetchPost();
         this.fetchComments();
+        this.$store.dispatch('getUserProjects')
+            .then(response => this.userprojects = response)
+            .catch(error => console.log(error.response));
     },
     computed: {
         ...mapGetters(["userID"]),
         isOwner() { return this.userID == this.post.user.userID || null }
     },
     watch: {
+        userprojects: function() {
+            let index = this.userprojects.findIndex((el) => el.Project_projectID == this.post.postProject);
+            if (index > -1) {
+                let role = this.userprojects[index].projectuserRole; 
+                (role == "ADMIN" || role == "OWNER") ? this.isAdmin = true : this.isAdmin = false;
+            } else {
+                //FIXME: User should not be here
+            }
+        }
     }
 }
 </script>
