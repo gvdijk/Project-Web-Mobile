@@ -36,7 +36,7 @@ export default {
                 description: this.project.projectDescription,
                 visibility: this.project.projectVisibility
             })
-            .then(response => this.$router.push(`/project/${response.data.id}`))
+            .then(response => this.$router.push(`/project/${response.data.projectID}`))
             .catch(error => console.log(error.response))
         }
     }

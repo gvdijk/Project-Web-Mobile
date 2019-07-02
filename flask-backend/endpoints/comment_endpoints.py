@@ -49,11 +49,11 @@ def delete_comment(id):
         return jsonify({"error": "Specified comment does not exist"})
 
     # Check if the user trying to delete the post is the post owner
-    post = database.getPostByID(comment['commentPost'])
+    post = database.getPostByID(str(comment['commentPost']))
     userRole = function.getProjectUserRole(get_jwt_identity(), post['postProject'])
     if not function.isProjectAdmin(userRole):
-        if post['postUser'] != get_jwt_identity():
-            return jsonify({"error": "Must be admin to delete comment of other user"}), 400
+        if comment['commentUser'] != get_jwt_identity():
+            return jsonify({"error": "Must be admin to delete comment of other user"}), 400 
     
     # Delete comment
     commentDeleted = database.deleteComment(id)

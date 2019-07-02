@@ -24,7 +24,7 @@ app.register_blueprint(post_endpoints)
 host = 'localhost'
 user = 'webapp'
 password = 'admin' # Super encripted and safe password usage
-database_name = 'newdb'
+database_name = 'tempdb'
 database.init(user, password, host, database_name)
 
 # Configure CORS parameters

@@ -14,18 +14,18 @@
         </div>
         <div class="site-info">
             <div class="site-info-title">Voordelen</div>
-            <div class="info-grid">
+            <div class="info-grid">                
                 <div class="info-column">
                     <div class="info-column-title">Deel Ideeën</div>
-                    <div class="info-column-content">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Cras tincidunt lobortis feugiat vivamus at augue eget. Massa sapien faucibus et molestie ac feugiat sed lectus. Turpis egestas maecenas pharetra convallis posuere morbi leo. Cursus turpis massa tincidunt dui. Leo a diam sollicitudin tempor id eu nisl nunc mi. Tellus molestie nunc non blandit.</div>
+                    <div class="info-column-content">Vindt de projecten die bij jou passen, en deel jouw beste ideeën met anderen. Project planner is het ideale platform om anderen op de hoogte te stellen van jouw beste werk.</div>
                 </div>
                 <div class="info-column">
                     <div class="info-column-title">Start conversaties</div>
-                    <div class="info-column-content">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Cras tincidunt lobortis feugiat vivamus at augue eget. Massa sapien faucibus et molestie ac feugiat sed lectus. Turpis egestas maecenas pharetra convallis posuere morbi leo. Cursus turpis massa tincidunt dui.</div>
+                    <div class="info-column-content">Bereik nieuwe leden, start nieuwe gesprekken en bereik nieuwe hoogtes in jouw project. Het regelen van projecten is nog nooit zo makkelijk geweest.</div>
                 </div>
                 <div class="info-column">
                     <div class="info-column-title">Beheer leden</div>
-                    <div class="info-column-content">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Cras tincidunt lobortis feugiat vivamus at augue eget. Massa sapien faucibus et molestie ac feugiat sed lectus. Turpis egestas maecenas pharetra convallis posuere morbi leo. Cursus turpis massa tincidunt dui. Leo a diam sollicitudin tempor id eu nisl nunc mi.</div>
+                    <div class="info-column-content">Kies met wie jij je volgende grote klus gaat klaren, en stel het beste team samen voor jouw project. Project planner biedt de mogelijkheid om jouw projecten te beheren op de manier die jij wilt.</div>
                 </div>
             </div>
         </div>

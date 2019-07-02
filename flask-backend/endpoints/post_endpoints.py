@@ -43,6 +43,8 @@ def add_comment(id):
 
     # Add comment
     comment = database.addPostComment(content, parent, userID, id)
+    user = database.getUserByID(str(comment['commentUser']))
+    comment['user'] = user
     return jsonify(comment), 201
 
 @post_endpoints.route('/post/<string:id>', methods=['GET'])

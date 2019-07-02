@@ -8,18 +8,18 @@
             <div class="comment-button delete-button" 
                 title="Verwijderen" 
                 v-if="isAdmin || isOwner" 
-                @click="$emit('requestModal', 'delete', {'type': 'comment', 'id': comment.commentID})">
+                @click="$emit('requestModal', 'delete', {'type': 'comment', 'id': comment.commentID, 'cb': deletedComment})">
                 <i class="fa fa-trash"></i>
             </div>
             <div class="comment-button edit-button" 
                 title="Bewerken" 
                 v-if="isAdmin || isOwner"
-                @click="$emit('requestModal', 'edit', {'type': 'comment', 'id': comment.commentID, 'text': comment.commentContent})">
+                @click="$emit('requestModal', 'edit', {'type': 'comment', 'id': comment.commentID, 'text': comment.commentContent, 'cb': editedComment })">
                 <i class="fa fa-edit"></i>
             </div>
             <div class="comment-button" 
                 title="Reageren" 
-                @click="$emit('requestModal', 'create', {'type': 'child', 'id': comment.commentPost, 'parent': comment.commentID})">
+                @click="$emit('requestModal', 'create', {'type': 'child', 'id': comment.commentPost, 'parent': comment.commentID, 'cb': createdChild })">
                 <i class="fa fa-reply"></i>
             </div>
         </div>
@@ -39,7 +39,17 @@ export default {
         }
     },
     methods: {
-        childCommentModalRequest(type, body) { this.$emit('requestModal', type, body); }
+        childCommentModalRequest(type, body) { this.$emit('requestModal', type, body); },
+        createdChild(response) {
+            response.children = [];
+            this.comment.children.push(response);
+        },
+        editedComment(response) {
+            this.comment.commentContent = response.commentContent;
+        },
+        deletedComment(response) {
+            this.comment.commentContent = "Deze reactie is verwijderd";
+        }
     },
     props: ['comment'],
     computed: {

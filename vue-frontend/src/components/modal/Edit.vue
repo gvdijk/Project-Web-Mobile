@@ -32,14 +32,20 @@ export default {
                     id: this.body.id,
                     text: this.body.text
                 })
-                .then(this.$emit('closeModal'))
+                .then(response => {
+                    this.$emit('closeModal');
+                    this.body.cb(response);
+                })
                 .catch(error => console.log(error));
             } else {
                 this.$store.dispatch('updateComment', {
                     id: this.body.id,
                     text: this.body.text
                 })
-                .then(this.$emit('closeModal'))
+                .then(response => {
+                    this.$emit('closeModal');
+                    this.body.cb(response);
+                })
                 .catch(error => console.log(error));
             }
         }

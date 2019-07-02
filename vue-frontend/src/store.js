@@ -199,7 +199,7 @@ export default new Vuex.Store({
                     parent: comment.parent,
                     userID: context.state.userID
                 })
-                .then(response => resolve(response))
+                .then(response => resolve(response.data))
                 .catch(error => {
                     context.dispatch('checkTokenExpiration', error.response);
                     reject(error);
@@ -306,7 +306,7 @@ export default new Vuex.Store({
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.JWT_Token;
             return new Promise((resolve, reject) => 
                 axios.delete(`/comment/${commentID}`)
-                .then(response => resolve(response))
+                .then(response => resolve(response.data))
                 .catch(error => {
                     context.dispatch('checkTokenExpiration', error.response);
                     reject(error);
@@ -323,7 +323,6 @@ export default new Vuex.Store({
                 })
                 .then(response => resolve(response.data))
                 .catch(error => {
-                    console.log(error);
                     context.dispatch('checkTokenExpiration', error.response);
                     reject(error);
                 })
@@ -375,7 +374,6 @@ export default new Vuex.Store({
             if(response.status === 401){
                 if(response.data.msg === "Token has expired"){
                     context.dispatch('logoutUser');
-                    console.log("User has been logged out because login token expired")
                     router.push({path: '/'});
                 }
             }

@@ -8,16 +8,15 @@
                 <span>&#187;</span>
             </div>
         </div>
-        <div class="side-pane">
+        <!-- <div class="side-pane">
             <div class="side-pane-title" @click="toggleInfoVisibility">
                 Pagina specifiek
                 <div class="side-pane-arrow" v-bind:class="{'arrow-up': !extendedInfo, 'arrow-down': extendedInfo}"></div>
             </div>
             <div class="side-pane-content" v-if="extendedInfo">
-                <!-- TODO: make content aware -->
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
             </div>
-        </div>
+        </div> -->
         <div class="side-pane" v-if="authenticated">
             <div class="side-pane-title" @click="toggleMyProjectsVisibility">
                 Mijn Projecten

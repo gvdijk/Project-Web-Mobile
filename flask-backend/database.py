@@ -107,7 +107,7 @@ def getUserPosts(id):
 def getUserComments(id):
     connection = getConnection()
     cur = connection.cursor(dictionary=True)
-    sql = "SELECT * FROM comment WHERE commentDeleted = 0 AND commentUser = " + id
+    sql = "SELECT * FROM comment WHERE commentDeleted = 0 AND NOT commentState = 'DELETED' AND commentUser = " + id
     cur.execute(sql)
     results = cur.fetchall()
     cur.close()
@@ -238,11 +238,11 @@ def getProjects(name, limit, offset):
         sql += " AND projectName LIKE %s"
         data = data + ("%" + name + "%",)
     if limit is not None:
-        sql += " ORDER BY projectName LIMIT " + limit
+        sql += " ORDER BY projectCreated DESC LIMIT " + limit
         if offset is not None:
             sql += " OFFSET " + offset
     else:
-        sql += " ORDER BY projectCreated"
+        sql += " ORDER BY projectCreated DESC"
     cur.execute(sql, data)
     results = cur.fetchall()
     cur.close()
