@@ -48,17 +48,17 @@
                             <div class="user-button" title="Accepteren" @click="acceptUser(user.User_userID)"
                             v-if="user.projectuserRole == 'PENDING'"><i class="fa fa-check"></i></div>
                             <div class="user-button" title="Weigeren"
-                            @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': user.Project_projectID, 'userID': user.User_userID})"
+                            @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': user.Project_projectID, 'userID': user.User_userID, 'cb': deleteUser})"
                             v-if="user.projectuserRole == 'PENDING'"><i class="fa fa-times"></i></div>
                             <div class="user-button" title="Annuleren"
-                            @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': user.Project_projectID, 'userID': user.User_userID})"
+                            @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': user.Project_projectID, 'userID': user.User_userID, 'cb': deleteUser})"
                             v-if="user.projectuserRole == 'INVITED'"><i class="fa fa-minus"></i></div>
                             <div class="user-button" title="Promoveer naar administrator" @click="promoteUser(user.User_userID)"
                             v-if="user.projectuserRole == 'USER' && isOwner"><i class="fa fa-star"></i></div>
                             <div class="user-button" title="Degradeer naar gebruiker" @click="demoteUser(user.User_userID)"
                             v-if="user.projectuserRole == 'ADMIN' && isOwner"><i class="fa fa-star is-admin"></i></div>
                             <div class="user-button" title="Verwijder gebruiker van project"
-                            @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': user.Project_projectID, 'userID': user.User_userID})"
+                            @click="$emit('requestModal', 'delete', {'type': 'projectuser', 'id': user.Project_projectID, 'userID': user.User_userID, 'cb': deleteUser})"
                             v-if="(user.projectuserRole == 'USER' && (isAdmin || isOwner)) || (user.projectuserRole == 'ADMIN' && isOwner) "><i class="fa fa-minus"></i></div>
                             <!-- <div class="user-button" title="Ban gebruiker van project"><i class="fa fa-ban"></i></div> -->
                         </td>
@@ -99,6 +99,10 @@ export default {
                 case "PENDING": return "Aangevraagd";
                 case "OWNER": return "Eigenaar";
             }
+        },
+        deleteUser(projectID, userID) {
+            let index = this.users.findIndex(user => user.User_userID === userID);
+            this.users.splice(index, 1);
         },
         fetchProject(){
             this.$store.dispatch('getProjectByID', this.$route.params.id)
@@ -174,6 +178,7 @@ export default {
                 .then(response => { 
                     this.inviteStatus = "Gebruiker uitgenodigd";
                     setTimeout(() => this.inviteStatus = "", 3000);
+
                 })
                 .catch(error => { 
                     this.inviteError = "Uitnodigen mislukt, is de gebruiker al lid?";
@@ -183,7 +188,6 @@ export default {
             .catch(error => { 
                 this.inviteError = "Gebruiker niet gevonden";
                     setTimeout(() => this.inviteError = "", 3000);
-                // FIXME: handle other errors
             })
 
         },
@@ -204,7 +208,7 @@ export default {
                 if (role == "ADMIN") this.isAdmin = true;
                 if (role == "OWNER") this.isOwner = true;
             } else {
-                //FIXME: User should not be here
+                
             }
         }
     }

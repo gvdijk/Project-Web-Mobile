@@ -133,7 +133,7 @@ export default {
                 case "OWNER": return "Eigenaar";
             }
         },
-        deletedProject(projectID) {
+        deletedProject(projectID, userID) {
             let index = this.projects.findIndex(project => project.project.projectID === projectID);
             this.projects.splice(index, 1);
         },

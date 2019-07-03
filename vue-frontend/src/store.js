@@ -338,7 +338,7 @@ export default new Vuex.Store({
                     password: payload.pass
                 })
                 .then(response => { resolve(response.data) })
-                .catch (error => { reject(error.response.data.error) })
+                .catch (error => { reject(error.response) })
             })
         },
         loginUser(context, payload){

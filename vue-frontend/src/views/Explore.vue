@@ -56,7 +56,7 @@ export default {
     created(){
         this.fetchProjects(this.offset, this.limit);
         this.$store.dispatch('getUserProjects')
-            .then(response => {this.userprojects = response; console.log(response)})
+            .then(response => this.userprojects = response)
             .catch(error => console.log(error.response))
     }
 }

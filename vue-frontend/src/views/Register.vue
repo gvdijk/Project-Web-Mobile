@@ -44,7 +44,8 @@ export default {
                     this.$router.push({path: '/explore'})
                 })
                 .catch( error => {
-                    console.log(error);
+                  this.errorMsg = error.data;
+                  this.showError();
                 });
             }else{ this.showError() }
         }else{ this.showError() }

@@ -103,6 +103,10 @@ def add_project_user(id):
     projectVisibility = project['projectVisibility']
     userRole = function.getProjectUserRole(get_jwt_identity(), id)
     validTarget = function.getProjectUserRole(role, id)
+    print(type(user))
+    print(type(str(get_jwt_identity())))
+    print(user)
+    print(get_jwt_identity())
     if validTarget is None:
         if projectVisibility == 'PUBLIC':
             if role not in ['INVITED', 'USER']:
@@ -112,7 +116,7 @@ def add_project_user(id):
                 if not function.isProjectAdmin(userRole):
                     return jsonify({"error": "Only admins can invite users on restricted projects"})
             elif role == 'PENDING':
-                if user != get_jwt_identity():
+                if user != str(get_jwt_identity()):
                     return jsonify({"error": "Only a user can request membership for himself"})
             else:
                 return jsonify({"error": "May only invite or request user on restricted project"})
@@ -357,7 +361,7 @@ def del_project_user(id):
         return jsonify({"error": "Target user is not a member of specified project"}), 403
 
     # User is trying to delete somebody else
-    if not (str(get_jwt_identity()) == user):
+    if not (str(get_jwt_identity()) == str(user)):
         if userRole not in ['ADMIN', 'OWNER']:
             return jsonify({"error": "Cannot delete project users without ADMIN or OWNER status"}), 403
         elif targetRole == 'OWNER':

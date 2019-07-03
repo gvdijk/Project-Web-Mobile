@@ -17,7 +17,7 @@
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
             </div>
         </div> -->
-        <div class="side-pane" v-if="authenticated">
+        <!-- <div class="side-pane" v-if="authenticated">
             <div class="side-pane-title" @click="toggleMyProjectsVisibility">
                 Mijn Projecten
                 <div class="side-pane-arrow" v-bind:class="{'arrow-up': !extendedProjects, 'arrow-down': extendedProjects}"></div>
@@ -25,7 +25,7 @@
             <div class="side-pane-content" v-if="extendedProjects">
                 <router-link :key="project.id" v-for="project in userprojects" to="/project/${project.projectID}"><a>{{project.projectName}}</a></router-link>
             </div>
-        </div>
+        </div> -->
         <!-- <div class="side-pane" v-if="authenticated">
             <div class="side-pane-title" @click="toggleRecentProjectsVisibility">
                 Recente Projecten

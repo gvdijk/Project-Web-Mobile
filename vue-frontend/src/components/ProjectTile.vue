@@ -55,6 +55,7 @@ export default {
                 role: "PENDING"
             })
             .then(response => {
+                console.log(response);
                 this.requestVisible = false;
                 this.isPending = true;
             })

@@ -33,7 +33,7 @@ def add_user():
     # Check if the user already exists
     user = database.getUserByName(name)
     if user is not None:
-        return "Username already exists"
+        return "Username already exists", 400
 
     # Hash the userpassword for secure storage
     hashedpass = function.hash_password(password)

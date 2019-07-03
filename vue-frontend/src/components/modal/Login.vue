@@ -39,7 +39,6 @@ export default {
             this.$router.push({path: '/register'});
         },
         loginAction() {
-            console.log(`Login attempt with \r\n username: ${this.username} \r\n password: ${this.password}`);
             // Send login attempt to the api server
             this.$store.dispatch('loginUser', {user: this.username, pass: this.password})
             // Login succesfull
