@@ -59,7 +59,7 @@ def login():
         jwt_token = create_access_token(identity=user['userID'])
         return jsonify({"id": user['userID'], "jwt_token": jwt_token}), 200
     else:
-        return jsonify({"error": "Incorrect wachtwoord"}), 401
+        return jsonify({"error": "Incorrect wachtwoord"}), 401 
 
 # Start the server
 if(__name__ == '__main__'):
