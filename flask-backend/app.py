@@ -28,7 +28,7 @@ database_name = 'tempdb'
 database.init(user, password, host, database_name)
 
 # Configure CORS parameters
-CORS(app, resources={r"/*": {"origins": "http://localhost:8080"}})
+CORS(app, resources={r"/*": {"origins": "http://localhost:8888"}})
 
 # Configure JWT parameters
 app.config['JWT_SECRET_KEY'] = 'super-secret-JWT-key'
@@ -36,7 +36,7 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600
 JWTManager(app)
 
 # Authentication endpoint
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST']) 
 def login():
     # Get user details from request body
     userDetails = request.get_json()

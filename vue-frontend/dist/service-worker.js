@@ -1,29 +1,3 @@
-/**
- * Welcome to your Workbox-powered service worker!
- *
- * You'll need to register this file in your web app and you should
- * disable HTTP caching for this file too.
- * See https://goo.gl/nhQhGp
- *
- * The rest of the code is auto-generated. Please don't update this file
- * directly; instead, make changes to your Workbox build configuration
- * and re-run your build process.
- * See https://goo.gl/2aRDsh
- */
+importScripts("/precache-manifest.b53ace1a5d5af219e78d076a61a1527e.js", "https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
-importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
-importScripts(
-  "/precache-manifest.96a23e104ddf37e7436dcbddac2adae2.js"
-);
-
-workbox.core.setCacheNameDetails({prefix: "vue-frontend"});
-
-/**
- * The workboxSW.precacheAndRoute() method efficiently caches and responds to
- * requests for URLs in the manifest.
- * See https://goo.gl/S9QRab
- */
-self.__precacheManifest = [].concat(self.__precacheManifest || []);
-workbox.precaching.suppressWarnings();
-workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
