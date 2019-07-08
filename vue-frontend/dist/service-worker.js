@@ -1,8 +1,10 @@
-importScripts("/precache-manifest.92ccab52fee08443471a8a2347e670ea.js", "https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
+importScripts("/precache-manifest.0e8711f1b000c3d60c07283fcfc65f62.js", "https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
+workbox.skipWaiting();
+workbox.clientsClaim();
 
-console.log("Hi");
-
+workbox.precaching.precacheAndRoute(self.__precacheManifest);
+workbox.routing.registerNavigationRoute('/index.html');
 
 workbox.routing.registerRoute(
     new RegExp('^http://localhost\\:5000/project'),
@@ -11,9 +13,6 @@ workbox.routing.registerRoute(
       plugins: [
         new workbox.cacheableResponse.Plugin({
           statuses: [200, 201, 404],
-        //   headers: {
-        //     'X-Is-Cacheable': 'true',
-        //   },
         })
       ]
     })
@@ -27,9 +26,6 @@ workbox.routing.registerRoute(
       plugins: [
         new workbox.cacheableResponse.Plugin({
           statuses: [200, 201, 404],
-        //   headers: {
-        //     'X-Is-Cacheable': 'true',
-        //   },
         })
       ]
     })
@@ -43,9 +39,6 @@ workbox.routing.registerRoute(
       plugins: [
         new workbox.cacheableResponse.Plugin({
           statuses: [200, 201, 404],
-        //   headers: {
-        //     'X-Is-Cacheable': 'true',
-        //   },
         })
       ]
     })
@@ -59,13 +52,8 @@ workbox.routing.registerRoute(
       plugins: [
         new workbox.cacheableResponse.Plugin({
           statuses: [200, 201, 404],
-        //   headers: {
-        //     'X-Is-Cacheable': 'true',
-        //   },
         })
       ]
     })
   );
-  
-
   

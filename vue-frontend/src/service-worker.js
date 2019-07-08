@@ -1,4 +1,5 @@
-
+workbox.precaching.precacheAndRoute(self.__precacheManifest);
+workbox.routing.registerNavigationRoute('/index.html');
 
 workbox.routing.registerRoute(
     new RegExp('^http://localhost\\:5000/project'),
@@ -51,4 +52,3 @@ workbox.routing.registerRoute(
     })
   );
   
-

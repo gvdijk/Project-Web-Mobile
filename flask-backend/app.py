@@ -28,7 +28,7 @@ database_name = 'tempdb'
 database.init(user, password, host, database_name)
 
 # Configure CORS parameters
-CORS(app, resources={r"/*": {"origins": "http://localhost:8888"}})
+CORS(app)
 
 # Configure JWT parameters
 app.config['JWT_SECRET_KEY'] = 'super-secret-JWT-key'
