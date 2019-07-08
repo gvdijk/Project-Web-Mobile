@@ -44,11 +44,39 @@ export default {
             this.modalType = type;
             this.modalData = data;
             this.modalActive = true;
+        },
+        askPermission() {
+            if (this.notificationsSupported) {
+                if (Notification.permission === 'granted') return;
+                Notification.requestPermission(result => {
+                    if (result !== 'granted') {
+                        // Do something?
+                    } else {
+                        this.showNotification()
+                    }
+                })
+            }
+        },
+        showNotification() {
+            navigator.serviceWorker.ready // returns a Promise, the active SW registration
+                .then(swreg => swreg.showNotification('Notificaties Ingeschakeld', {
+                    body: 'Vanaf nu ontvang je updates van Project Planner',
+                    icon: '/img/icons/android-chrome-192x192.png',
+                    image: '/img/autumn-forest.png',
+                    vibrate: [300, 200, 300],
+                    badge: '/img/icons/plint-badge-96x96.png'
+                }));
+        },
+    },
+    created() {
+        if ('Notification' in window && 'serviceWorker' in navigator) {
+            this.notificationsSupported = true
         }
     },
     mounted() {
         setTimeout(() => this.sidebarExtended = false, 1000);
-    }
+        this.askPermission();
+    },
 }
 </script>
 

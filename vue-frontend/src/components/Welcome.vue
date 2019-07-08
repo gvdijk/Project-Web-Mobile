@@ -40,42 +40,7 @@ export default {
         return {
             notificationsSupported: false,
         }
-    },
-    methods: {
-        askPermission() {
-            if (this.notificationsSupported) {
-                Notification.requestPermission(result => {
-                    console.log('result from permission question', result);
-                        if (result !== 'granted') {
-                        alert('You probably do not like notifications?!');
-                    } else {
-                        this.showNotification()
-                    }
-                })
-            }
-        },
-        showNotification() {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.ready // returns a Promise, the active SW registration
-                    .then(swreg => swreg.showNotification('Notificaties Ingeschakeld', {
-                        body: 'Vanaf nu ontvang je updates van Project Planner',
-                        icon: '/img/icons/android-chrome-192x192.png',
-                        image: '/img/autumn-forest.png',
-                        vibrate: [300, 200, 300],
-                        badge: '/img/icons/plint-badge-96x96.png',
-                        // actions: [
-                        //     { action: 'confirm', title: 'Okay', icon: '/img/icons/android-chrome-192x192.png'},
-                        //     { action: 'cancel', title: 'Cancel', icon: '/img/icons/android-chrome-192x192.png'}
-                        // ],
-                    }))
-            }
-        },
-    },
-    created() {
-        if ('Notification' in window && 'serviceWorker' in navigator) {
-            this.notificationsSupported = true
-        }
-    },
+    }
 }
 </script>
 

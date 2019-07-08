@@ -66,9 +66,10 @@
                 </table>
             </div>
         </section>
-        <!-- <section>
-            <div class="delete-button" v-if="isOwner" @click="$emit('requestModal', 'delete', {'type': 'project', 'id': project.projectID})">Project Verwijderen</div>
-        </section> -->
+        <section>
+            <button @click="fetchAll()" class="refresh-button"><img src="https://cdn2.iconfinder.com/data/icons/dark-action-bar-2/96/refresh-512.png" alt="refresh"></button>
+            <!-- <div class="delete-button" v-if="isOwner" @click="$emit('requestModal', 'delete', {'type': 'project', 'id': project.projectID})">Project Verwijderen</div> -->
+        </section>
     </div>
 </template>
 
@@ -189,16 +190,17 @@ export default {
                 this.inviteError = "Gebruiker niet gevonden";
                     setTimeout(() => this.inviteError = "", 3000);
             })
-
-        },
-
+        },     
+        fetchAll(){
+            this.fetchProject();
+            this.fetchProjectUsers();
+            this.$store.dispatch('getUserProjects')
+                .then(response => this.userprojects = response)
+                .catch(error => console.log(error.response));
+        }
     },
     created() {
-        this.fetchProject();
-        this.fetchProjectUsers();
-        this.$store.dispatch('getUserProjects')
-            .then(response => this.userprojects = response)
-            .catch(error => console.log(error.response));
+        this.fetchAll();
     },
     watch: {
         userprojects: function() {
@@ -406,6 +408,31 @@ i {
 
 .fa-minus:hover {
     color: var(--orange);
+}
+
+
+.refresh-button{
+    width: 40px;
+    height: 40px;
+    background-color: var(--white-base);
+    color: var(--green);
+    border-style: solid;
+    border-color: var(--gray-bright);
+    cursor: pointer;
+    transition-duration: 0.3s;
+    border-width: 1px;
+    border-radius: 8px;
+    float: right;
+}
+
+.refresh-button:hover{
+    color: var(--white-base);
+    background-color: var(--green);
+}
+
+.refresh-button img {
+     width: 30px;
+     height: 30px; 
 }
 
 </style>

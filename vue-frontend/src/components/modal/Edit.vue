@@ -36,7 +36,9 @@ export default {
                     this.$emit('closeModal');
                     this.body.cb(response);
                 })
-                .catch(error => console.log(error));
+                .catch(error => {
+                    if (error.request) this.$emit('closeModal');
+                });
             } else {
                 this.$store.dispatch('updateComment', {
                     id: this.body.id,
@@ -46,7 +48,9 @@ export default {
                     this.$emit('closeModal');
                     this.body.cb(response);
                 })
-                .catch(error => console.log(error));
+                .catch(error => {
+                    if (error.request) this.$emit('closeModal');
+                });
             }
         }
     },

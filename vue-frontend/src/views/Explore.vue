@@ -19,6 +19,7 @@
 <script>
 import ProjectTile from '../components/ProjectTile.vue'
 import PageSelector from '../components/PageSelector.vue'
+import { mapGetters } from 'vuex'
 
 export default {
     name: 'Explore',
@@ -51,13 +52,26 @@ export default {
         pageChanged(offset){
             this.offset = offset;
             this.fetchProjects(this.offset, this.limit);
+            this.$store.dispatch('getUserProjects')
+                .then(response => this.userprojects = response)
+                .catch(error => console.log(error.response));
         }
     },
     created(){
         this.fetchProjects(this.offset, this.limit);
         this.$store.dispatch('getUserProjects')
             .then(response => this.userprojects = response)
-            .catch(error => console.log(error.response))
+            .catch(error => console.log(error.response));
+    },
+    computed: {
+        ...mapGetters(["authenticated"])
+    },
+    watch: {
+        authenticated: function() {
+        this.$store.dispatch('getUserProjects')
+            .then(response => this.userprojects = response)
+            .catch(error => console.log(error.response));
+        }
     }
 }
 </script>

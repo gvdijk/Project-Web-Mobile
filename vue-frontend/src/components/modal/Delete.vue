@@ -36,14 +36,18 @@ export default {
                     this.$emit('closeModal');
                     this.body.cb(response);
                 })
-                .catch(error => console.log(error));
+                .catch(error => {
+                    if (error.request) this.$emit('closeModal');
+                });
             } else if (this.body.type == 'post') {
                 this.$store.dispatch('deletePost', this.body.id)
                 .then(response => { 
                     this.$emit('closeModal');
                     this.body.cb(this.body.id);
                 })
-                .catch(error => console.log(error));
+                .catch(error => {
+                    if (error.request) this.$emit('closeModal');
+                });
             } else if (this.body.type == 'projectuser') {
                 this.$store.dispatch('deleteProjectUser', {
                     projectID: this.body.id,
@@ -53,14 +57,18 @@ export default {
                     this.$emit('closeModal'); 
                     this.body.cb(this.body.id, this.body.userID);
                     })
-                .catch(error => console.log(error.response));
+                .catch(error => {
+                    if (error.request) this.$emit('closeModal');
+                });
             } else {
                 this.$store.dispatch('deleteComment', this.body.id)
                 .then(response => {
                     this.$emit('closeModal');
                     this.body.cb(this.body.id);
                 })
-                .catch(error => console.log(error));
+                .catch(error => {
+                    if (error.request) this.$emit('closeModal');
+                });
             }
         }
     },

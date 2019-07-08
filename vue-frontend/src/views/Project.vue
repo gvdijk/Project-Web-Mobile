@@ -4,7 +4,7 @@
             <div class="project-header">
                 <div class="project-title">{{project.projectName}}</div>
                 <div class="project-actions">
-                    <div class="project-button" @click="$emit('requestModal', 'create', {'type': 'post', 'id': project.projectID})">Nieuw bericht</div>
+                    <div class="project-button" @click="$emit('requestModal', 'create', {'type': 'post', 'id': project.projectID ? project.projectID : $route.params.id})">Nieuw bericht</div>
                     <router-link 
                         class="project-button settings-button" 
                         v-if="isAdmin"
@@ -53,14 +53,17 @@ export default {
         fetchPosts(limit, offset){
             this.$store.dispatch('getProjectPosts', {projectID: this.$route.params.id, limit: limit, offset: offset})
             .then( response => {
-                this.posts = response.data
-                this.count = response.count
+                this.posts = response.data;
+                this.count = response.count;
             })
             .catch( error => console.log(error))
         },
         pageChanged(offset){
             this.offset = offset;
-            this.fetchPosts(this.limit, this.offset)
+            this.fetchPosts(this.limit, this.offset);
+            this.$store.dispatch('getUserProjects')
+                .then(response => this.userprojects = response)
+                .catch(error => console.log(error.response));
         },
         // projectRelation() {
         //     let index = this.userprojects.findIndex((el) => el.Project_projectID == this.project.projectID);

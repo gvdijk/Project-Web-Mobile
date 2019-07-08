@@ -371,12 +371,12 @@ export default new Vuex.Store({
 
 
         checkTokenExpiration(context, response){
-            if(response.status === 401){
-                if(response.data.msg === "Token has expired"){
-                    context.dispatch('logoutUser');
-                    router.push({path: '/'});
-                }
-            }
+            // if(response.status === 401){
+            //     if(response.data.msg === "Token has expired"){
+            //         context.dispatch('logoutUser');
+            //         router.push({path: '/'});
+            //     }
+            // }
         }
     }
 })

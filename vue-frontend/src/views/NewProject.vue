@@ -2,17 +2,19 @@
     <div class="newproject">
         <h1>Nieuw Project Aanmaken</h1>
         <section>
-            <label>Naam</label>
-            <input type="text" v-model="project.projectName" placeholder="Naam">
-            <label>Omschrijving</label>
-            <textarea v-model="project.projectDescription" placeholder="Omschrijving"></textarea>
-            <label>Zichtbaarheid</label>
-            <select v-model="project.projectVisibility">
-                <option value="PUBLIC">Openbaar</option>
-                <option value="RESTRICTED">Beschermd</option>
-                <option value="PRIVATE">Verborgen</option>
-            </select>
-            <button @click="createAction">Aanmaken</button>
+            <form action="#" @submit.prevent="createAction">
+                <label>Naam</label>
+                <input type="text" v-model="project.projectName" placeholder="Naam">
+                <label>Omschrijving</label>
+                <textarea v-model="project.projectDescription" placeholder="Omschrijving"></textarea>
+                <label>Zichtbaarheid</label>
+                <select v-model="project.projectVisibility">
+                    <option value="PUBLIC">Openbaar</option>
+                    <option value="RESTRICTED">Beschermd</option>
+                    <option value="PRIVATE">Verborgen</option>
+                </select>
+                <button type="submit" v-bind:class="{'disabled': disabled}">Aanmaken</button>
+            </form>
         </section>
     </div>
 </template>
@@ -26,18 +28,33 @@ export default {
                 projectName: "",
                 projectDescription: "",
                 projectVisibility: "PUBLIC"
-            }
+            },
+            disabled: false
         }
     },
     methods: {
         createAction() {
-            this.$store.dispatch('createProject', {
-                name: this.project.projectName,
-                description: this.project.projectDescription,
-                visibility: this.project.projectVisibility
-            })
-            .then(response => this.$router.push(`/project/${response.data.projectID}`))
-            .catch(error => console.log(error.response))
+            if (!this.disabled) {
+                this.$store.dispatch('createProject', {
+                    name: this.project.projectName,
+                    description: this.project.projectDescription,
+                    visibility: this.project.projectVisibility
+                })
+                .then(response => this.$router.push(`/project/${response.data.projectID}`))
+                .catch(error => {
+                    if (error.response) {
+                        // The request was made and the server responded with a status code
+                        // that falls out of the range of 2xx
+                    } else if (error.request) {
+                        // The request was made but no response was received
+                        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                        // http.ClientRequest in node.js
+                        this.disabled = true;
+                    } else {
+                        // Something happened in setting up the request that triggered an Error
+                    }
+                })
+            }
         }
     }
 }
@@ -131,5 +148,15 @@ input:focus {
 
 textarea:focus {
     border: 1px solid var(--green);
+}
+
+
+.disabled {
+    background-color: var(--gray-bright);
+    cursor: default;
+}
+
+button:hover {
+    background-color: var(--gray-bright);
 }
 </style>

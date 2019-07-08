@@ -51,6 +51,9 @@ export default {
         pageChanged(offset){
             this.offset = offset;
             this.fetchProjects(this.offset, this.limit);
+        this.$store.dispatch('getUserProjects')
+            .then(response => {this.userprojects = response; console.log(response)})
+            .catch(error => console.log(error.response));
         }
     },
     created(){

@@ -5,7 +5,7 @@
                 <div class="post-title">{{post.postTitle}}</div>
                 <div class="post-actions">
                     <div class="post-button"
-                        @click="$emit('requestModal', 'create', {'type': 'comment', 'id': post.postID, 'cb': addComment})">
+                        @click="$emit('requestModal', 'create', {'type': 'comment', 'id': post.postID ? post.postID : $route.params.id, 'cb': addComment})">
                         Reageer
                     </div>
                     <div class="post-button edit-button" v-if="isOwner" 
@@ -21,6 +21,7 @@
         <div class="posts-view">
             <CommentTile v-for="comment in comments" :key="comment.id" v-bind:comment="comment" v-bind:isAdmin="isAdmin" v-on:requestModal="commentModalRequest" />
         </div>
+        <button @click="fetchComments()" class="refresh-button"><img src="https://cdn2.iconfinder.com/data/icons/dark-action-bar-2/96/refresh-512.png" width="30" height="30" alt="refresh"></button>
     </div>
 </template>
 
@@ -155,6 +156,25 @@ export default {
 
 .delete-button:hover {
     background-color: var(--red);
+}
+
+.refresh-button{
+    width: 40px;
+    height: 40px;
+    background-color: var(--white-base);
+    color: var(--green);
+    border-style: solid;
+    border-color: var(--gray-bright);
+    cursor: pointer;
+    transition-duration: 0.3s;
+    border-width: 1px;
+    border-radius: 8px;
+    float: right;
+}
+
+.refresh-button:hover{
+    color: var(--white-base);
+    background-color: var(--green);
 }
 
 </style>

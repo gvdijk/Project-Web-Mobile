@@ -43,7 +43,9 @@ export default {
                     this.$router.push(`/project/${this.body.id}/post/${response.data.postID}`);
                     this.$emit('closeModal');
                 })
-                .catch(error => console.log(error))
+                .catch(error => {
+                    if (error.request) this.$emit('closeModal');
+                })
             } else {
                 this.$store.dispatch('createComment', {
                    postID: this.body.id,
@@ -54,7 +56,9 @@ export default {
                     this.$emit('closeModal');
                     this.body.cb(response);
                 })
-                .catch(error => console.log(error))
+                .catch(error => {
+                    if (error.request) this.$emit('closeModal');
+                })
             }
         }
     },

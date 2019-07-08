@@ -64,32 +64,26 @@ export default {
         infoChanged() {
             let index = this.userprojects.findIndex((el) => el.Project_projectID == this.project.projectID);
     
+            this.joinVisible = false;
+            this.requestVisible = false;
+            this.accessible = false;
+            this.isInvited = false;
+            this.isPending = false;
+            
             if (index > -1) {
-                this.joinVisible = false;
-                this.requestVisible = false;
-
                 let role = this.userprojects[index].projectuserRole; 
 
                 if (role == "INVITED") {
                     this.isInvited = true;
-                    this.isPending = false;
-                    this.accessible = false;
                 } else if (role == "PENDING") {
-                    this.isInvited = false;
                     this.isPending = true;
-                    this.accessible = false;
                 } else {
-                    this.isInvited = false;
-                    this.isPending = false;
                     this.accessible = true;
                 }
             } else {
-                    this.accessible = false;
                 if (this.project.projectVisibility == "PUBLIC") {
                     this.joinVisible = true;
-                    this.requestVisible = false;
                 } else {
-                    this.joinVisible = false;
                     this.requestVisible = true;
                 }
             }
@@ -100,7 +94,8 @@ export default {
         this.infoChanged();
     },
     watch: {
-        project: function() {this.infoChanged()}
+        project: function() {this.infoChanged()},
+        userprojects: function() {this.infoChanged()}
     }
 }
 </script>

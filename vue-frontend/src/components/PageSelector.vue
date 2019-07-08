@@ -1,5 +1,5 @@
 <template>
-    <div class="page-selector" v-if="totalEntries > entriesPerPage + 1">
+    <div class="page-selector">
         <button :disabled="currentPage === 1" @click="switchPage(1)" class='left-border-button' v-bind:class="{'inactive': currentPage == 1}">&lt;&lt;</button>
         <button :disabled="currentPage === 1" @click="switchPage(currentPage - 1)" class='selector-button' v-bind:class="{'inactive': currentPage == 1}">&lt;</button>
         <span v-for="button in buttons" v-bind:key="button.id">
@@ -7,6 +7,7 @@
         </span>
         <button :disabled="currentPage === totalPages" @click="switchPage(currentPage + 1)" class='selector-button' v-bind:class="{'inactive': currentPage === totalPages}">&gt;</button>
         <button :disabled="currentPage === totalPages" @click="switchPage(totalPages)" class='right-border-button' v-bind:class="{'inactive': currentPage === totalPages}">&gt;&gt;</button>
+        <button @click="pageChanged()" class="refresh-button"><img src="https://cdn2.iconfinder.com/data/icons/dark-action-bar-2/96/refresh-512.png" width="30" height="30" alt="refresh"></button>
     </div>
 </template>
 
@@ -132,4 +133,11 @@ button:hover{
 .selector-button{
     border-width: 1px 1px 1px 0px;
 }
+
+.refresh-button{
+    border-width: 1px;
+    border-radius: 8px;
+    float: right;
+}
+
 </style>

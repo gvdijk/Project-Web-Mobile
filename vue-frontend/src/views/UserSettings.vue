@@ -99,9 +99,11 @@
                 </table>
             </div>
         </section>
-        <!-- <section>
-            <div class="delete-button" @click="$emit('requestModal', 'delete', {'type': 'user', 'id': userID})">Account Verwijderen</div>
-        </section> -->
+        <section>
+            <button @click="fetchAll()" class="refresh-button"><img src="https://cdn2.iconfinder.com/data/icons/dark-action-bar-2/96/refresh-512.png" alt="refresh"></button>
+            <div v-if="notifications" class="button" @click="askPermission()">Notificaties Toestaan</div>
+            <!-- <div class="delete-button" @click="$emit('requestModal', 'delete', {'type': 'user', 'id': userID})">Account Verwijderen</div> -->
+        </section>
     </div>
 </template>
 
@@ -202,19 +204,40 @@ export default {
             .then(response => this.project = response)
             .catch(error => console.log(error))
         },
-
+        askPermission() {
+            if (this.notificationsSupported) {
+                if (Notification.permission === 'granted') return;
+                Notification.requestPermission(result => {
+                    if (result !== 'granted') {
+                        // Do something?
+                    } else {
+                        this.showNotification()
+                    }
+                })
+            }
+        },
+        showNotification() {
+            navigator.serviceWorker.ready // returns a Promise, the active SW registration
+                .then(swreg => swreg.showNotification('Notificaties Ingeschakeld', {
+                    body: 'Vanaf nu ontvang je updates van Project Planner',
+                    icon: '/img/icons/android-chrome-192x192.png',
+                    image: '/img/autumn-forest.png',
+                    vibrate: [300, 200, 300],
+                    badge: '/img/icons/plint-badge-96x96.png'
+                }));
+        },     
+        fetchAll(){
+            this.fetchUser();
+            this.fetchUserProjects();
+            this.fetchUserPosts();
+            this.fetchUserComments();
+        }
     },
     created() {
-        this.fetchUser();
-        this.fetchUserProjects();
-        this.fetchUserPosts();
-        this.fetchUserComments();
+        this.fetchAll();
     },
     computed: {
-        // commentPost(comment) {
-        //     console.log(comment);
-        //     return comment.post.postTitle || null;
-        // }
+        notifications: () => Notification.permission !== 'granted'
     }
 }
 </script>
@@ -415,4 +438,28 @@ i {
     color: var(--orange);
 }
 
+
+.refresh-button{
+    width: 40px;
+    height: 40px;
+    background-color: var(--white-base);
+    color: var(--green);
+    border-style: solid;
+    border-color: var(--gray-bright);
+    cursor: pointer;
+    transition-duration: 0.3s;
+    border-width: 1px;
+    border-radius: 8px;
+    float: right;
+}
+
+.refresh-button:hover{
+    color: var(--white-base);
+    background-color: var(--green);
+}
+
+.refresh-button img {
+     width: 30px;
+     height: 30px; 
+}
 </style>
